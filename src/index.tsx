@@ -3,10 +3,14 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+// import Model from './ecosphere/Model';
+import { world } from './ecosphere/hello';
+
+const model = world; //new Model('hi')
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <App model={model} />
   </React.StrictMode>,
   document.getElementById('root')
 );

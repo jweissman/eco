@@ -1,24 +1,31 @@
-import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import Model from './ecosphere/Model';
 
-function App() {
+type ApplicationProps = { model: Model }
+function App({ model }: ApplicationProps) {
+  const { inventory, individuals } = model;
+  const items = Object.entries(inventory.storage).map(([elementId, amount]) => {
+    // console.log("Consider element with id " + elementId);
+    const element = model.lookupElementById(Number(elementId))
+    return { ...element, amount }
+  })
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <span>
+        <b>MODEL:</b>
+        {model.name}
+      </span>
+
+      <b>ITEMS:</b>
+      <ul>
+        {items.map(({name, amount}) => <li key={name}>{name}: {amount}</li>)}
+      </ul>
+
+      <b>INDIVIDUALS:</b>
+      <ul>
+        {individuals.map(({ name }) => <li key={name}>{name}</li>)}
+      </ul>
     </div>
   );
 }
