@@ -1,6 +1,5 @@
 import { Individual } from './Model';
 
-// import Model, { Inventory, Individual } from './ecosphere/Model';
 export function ModelView({ modelName, items, individuals }: { modelName: string; items: { name: string; amount: number; }[]; individuals: Individual[]; }) {
   return <>
     <h4>{modelName}</h4>
