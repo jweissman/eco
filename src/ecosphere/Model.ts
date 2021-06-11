@@ -3,7 +3,12 @@ export type Individual = { id: number, name: string }
 
 export type Source = {}
 
-class Inventory {
+type TimeEvolution = ({ add, remove }: {
+  add: (amount: number, elementName: string) => void,
+  remove: (amount: number, elementName: string) => void,
+}) => void
+
+export class Inventory {
   storage: { [key: number]: number } = {}
 }
 
@@ -17,7 +22,7 @@ class Model {
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(public name: string) {}
 
-  element(name: string) {
+  element(name: string): Substance {
     if (this.hasElement(name)) {
       const element: Substance = this.lookupElementByName(name)
       return element
@@ -26,22 +31,28 @@ class Model {
     const id = Math.max(0,...elementIds)+1;
     const theElement = { id, name }
     this.elements.push(theElement)
-    return theElement
+    return theElement;
   }
-
-
 
   add(amount: number, elementName: string): void {
     const element: Substance = this.lookupElementByName(elementName);
-    this.inventory.storage[element.id] ||= 0;
+    this.inventory.storage[element.id] = this.inventory.storage[element.id] || 0;
     this.inventory.storage[element.id] += amount;
   }
 
   remove(amount: number, elementName: string): void {
     const element: Substance = this.lookupElementByName(elementName);
-    this.inventory.storage[element.id] ||= 0;
+    this.inventory.storage[element.id] = this.inventory.storage[element.id] || 0;
     this.inventory.storage[element.id] -= amount;
   }
+
+  zero(elementName: string): void {
+    const element: Substance = this.lookupElementByName(elementName);
+    this.inventory.storage[element.id] = 0; // this.inventory.storage[element.id] || 0;
+    // this.inventory.storage[element.id] -= amount;
+  }
+
+
 
   count(elementName: string): number {
     const element: Substance = this.lookupElementByName(elementName)
@@ -75,6 +86,26 @@ class Model {
     const theIndividual = { id, name }
     this.individuals.push(theIndividual)
     return theIndividual
+  }
+
+
+  timeEvolution: TimeEvolution = ({ add, remove }) => {}
+  evolve(timeEvolution: TimeEvolution): void {
+    this.timeEvolution = timeEvolution
+  }
+
+  step() {
+    const add = this.add.bind(this)
+    const remove = this.remove.bind(this) 
+    this.timeEvolution({ add, remove })
+    return this;
+  }
+
+  get inventoryMap() {
+    return Object.entries(this.inventory.storage).map(([elementId, amount]) => {
+      const element = this.lookupElementById(Number(elementId))
+      return { ...element, amount }
+    })
   }
 }
 

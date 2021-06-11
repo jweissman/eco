@@ -36,4 +36,14 @@ describe('Model', () => {
     model.remove(1, 'Carbon')
     expect(model.inventory.storage).toEqual({ [carbon.id]: 4, [diamond.id]: 1 })
   })
+
+  it('steps through time', () => {
+    model.evolve(({ add, remove }) => add(1, 'Carbon'));
+    model.zero('Carbon')
+    expect(model.count('Carbon')).toEqual(0)
+    model.add(1, 'Carbon')
+    expect(model.count('Carbon')).toEqual(1)
+    model.step()
+    expect(model.count('Carbon')).toEqual(2)
+  })
 })
