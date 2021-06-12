@@ -2,26 +2,25 @@ import Model from "./Model"
 import { Substance, Individual } from "./types";
 
 describe('Model', () => {
-  const modelName = 'the model name';
-  const model = new Model(modelName);
+  const model = new Model('Avernus');
   const { create } = model.items;
 
   it('has a name', () => {
-    expect(model.name).toEqual('the model name')
+    expect(model.name).toEqual('Avernus')
   })
 
   it('defines elements', () => {
-    expect(model.elements).toEqual([])
+    expect(model.items.list()).toEqual([])
     const carbon: Substance = create("Carbon")
     expect(carbon.name).toEqual('Carbon')
-    expect(model.elements).toEqual([carbon])
+    expect(model.items.list()).toEqual([carbon])
   })
 
   it('defines individuals', () => {
-    expect(model.individuals).toEqual([])
-    const jed: Individual = model.individual("Jed");
+    expect(model.people.list()).toEqual([])
+    const jed: Individual = model.people.create("Jed");
     expect(jed.name).toEqual("Jed")
-    expect(model.individuals).toEqual([jed])
+    expect(model.people.list()).toEqual([jed])
   })
 
   it('defines global inventory (stocks of items)', () => {
@@ -53,8 +52,10 @@ describe('Model', () => {
     expect(model.items.count('Carbon')).toEqual(8)
   })
 
-  // it('machines', () => {
-  //   model.machine('Windmill')
+  it('machines', () => {
+     const windmill = model.tools.create('Windmill')
+     expect(model.tools.list()).toEqual([windmill]);
+  })
   //   model.job('milling', {
   //     at: 'Windmill', consumes: { Grain: 10, }, produces: { Flour: 20 }
   //   })

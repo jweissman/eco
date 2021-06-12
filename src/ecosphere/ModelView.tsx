@@ -1,10 +1,11 @@
 import { prettyAmount } from "./prettyAmount";
-import { Individual } from "./types";
+import { Individual, Machine } from "./types";
 
 type ModelViewProps = {
   modelName: string;
   items: { name: string; amount: number; }[];
   individuals: Individual[];
+  machines: Machine[];
   lastInventoryChanges: { [elementName: string]: number };
 }
 
@@ -12,6 +13,7 @@ export function ModelView({
   modelName,
   items,
   individuals,
+  machines,
   lastInventoryChanges
 }: ModelViewProps) {
   const presentItem = ({ name, amount }: { name: string, amount: number }) => <li key={name} title={name} className='Item'>
@@ -39,6 +41,11 @@ export function ModelView({
     <h5>INDIVIDUALS</h5>
     <ul>
       {individuals.map(({ name }) => <li key={name}>{name}</li>)}
+    </ul>
+
+    <h5>MACHINES</h5>
+    <ul>
+      {machines.map(({ name }) => <li key={name}>{name}</li>)}
     </ul>
   </>;
 }

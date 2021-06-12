@@ -7,10 +7,14 @@ const build: () => Model = () => {
   const model = new Model('Space Station')
   model.items.create('Power')
   model.items.create('Air')
-  model.individual('Zedediah')
+  model.people.create('Zachariah')
   model.items.add(100, 'Power')
   model.items.add(100, 'Air')
-  model.evolve(({ remove }) => remove(1, 'Air'));
+  model.tools.create('Control Panel')
+  model.evolve(({ remove, t }) => {
+    remove(1, 'Air')
+    if (t % 3 === 0) { remove(1, 'Power') }
+  });
   return model;
 }
 
@@ -32,7 +36,6 @@ class Eco {
     count: async (itemName: string) => {
       const it = Eco.items.get(itemName);
       const amount = await within(it).findByTestId('Item Count')
-      expect(amount).toBeInTheDocument()
       return Number(amount.textContent);
     }
   }
@@ -52,13 +55,29 @@ it('renders element inventories', async () => {
 });
 
 it('renders individuals', () => {
-  const individuals = screen.getByText(/Zed/i);
-  expect(individuals).toBeInTheDocument();
+  const zed = screen.getByText(/Zach/i);
+  expect(zed).toBeInTheDocument();
+});
+
+it('renders tools', () => {
+  const tool = screen.getByText(/Control Panel/i);
+  expect(tool).toBeInTheDocument();
 });
 
 it('steps through time', async () => {
   expect(await Eco.items.count('Air')).toEqual(100)
+  expect(await Eco.items.count('Power')).toEqual(100)
   const stepButton = await screen.findByText("Step")
   fireEvent.click(stepButton);
   expect(await Eco.items.count('Air')).toEqual(99)
+  expect(await Eco.items.count('Power')).toEqual(99)
+  fireEvent.click(stepButton);
+  expect(await Eco.items.count('Air')).toEqual(98)
+  expect(await Eco.items.count('Power')).toEqual(99)
+  fireEvent.click(stepButton);
+  expect(await Eco.items.count('Air')).toEqual(97)
+  expect(await Eco.items.count('Power')).toEqual(99)
+  fireEvent.click(stepButton);
+  expect(await Eco.items.count('Air')).toEqual(96)
+  expect(await Eco.items.count('Power')).toEqual(98)
 })

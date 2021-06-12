@@ -1,44 +1,48 @@
-import { Engine } from "./Engine";
 import { Model } from "./Model";
-import { StepResult, Substance } from "./types";
+import { Substance } from "./types";
+import { where } from "./where";
 
 export class Manager {
-  engine: Engine = new Engine(this.model);
-  constructor(public model: Model) { }
+  constructor(public model: Model) {
+    this.lookup = this.lookup.bind(this)
+    this.lookupById = this.lookupById.bind(this)
+  }
 
-  step(): StepResult { return this.engine.step(); }
-
-  hasElement(elementName: string): boolean {
-    const matching = this.model.elements.find(e => e.name === elementName);
+  has(itemName: string): boolean {
+    const { items } = this.model
+    const matching = items.list().find(where('name', itemName)) 
     return !!matching;
   }
 
-  lookupElementById(elementId: number): Substance {
-    const matching = this.model.elements.find(e => e.id === elementId);
+  lookupById(elementId: number): Substance {
+    const { items } = this.model
+    const matching = items.list().find(where('id', elementId))
     if (matching) {
       return matching;
     }
-    throw new Error("no such element with id: " + elementId);
+    throw new Error("No such element with id: " + elementId);
   }
 
-  lookupElementByName(elementName: string): Substance {
-    const matching = this.model.elements.find(e => e.name === elementName);
+  lookup(elementName: string): Substance {
+    const { items } = this.model
+    const matching = items.list().find(where('name', elementName))
     if (matching) {
       return matching;
     }
-    throw new Error("no such element: " + elementName);
+    throw new Error("No such element with name: " + elementName);
   }
 
-  get inventoryMap() {
-    const warehouse = Object.entries(this.model.inventory.storage)
-    return warehouse.flatMap(([elementId, amount]) => {
-      const element = this.lookupElementById(Number(elementId))
-      if (amount > 0) {
-        return { ...element, amount }
-      } else {
-        return []
-      }
-    })
+  get stocks(): (Substance & { amount: number })[] {
+    return this.model.items.table();
+    // const warehouse = Object.entries(this.model.items.stored)
+    // // inventory.storage)
+    // return warehouse.flatMap(([elementId, amount]) => {
+    //   const element = this.lookupById(Number(elementId))
+    //   if (amount > 0) {
+    //     return { ...element, amount }
+    //   } else {
+    //     return []
+    //   }
+    // })
   }
-
 }

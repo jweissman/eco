@@ -53,10 +53,12 @@ const People = {
   Raz: 'Erasmus',
 }
 
+const { Zed, Cash, Raz } = People;
+
 // define individuals
-world.individual(People.Zed)
-world.individual(People.Cash)
-world.individual(People.Raz)
+world.people.create(Zed)
+world.people.create(Cash)
+world.people.create(Raz)
 
 // todo individual tasks
 

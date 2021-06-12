@@ -3,8 +3,28 @@ import { Substance } from "./types";
 export class Inventory {
   constructor(
     private lookupElementByName: (elementName: string) => Substance,
+    private lookupElementById: (elementId: number) => Substance,
     public storage: { [key: number]: number; } = {},
-  ) { }
+  ) {
+    this.add = this.add.bind(this)
+    this.remove = this.remove.bind(this)
+    this.zero = this.zero.bind(this)
+    this.count = this.count.bind(this)
+  }
+
+  get report(): (Substance & { amount: number })[] {
+    // console.log(this.storage)
+    const warehouse = Object.entries(this.storage) 
+    console.log(warehouse)
+    return warehouse.flatMap(([elementId, amount]) => {
+      const element = this.lookupElementById(Number(elementId))
+      if (amount > 0) {
+        return { ...element, amount }
+      } else {
+        return []
+      }
+    })
+  }
 
   add(amount: number, elementName: string) {
     this.setAmount(elementName, this.count(elementName) + amount);

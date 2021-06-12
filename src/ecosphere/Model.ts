@@ -1,61 +1,64 @@
+import { Engine } from "./Engine"
 import { Inventory } from "./Inventory"
+import { manageItems } from "./manageItems"
 import { Manager } from "./Manager"
-import { Substance, Individual, TimeEvolution } from "./types"
+import { Substance, Individual, TimeEvolution, Machine, StepResult } from "./types"
 
 export class Model {
-  elements: Substance[] = []
-  individuals: Individual[] = []
-  manager: Manager = new Manager(this)
-  inventory: Inventory = new Inventory(
-    this.manager.lookupElementByName.bind(this.manager)
+  private ticks: number = 0
+  private elements: Substance[] = []
+  private machines: Machine[] = []
+  private individuals: Individual[] = []
+  private manager: Manager = new Manager(this)
+  private inventory: Inventory = new Inventory(
+    this.manager.lookup,
+    this.manager.lookupById
   )
+  private timeEvolution: TimeEvolution | null = null
+  private engine: Engine = new Engine(this);
 
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
-  constructor(public name: string) {
-    // console.log("[Model] The model '" + name + "' was created")
-  }
+  constructor(public name: string) {}
 
-  // item management ////////////////////////////////
-  items: {
-    create: (name: string) => Substance
-    add: (amount: number, elementName: string) => void,
-    remove: (amount: number, elementName: string) => void,
-    zero: (elementName: string) => void,
-    count: (elementName: string) => number               
-  } = {
+  items = manageItems(this.inventory, this.manager, this.elements)
+  people = {
+    list: () => this.individuals,
     create: (name: string) => {
-      if (this.manager.hasElement(name)) {
-        const element: Substance = this.manager.lookupElementByName(name)
-        return element
-      }
-      const elementIds: number[] = this.elements.map(({ id }) => id);
-      const id = Math.max(0,...elementIds)+1;
-      const theElement = { id, name }
-      this.elements.push(theElement)
-      return theElement;
+      const individualIds: number[] = this.elements.map(({ id }) => id);
+      const id = Math.max(0,...individualIds)+1;
+      const theIndividual = { id, name }
+      // console.log(name)
+      this.individuals.push(theIndividual)
+      return theIndividual
     },
-    // item management //////////////////////////////
-    add: (amount: number, elementName: string) => { this.inventory.add(amount, elementName); },
-    remove: (amount: number, elementName: string) => { this.inventory.remove(amount, elementName); },
-    zero: (elementName: string) => { this.inventory.zero(elementName); },
-    count: (elementName: string) => { return this.inventory.count(elementName); },
+  }
+  tools: {
+    list: () => Machine[],
+    create: (name: string) => Machine,
+  } = { 
+    list: () => this.machines,
+    create: (name: string) => {
+      const individualIds: number[] = this.elements.map(({ id }) => id);
+      const id = Math.max(0,...individualIds)+1;
+      const theMachine = { id, name }
+      this.machines.push(theMachine)
+      return theMachine
+    }
   }
 
-  // individual management /////////////////////////////////
-  individual(name: string): any {
-    const individualIds: number[] = this.elements.map(({ id }) => id);
-    const id = Math.max(0,...individualIds)+1;
-    const theIndividual = { id, name }
-    this.individuals.push(theIndividual)
-    return theIndividual
-  }
-
-  // time evolution ///////////////////////////////////////
-  timeEvolution: TimeEvolution = ({ add, remove }) => {}
   evolve(timeEvolution: TimeEvolution): void {
     this.timeEvolution = timeEvolution
   }
-  step() { return this.manager.step() }
+ 
+  step(): StepResult {
+    return this.engine.step(this.ticks++);
+  }
+  
+  get evolution(): TimeEvolution {
+    if (this.timeEvolution) {
+      return this.timeEvolution
+    }
+    throw new Error("No time evolution defined")
+  }
 }
 
 export default Model;

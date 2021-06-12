@@ -2,19 +2,16 @@ import { Inventory } from "./Inventory";
 import { Model } from "./Model";
 
 export class Delta {
-  constructor(public model: Model) { }
-
-  inventory: Inventory = new Inventory(
-    this.model.manager.lookupElementByName.bind(this.model.manager),
+  private inventory: Inventory = new Inventory(
+    this.model.items.lookup,
+    this.model.items.lookupById,
     {}
   );
-
-  // todo test this :)
-  timeEvolution(): void {
-    const add = this.inventory.add.bind(this.inventory);
-    const remove = this.inventory.remove.bind(this.inventory);
-    const count = this.model.items.count.bind(this.model);
-
-    this.model.timeEvolution({ add, remove, count });
+  constructor(public model: Model) { }
+  get storage() { return this.inventory.storage }
+  timeEvolution(t: number): void {
+    const { add, remove } = this.inventory; 
+    const { count } = this.model.items;
+    this.model.evolution({ add, remove, count, t });
   }
 }
