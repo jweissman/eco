@@ -1,85 +1,47 @@
-export type Substance = { id: number, name: string }
-export type Individual = { id: number, name: string }
+import { Inventory } from "./Inventory"
+import { Manager } from "./Manager"
+import { Substance, Individual, TimeEvolution } from "./types"
 
-export type Source = {}
-
-type TimeEvolution = ({ add, remove }: {
-  add: (amount: number, elementName: string) => void,
-  remove: (amount: number, elementName: string) => void,
-}) => void
-
-export class Inventory {
-  storage: { [key: number]: number } = {}
-}
-
-class Model {
+export class Model {
   elements: Substance[] = []
   individuals: Individual[] = []
-  sources: Source[] = []
-  // substance id -> amount
-  inventory: Inventory = new Inventory()
+  manager: Manager = new Manager(this)
+  inventory: Inventory = new Inventory(
+    this.manager.lookupElementByName.bind(this.manager)
+  )
 
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
-  constructor(public name: string) {}
-
-  element(name: string): Substance {
-    if (this.hasElement(name)) {
-      const element: Substance = this.lookupElementByName(name)
-      return element
-    }
-    const elementIds: number[] = this.elements.map(({ id }) => id);
-    const id = Math.max(0,...elementIds)+1;
-    const theElement = { id, name }
-    this.elements.push(theElement)
-    return theElement;
+  constructor(public name: string) {
+    // console.log("[Model] The model '" + name + "' was created")
   }
 
-  add(amount: number, elementName: string): void {
-    const element: Substance = this.lookupElementByName(elementName);
-    this.inventory.storage[element.id] = this.inventory.storage[element.id] || 0;
-    this.inventory.storage[element.id] += amount;
+  // item management ////////////////////////////////
+  items: {
+    create: (name: string) => Substance
+    add: (amount: number, elementName: string) => void,
+    remove: (amount: number, elementName: string) => void,
+    zero: (elementName: string) => void,
+    count: (elementName: string) => number               
+  } = {
+    create: (name: string) => {
+      if (this.manager.hasElement(name)) {
+        const element: Substance = this.manager.lookupElementByName(name)
+        return element
+      }
+      const elementIds: number[] = this.elements.map(({ id }) => id);
+      const id = Math.max(0,...elementIds)+1;
+      const theElement = { id, name }
+      this.elements.push(theElement)
+      return theElement;
+    },
+    // item management //////////////////////////////
+    add: (amount: number, elementName: string) => { this.inventory.add(amount, elementName); },
+    remove: (amount: number, elementName: string) => { this.inventory.remove(amount, elementName); },
+    zero: (elementName: string) => { this.inventory.zero(elementName); },
+    count: (elementName: string) => { return this.inventory.count(elementName); },
   }
 
-  remove(amount: number, elementName: string): void {
-    const element: Substance = this.lookupElementByName(elementName);
-    this.inventory.storage[element.id] = this.inventory.storage[element.id] || 0;
-    this.inventory.storage[element.id] -= amount;
-  }
-
-  zero(elementName: string): void {
-    const element: Substance = this.lookupElementByName(elementName);
-    this.inventory.storage[element.id] = 0; // this.inventory.storage[element.id] || 0;
-    // this.inventory.storage[element.id] -= amount;
-  }
-
-
-
-  count(elementName: string): number {
-    const element: Substance = this.lookupElementByName(elementName)
-    return this.inventory.storage[element.id]
-  }
-
-  hasElement(elementName: string): boolean {
-    const matching = this.elements.find(e => e.name === elementName)
-    return !!matching;
-  }
-
-  lookupElementById(elementId: number): Substance {
-    const matching = this.elements.find(e => e.id === elementId)
-    if (matching) {
-      return matching
-    }
-    throw new Error("no such element with id: " + elementId)
-  }
-
-  lookupElementByName(elementName: string): Substance {
-    const matching = this.elements.find(e => e.name === elementName)
-    if (matching) {
-      return matching
-    }
-    throw new Error("no such element: " + elementName)
-  }
-
+  // individual management /////////////////////////////////
   individual(name: string): any {
     const individualIds: number[] = this.elements.map(({ id }) => id);
     const id = Math.max(0,...individualIds)+1;
@@ -88,25 +50,12 @@ class Model {
     return theIndividual
   }
 
-
+  // time evolution ///////////////////////////////////////
   timeEvolution: TimeEvolution = ({ add, remove }) => {}
   evolve(timeEvolution: TimeEvolution): void {
     this.timeEvolution = timeEvolution
   }
-
-  step() {
-    const add = this.add.bind(this)
-    const remove = this.remove.bind(this) 
-    this.timeEvolution({ add, remove })
-    return this;
-  }
-
-  get inventoryMap() {
-    return Object.entries(this.inventory.storage).map(([elementId, amount]) => {
-      const element = this.lookupElementById(Number(elementId))
-      return { ...element, amount }
-    })
-  }
+  step() { return this.manager.step() }
 }
 
 export default Model;

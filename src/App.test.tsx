@@ -1,46 +1,64 @@
 import React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { within, fireEvent, render, screen } from '@testing-library/react';
 import App from './App';
 import Model from './ecosphere/Model';
 
-const model = new Model('Space Station')
-model.element('Power')
-model.element('Air')
-model.individual('Zedediah')
-model.add(100, 'Power')
-model.add(100, 'Air')
-model.evolve(({ remove }) => remove(1, 'Air'));
+const build: () => Model = () => {
+  const model = new Model('Space Station')
+  model.items.create('Power')
+  model.items.create('Air')
+  model.individual('Zedediah')
+  model.items.add(100, 'Power')
+  model.items.add(100, 'Air')
+  model.evolve(({ remove }) => remove(1, 'Air'));
+  return model;
+}
 
-test('renders model name', () => {
-  render(<App model={model} />);
-  const name = screen.getByText(/Space Station/i);
-  expect(name).toBeInTheDocument();
+class Eco {
+  static get modelName() {
+    return screen.getByLabelText('Model Title')
+  }
+
+  static get globalItems() {
+    return screen.getByLabelText('Global Items')
+  }
+
+  static items = {
+    get: (itemName: string) => {
+      const items = within(Eco.globalItems);
+      const theItem = (items.getByTitle(itemName));
+      return theItem;
+    },
+    count: async (itemName: string) => {
+      const it = Eco.items.get(itemName);
+      const amount = await within(it).findByTestId('Item Count')
+      expect(amount).toBeInTheDocument()
+      return Number(amount.textContent);
+    }
+  }
+}
+
+const model: Model = build()
+beforeEach(() => render(<App model={model} />))
+
+it('renders model name', () => {
+  expect(Eco.modelName).toBeInTheDocument();
+  expect(Eco.modelName).toHaveTextContent('Space Station')
 });
 
-test('renders element inventories', () => {
-  render(<App model={model} />);
-  const power = screen.getByText(/Power: 100/i);
-  expect(power).toBeInTheDocument();
-  const air = screen.getByText(/Air: 100/i);
-  expect(air).toBeInTheDocument();
+it('renders element inventories', async () => {
+  expect(await Eco.items.count('Air')).toEqual(100)
+  expect(await Eco.items.count('Power')).toEqual(100)
 });
 
-test('renders individuals', () => {
-  render(<App model={model} />);
+it('renders individuals', () => {
   const individuals = screen.getByText(/Zed/i);
   expect(individuals).toBeInTheDocument();
 });
 
 it('steps through time', async () => {
-  render(<App model={model} />);
-
-  const air = screen.getByText(/Air: 100/i);
-  expect(air).toBeInTheDocument();
-
+  expect(await Eco.items.count('Air')).toEqual(100)
   const stepButton = await screen.findByText("Step")
   fireEvent.click(stepButton);
-
-  const lessAir = screen.getByText(/Air: 99/i);
-  expect(lessAir).toBeInTheDocument();
-
+  expect(await Eco.items.count('Air')).toEqual(99)
 })

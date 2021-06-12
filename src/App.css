@@ -1,5 +1,29 @@
 .App {
+  /* font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; */
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  font-size: 67.5%;
   background-color: #282c34;
   color: #eaeaea;
+  padding: 10px;
+  font-size: 10pt;
   height: 100vh;
+}
+
+.App ul {
+  padding: 7px;
+}
+.App ul > li {
+  padding: 2px;
+  list-style: none;
+  border-bottom: 2px solid #eaeaea;
+  display: flex;
+  flex-direction: row;
+}
+.App ul > li span {
+  display: flex;
+  width: 100px;
+}
+
+.App ul > li span.delta {
+  color: #909090
 }

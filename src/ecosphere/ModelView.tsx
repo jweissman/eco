@@ -1,13 +1,40 @@
-import { Individual } from './Model';
+import { prettyAmount } from "./prettyAmount";
+import { Individual } from "./types";
 
-export function ModelView({ modelName, items, individuals }: { modelName: string; items: { name: string; amount: number; }[]; individuals: Individual[]; }) {
+type ModelViewProps = {
+  modelName: string;
+  items: { name: string; amount: number; }[];
+  individuals: Individual[];
+  lastInventoryChanges: { [elementName: string]: number };
+}
+
+export function ModelView({
+  modelName,
+  items,
+  individuals,
+  lastInventoryChanges
+}: ModelViewProps) {
+  const presentItem = ({ name, amount }: { name: string, amount: number }) => <li key={name} title={name} className='Item'>
+    <span data-testid='Item Name'>{name}</span>
+    <span data-testid='Item Count'>
+      {prettyAmount(amount)}
+    </span>
+    {lastInventoryChanges[name] && (
+      <span className='delta' data-testid='Item Delta'>
+        {lastInventoryChanges[name]}
+      </span>
+    )}
+  </li>
+
   return <>
-    <h4>{modelName}</h4>
+    <h4 aria-label='Model Title'>{modelName}</h4>
 
-    <h5>ITEMS</h5>
-    <ul>
-      {items.map(({ name, amount }) => <li key={name}>{name}: {amount}</li>)}
-    </ul>
+    <div>
+      <h5>ITEMS</h5>
+      <ul aria-label='Global Items'>
+        {items.map(presentItem)}
+      </ul>
+    </div>
 
     <h5>INDIVIDUALS</h5>
     <ul>
