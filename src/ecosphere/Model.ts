@@ -1,35 +1,26 @@
 import { Stocks } from "./Stocks"
-import { Substance, Individual, TimeEvolution, Machine, StepResult } from "./types"
+import { Substance, Individual, Machine, StepResult, Animal } from "./types"
 import { Population } from "./Population"
 import { Delta } from "./Delta"
-
-// type Job = { personId: number, machineId: number }
-
+import { Registry } from "./Registry"
+import { Simulation } from "./Simulation"
 interface IModel {
-  name: string
   resources: Stocks<Substance>
   machines: Stocks<Machine>
+  animals: Registry<Animal>
   people: Population<Individual>
-  // jobs: Job[]
-  evolution: TimeEvolution
+  // jobAssignments: JobAssignment[]
 }
 
-export class Model implements IModel {
+export class Model extends Simulation implements IModel  {
   public resources = new Stocks<Substance>('resources')
-  public machines = new Stocks('machines')
-  public people = new Population<Individual>()
-  // public jobs: Job[] = []
+  public machines = new Stocks<Machine>('machines')
+  public animals = new Registry<Animal>('wildlife')
+  public people = new Population<Individual>('people')
 
-  private ticks: number = 0
-  private timeEvolution: TimeEvolution | null = null
+  // public jobs = new Population<Job>()
+  // public jobAssignments: JobAssignment[] = []
 
-  constructor(public name: string) {}
-
-  set evolution(timeEvolution: TimeEvolution) { this.timeEvolution = timeEvolution }
-  get evolution(): TimeEvolution {
-    if (this.timeEvolution) { return this.timeEvolution }
-    throw new Error("No time evolution defined")
-  }
 
   step(t: number = this.ticks++): StepResult {
     return this.apply(
@@ -38,8 +29,9 @@ export class Model implements IModel {
   }
 
   // work(person: Individual, machine: Machine) {
-  //   const job = { personId: person.id, machineId: machine.id };
-  //   this.jobs.push(job);
+  //   // const job = { personId: person.id, machineId: machine.id };
+  //   // this.jobAssignments.push(job);
+  //   throw new Error("not impl")
   // }
 
   private apply(delta: Delta) {
@@ -54,6 +46,15 @@ export class Model implements IModel {
       }
     });
     return { changed };
+  }
+
+  get report() {
+    const { resources, animals } = this
+    return {
+      resources: resources.report,
+      animals: animals.report
+    }
+    // throw new Error("Method not implemented.")
   }
 }
 

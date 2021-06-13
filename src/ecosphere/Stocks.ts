@@ -2,9 +2,9 @@ import { BasicEntity } from "./BasicEntity";
 import { boundMethod } from 'autobind-decorator'
 import { where } from "./where";
 import { isString } from "./isString";
+import { ManageStock, ManageStocks } from "./types";
 
 export class Stocks<T extends BasicEntity> {
-  // private elements: T[] = [];
   private storage: { [key: number]: number; } = {}
 
   constructor(
@@ -15,12 +15,14 @@ export class Stocks<T extends BasicEntity> {
   get list() { return this.elements }
   get _store() { return this.storage }
 
-  public create(name: string): T
-  public create(attributes: { name: string } & Partial<T>): T
+  public clear() { this.elements = []; this.storage = {} }
+
+  public create(name: string): ManageStock<T>
+  public create(attributes: { name: string } & Partial<T>): ManageStock<T>
   /** Create a new type of element to store */
   @boundMethod
   public create(attrs: any) {
-    let name = null;
+    let name: string | null = null;
     let attributes: Partial<T> = {}
     if (isString(attrs)) {
       name = attrs;
@@ -28,30 +30,35 @@ export class Stocks<T extends BasicEntity> {
     } else {
       ({ name, ...attributes } = attrs);
     }
-    if (this.has(name)) {
-      const entity: T = this.lookup(name) as T;
-      return entity;
+    if (isString(name) && this.has(name)) {
+      // const entity: T = this.lookup(name) as T;
+      return this.manage(name);
     }
     const elementIds: number[] = this.list.map(({ id }) => id);
     const id = Math.max(0, ...elementIds) + 1;
     const theEntity: T = { id, name, ...attributes } as unknown as T;
     this.list.push(theEntity);
-    return theEntity;
+    const manage: ManageStocks = this.manage(name as string)
+    return manage
+  }
+
+  private manage(name: string): ManageStock<T> {
+    return {
+      add: (amt: number) => this.add(amt, name),
+      remove: (amt: number) => this.remove(amt, name),
+      count: () => this.count(name),
+      get: () => this.lookup(name)
+    }
   }
 
   @boundMethod
   add(amount: number, name: string) {
-    // console.log(this)
-    let initial = 0;
-    if (this.has(name)) { initial = this.count(name) }
-    this.setAmount(name, initial + amount);
+    this.setAmount(name, this.count(name) + amount);
   }
 
   @boundMethod
   remove(amount: number, name: string): void {
-    let initial = 0;
-    if (this.count(name)) { initial = this.count(name) }
-    this.setAmount(name, initial - amount);
+    this.setAmount(name, this.count(name) - amount);
   }
 
   @boundMethod
@@ -89,7 +96,6 @@ export class Stocks<T extends BasicEntity> {
 
   get report(): (T & { amount: number })[] {
     const warehouse = Object.entries(this.storage) 
-    console.log(warehouse)
     return warehouse.flatMap(([elementId, amount]) => {
       const element = this.lookupById(Number(elementId))
       if (amount > 0) {

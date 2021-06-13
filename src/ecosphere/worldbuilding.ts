@@ -16,7 +16,6 @@ export function worldbuilding({ add, remove, count }: { add: Function; remove: F
   };
 
   return {
-    // randomInt: random,
     reproduce
   };
 }
