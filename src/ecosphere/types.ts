@@ -11,14 +11,23 @@ export type Individual = BasicEntity & { age: number }
 
 // okay, this is still really a 'species'?? that's okay
 export type Animal = Individual & {
-  // species: Species
-  // health:   'dying' | 'sick' | 'wounded' | 'healthy' | 'flourishing'
-  // strength: 'weak' | 'robust' | 'mighty' | 'indomitable'
-  // cunning:  'dim' | 'attentive' | 'skillful' | 'wise'
-  // agility:  'clumsy' | 'nimble' | 'spry'
+  species: Species
+  health:   'dying' | 'sick' | 'wounded' | 'healthy' | 'flourishing'
+  strength: 'weak' | 'robust' | 'mighty' | 'indomitable'
+  cunning:  'dim' | 'attentive' | 'skillful' | 'wise'
+  agility:  'clumsy' | 'nimble' | 'spry'
 }
-export type Machine = BasicEntity
 
+// export type MachineKind = BasicEntity
+export type Machine = BasicEntity //& { kind: MachineKind, owner?: Individual }
+
+export type Recipe = BasicEntity & {
+  produces: { [resourceName: string]: number }
+  consumes?: { [resourceName: string]: number }
+  requiresMachine?: string // machine name
+}
+
+// export type Job = { machine: Machine }
 
 export type ManageStocks = {
   add: (amount: number, name: string) => void,
@@ -29,15 +38,14 @@ export type ManageStocks = {
 export type ManageStock<T> = {
   add: (amount: number) => void,
   remove: (amount: number) => void,
-  count: () => number,
-  get: () => T
+  count: number,
+  item: T
 }
 
 export type ManagePopulation<T> = {
   count: number
   birth: (name: string) => T
   death: (name: string) => T
-  // could implement add/remove by calling birth/death on random individuals...????????
   add: (amount: number) => T[]
   remove: (amount: number) => T[]
 }
@@ -46,12 +54,12 @@ export type ManagePopulationRegistry<T> = {
   lookup: (name: string) => ManagePopulation<T>
 }
 
-export type Evolution = {
-  t: number
-  resources: ManageStocks
-  animals: ManagePopulationRegistry<Animal>
+export interface Evolution {
+  [key: string]: ManageStocks
+  // ticks: number
+  // animals: ManagePopulationRegistry<Animal>
 }
-export type TimeEvolution = (evolution: Evolution) => void
+export type TimeEvolution = (evolution: Evolution, ticks: number) => void
 
 export type StepResult = {
   changed: { [elementName: string]: number }

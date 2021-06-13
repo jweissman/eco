@@ -11,7 +11,7 @@ const build: () => Model = () => {
   model.resources.add(100, 'Power')
   model.resources.add(100, 'Air')
   model.machines.create('Control Panel')
-  model.dynamics = (({ t, resources }) => { //remove, t }) => {
+  model.dynamics = (({ resources }, t) => { //remove, t }) => {
     resources.remove(1, 'Air')
     if (t % 3 === 0) { resources.remove(1, 'Power') }
   });

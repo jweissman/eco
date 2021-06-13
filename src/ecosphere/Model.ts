@@ -1,40 +1,42 @@
 import { Stocks } from "./Stocks"
-import { Substance, Individual, Machine, StepResult, Animal } from "./types"
+import { Substance, Individual, Machine, Animal, Recipe } from "./types"
 import { Population } from "./Population"
 import { Delta } from "./Delta"
 import { Registry } from "./Registry"
 import { Simulation } from "./Simulation"
+import { Collection, IList } from "./Collection"
+import { BasicEntity } from "./BasicEntity"
+import { Map } from "./Map"
+
 interface IModel {
   resources: Stocks<Substance>
   machines: Stocks<Machine>
   animals: Registry<Animal>
   people: Population<Individual>
-  // jobAssignments: JobAssignment[]
+
+  recipes: IList<Recipe>
 }
 
-export class Model extends Simulation implements IModel  {
+type Task = BasicEntity & {
+  machine?: string
+  recipe: string
+}
+
+
+export class Model extends Simulation<Substance> implements IModel  {
   public resources = new Stocks<Substance>('resources')
-  public machines = new Stocks<Machine>('machines')
-  public animals = new Registry<Animal>('wildlife')
-  public people = new Population<Individual>('people')
+  public machines  = new Stocks<Machine>('machines')
+  public animals   = new Registry<Animal>('wildlife')
+  public people    = new Population<Individual>('people')
+  public recipes   = new Collection<Recipe>()
+  public tasks     = new Collection<Task>()
+  public jobs      = new Map<Individual, Task>(worker => worker.id, id => this.people.lookupById(id))
 
-  // public jobs = new Population<Job>()
-  // public jobAssignments: JobAssignment[] = []
+  // public taskmaster: EmploymentManager<Individual, Job> = []
 
+  get delta() { return new Delta(this, (model) => model.resources) }
 
-  step(t: number = this.ticks++): StepResult {
-    return this.apply(
-      new Delta(this).evolve(t)
-    )
-  }
-
-  // work(person: Individual, machine: Machine) {
-  //   // const job = { personId: person.id, machineId: machine.id };
-  //   // this.jobAssignments.push(job);
-  //   throw new Error("not impl")
-  // }
-
-  private apply(delta: Delta) {
+  protected apply(delta: Delta<Substance>) {
     const { add, list } = this.resources;
     const { storage: updated } = delta;
     const changed: { [elementName: string]: number; } = {};
@@ -54,7 +56,6 @@ export class Model extends Simulation implements IModel  {
       resources: resources.report,
       animals: animals.report
     }
-    // throw new Error("Method not implemented.")
   }
 }
 

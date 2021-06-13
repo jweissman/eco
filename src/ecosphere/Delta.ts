@@ -1,33 +1,27 @@
+import { BasicEntity } from "./BasicEntity";
 import { Model } from "./Model";
 import { Stocks } from "./Stocks";
-import { Substance } from "./types";
+// import { Substance } from "./types";
 
-export class Delta {
-  private changingResources: Stocks<Substance> = new Stocks('resources (delta)', this.model.resources.list);
-  constructor(public model: Model) { }
-  get storage() { return this.changingResources._store }
+// okay so maybe we want a 'collection' of dynamics
+// each one operates on a given set of stocks ??
+// we can at least keep types straight...
+// and anyway not be injecting different stocks and having to track them!!
+export class Delta<T extends BasicEntity> {
+  private changes: Stocks<T>;
+  constructor(public model: Model, public getStocks: (model: Model) => Stocks<T>) {
+    let baseline = this.getStocks(model)
+    this.changes = new Stocks(`${baseline.name} (delta)`, baseline.list);
+  }
 
-  evolve(t: number): Delta {
-    const { add, remove } = this.changingResources; 
-    const { count } = this.model.resources;
-    this.model.dynamics({
-      t,
-      resources: { add, remove, count },
-      animals: this.model.animals
-        // birth: (name: string) => this.model.animals.lookup(name).birth(),
-        // death: (name: string) => this.model.animals.lookup(name).death(),
-        //   // todo..w
-        // count: (name: string) => this.model.animals.count(name),
-        // add: (amount: number, name: string) => {
-        //   if (amount > this.model.animals.count)
-        //   let born = []
-        //   for (let i = 0; i < amount; i++) {
-        //     this.model.animals.create()
-        //     // this.model.animals.destroy(this.model.animals.list[i].name);
-        //   }
-        // }
-      // }
-    });
+  get storage() { return this.changes._store }
+
+  evolve(t: number): Delta<T> {
+    let stocks = this.getStocks(this.model)
+    // const { add, remove } = this.changes; 
+    // const { count } = stocks; //this.model.resources;
+    const flow = { [stocks.name]: stocks.manageAll() }
+    this.model.dynamics(flow, t);
     return this;
   }
 }

@@ -4,13 +4,35 @@ import { where } from "./where";
 import { isString } from "./isString";
 import { ManageStock, ManageStocks } from "./types";
 
+class StockManager<T extends BasicEntity> implements ManageStock<T> {
+  constructor(private stocks: Stocks<T>, private stockId: number) {}
+  add(amount: number): void { return this.stocks.add(amount, this.name) }
+  remove(amount: number): void { return this.stocks.remove(amount, this.name) }
+  get count(): number { return this.stocks.count(this.name) }
+  get name() { return this.item.name }
+  get item(): T { return this.stocks.lookupById(this.stockId) }
+}
+
+class WarehouseManager<T extends BasicEntity> implements ManageStocks {
+  constructor(private stocks: Stocks<T>) {}
+
+  @boundMethod
+  add(amount: number, name: string): void { return this.stocks.add(amount, name)};
+
+  @boundMethod
+  remove(amount: number, name: string): void { return this.stocks.remove(amount, name)};
+
+  @boundMethod
+  count(name: string): number { return this.stocks.count(name) }
+}
+
 export class Stocks<T extends BasicEntity> {
   private storage: { [key: number]: number; } = {}
 
   constructor(
     public name: string,
     private elements: T[] = []
-  ) {}
+  ) { }
 
   get list() { return this.elements }
   get _store() { return this.storage }
@@ -31,25 +53,16 @@ export class Stocks<T extends BasicEntity> {
       ({ name, ...attributes } = attrs);
     }
     if (isString(name) && this.has(name)) {
-      // const entity: T = this.lookup(name) as T;
       return this.manage(name);
     }
     const elementIds: number[] = this.list.map(({ id }) => id);
     const id = Math.max(0, ...elementIds) + 1;
     const theEntity: T = { id, name, ...attributes } as unknown as T;
     this.list.push(theEntity);
-    const manage: ManageStocks = this.manage(name as string)
+    const manage: ManageStock<T> = this.manage(name as string)
     return manage
   }
 
-  private manage(name: string): ManageStock<T> {
-    return {
-      add: (amt: number) => this.add(amt, name),
-      remove: (amt: number) => this.remove(amt, name),
-      count: () => this.count(name),
-      get: () => this.lookup(name)
-    }
-  }
 
   @boundMethod
   add(amount: number, name: string) {
@@ -74,7 +87,7 @@ export class Stocks<T extends BasicEntity> {
   }
 
   has(name: string): boolean {
-    const matching = this.elements.find(where('name', name)) 
+    const matching = this.elements.find(where('name', name))
     return !!matching;
   }
 
@@ -95,7 +108,7 @@ export class Stocks<T extends BasicEntity> {
   }
 
   get report(): (T & { amount: number })[] {
-    const warehouse = Object.entries(this.storage) 
+    const warehouse = Object.entries(this.storage)
     return warehouse.flatMap(([elementId, amount]) => {
       const element = this.lookupById(Number(elementId))
       if (amount > 0) {
@@ -104,6 +117,16 @@ export class Stocks<T extends BasicEntity> {
         return []
       }
     })
+  }
+
+  manage(name: string): ManageStock<T> {
+    return new StockManager<T>(this, this.lookup(name).id)
+  }
+
+  manageAll(): ManageStocks {
+    return new WarehouseManager(this)
+    // const { add, remove, count } = this
+    // return { add, remove, count }
   }
 
   private setAmount(name: string, amount: number): void {

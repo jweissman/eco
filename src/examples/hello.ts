@@ -119,8 +119,12 @@ world.machines.create(Windmill);
 //   produces: { Bread: 2 },
 // })
 
+// world.dynamics = (({ animals }) => { //add, remove, count }) => {
+//   const { add, remove, count } = animals
+//   // const { reproduce } = worldbuilding(animals) //{ add, remove, count })
+// })
 // todo okay really need to add add/remove count blocks for each resource
-world.dynamics = (({ resources, animals }) => { //add, remove, count }) => {
+world.dynamics = (({ resources }) => { //add, remove, count }) => {
   const { add, remove, count } = resources
   // const { reproduce } = worldbuilding(animals) //{ add, remove, count })
 

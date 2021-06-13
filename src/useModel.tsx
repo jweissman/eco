@@ -13,7 +13,7 @@ const ticksPerSecond = (n: number) => n > 0 ? Math.floor(1000 / n) : 1
 const speeds = {slow: 10, fast: 25, faster: 50, fastest: 80};
 export function useModel(model: Model = new Model('Hello World')): ModelAPI {
   const [lastChanges, setLastChanges] = useState({})
-  const [delay, setDelay] = useState(ticksPerSecond(speeds.fast));
+  const [delay, setDelay] = useState(ticksPerSecond(speeds.slow));
   const [shouldStep, step] = useState(false);
   const performStep = () => { step(true); };
 

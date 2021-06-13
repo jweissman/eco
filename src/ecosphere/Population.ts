@@ -38,12 +38,28 @@ export class Population<T extends BasicEntity> {
     // if (theIndividual) {
     //   return theIndividual
     // }
-    throw new Error(`Could not find ${name} in the population of ${this.name}`)
+    throw new Error(`Could not find individual with name '${name}' in the population of ${this.name}`)
   }
 
-  public birth(name: string = `New Individual ${this.count+1}`): T {
+  public lookupById(id: number): T {
+    let theIndividual = null;
+    this.individuals.forEach(individual => {
+      if (individual.id === id) {
+        theIndividual = individual;
+        // break;
+      }
+    });
+    if (theIndividual) { return theIndividual }
+    console.log(this.individuals.entries().next().value)
+    // if (theIndividual) {
+    //   return theIndividual
+    // }
+    throw new Error(`Could not find individual with id ${id} in the population of ${this.name}`)
+  };
+
+  public birth(name: string = `${this.name} ${this.count}`): T {
     const newborn = this.create(name)
-    console.log(`[Population.birth] ${name} is born`)
+    // console.log(`[Population.birth] ${name} is born`)
     return newborn
   }
 
