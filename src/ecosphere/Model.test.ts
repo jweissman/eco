@@ -3,58 +3,70 @@ import { Substance, Individual } from "./types";
 
 describe('Model', () => {
   const model = new Model('Avernus');
-  const { create } = model.items;
+  // const { create } = model.resources;
 
   it('has a name', () => {
     expect(model.name).toEqual('Avernus')
   })
 
   it('defines elements', () => {
-    expect(model.items.list()).toEqual([])
-    const carbon: Substance = create("Carbon")
+    expect(model.resources.list).toEqual([])
+    const carbon: Substance = model.resources.create("Carbon")
     expect(carbon.name).toEqual('Carbon')
-    expect(model.items.list()).toEqual([carbon])
+    const diamond: Substance = model.resources.create({ name: "Diamond", rarity: 'infrequent' })
+    expect(diamond.rarity).toEqual('infrequent')
+    console.log(diamond)
+    expect(diamond.name).toEqual('Diamond')
+    expect(model.resources.list).toEqual([carbon, diamond])
   })
 
   it('defines individuals', () => {
-    expect(model.people.list()).toEqual([])
-    const jed: Individual = model.people.create("Jed");
+    expect(model.people.list).toEqual([])
+    const jed: Individual = model.people.create({ name: "Jed", age: 47 });
     expect(jed.name).toEqual("Jed")
-    expect(model.people.list()).toEqual([jed])
+    expect(jed.age).toEqual(47)
+    expect(model.people.list).toEqual([jed])
+    const tom: Individual = model.people.create("Tom");
+    expect(tom.name).toEqual("Tom")
+    expect(model.people.list).toEqual([jed, tom])
+    const harry: Individual = model.people.create("Harry");
+    expect(harry.name).toEqual("Harry")
+    expect(model.people.list).toEqual([jed, tom, harry])
   })
 
   it('defines global inventory (stocks of items)', () => {
-    expect(model.inventory.storage).toEqual({})
-    const carbon: Substance = create("Carbon")
-    const diamond: Substance = create("Diamond")
-    model.items.add(5, 'Carbon')
-    expect(model.items.count('Carbon')).toEqual(5)
-    expect(model.inventory.storage).toEqual({ [carbon.id]: 5 })
-    model.items.add(3, 'Diamond')
-    expect(model.inventory.storage).toEqual({ [carbon.id]: 5, [diamond.id]: 3 })
-    model.items.remove(2, 'Diamond')
-    expect(model.inventory.storage).toEqual({ [carbon.id]: 5, [diamond.id]: 1 })
-    model.items.remove(1, 'Carbon')
-    expect(model.inventory.storage).toEqual({ [carbon.id]: 4, [diamond.id]: 1 })
+    expect(model.resources.report).toEqual([])
+    const carbon = model.resources.create("Carbon")
+    const diamond = model.resources.create("Diamond")
+    model.resources.add(5, 'Carbon')
+    expect(model.resources.count('Carbon')).toEqual(5)
+    expect(model.resources.report).toEqual([{ ...carbon, amount: 5 }])
+    model.resources.add(3, 'Diamond')
+    expect(model.resources.report).toEqual([{ ...carbon, amount: 5 }, { ...diamond, amount: 3 }])
+    model.resources.remove(2, 'Diamond')
+    expect(model.resources.report).toEqual([{ ...carbon, amount: 5 }, { ...diamond, amount: 1 }])
+    model.resources.remove(1, 'Carbon')
+    expect(model.resources.report).toEqual([{ ...carbon, amount: 4 }, { ...diamond, amount: 1 }])
   })
 
   it('steps through time', () => {
-    model.evolve(({ add, count }) => add(count('Carbon'), 'Carbon'));
-    model.items.zero('Carbon')
-    expect(model.items.count('Carbon')).toEqual(0)
-    model.items.add(1, 'Carbon')
-    expect(model.items.count('Carbon')).toEqual(1)
+    model.resources.create('Carbon')
+    model.resources.zero('Carbon')
+    model.evolution = ({ add, count }) => add(count('Carbon'), 'Carbon')
+    expect(model.resources.count('Carbon')).toEqual(0)
+    model.resources.add(1, 'Carbon')
+    expect(model.resources.count('Carbon')).toEqual(1)
     model.step()
-    expect(model.items.count('Carbon')).toEqual(2)
+    expect(model.resources.count('Carbon')).toEqual(2)
     model.step()
-    expect(model.items.count('Carbon')).toEqual(4)
+    expect(model.resources.count('Carbon')).toEqual(4)
     model.step()
-    expect(model.items.count('Carbon')).toEqual(8)
+    expect(model.resources.count('Carbon')).toEqual(8)
   })
 
   it('machines', () => {
-     const windmill = model.tools.create('Windmill')
-     expect(model.tools.list()).toEqual([windmill]);
+     const windmill = model.machines.create('Windmill')
+     expect(model.machines.list).toEqual([windmill]);
   })
   //   model.job('milling', {
   //     at: 'Windmill', consumes: { Grain: 10, }, produces: { Flour: 20 }

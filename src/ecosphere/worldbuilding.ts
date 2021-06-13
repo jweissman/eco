@@ -1,10 +1,8 @@
 type ReproduceOptions = {
   growthRate: number, cap?: number
 }
+
 export function worldbuilding({ add, remove, count }: { add: Function; remove: Function; count: Function; }) {
-  const random = (min: number, max: number) => {
-    return min + Math.floor(Math.random() * (max - min));
-  };
 
   const reproduce = (element: string, options: ReproduceOptions) => {
     const { growthRate, cap } = options;
@@ -18,7 +16,7 @@ export function worldbuilding({ add, remove, count }: { add: Function; remove: F
   };
 
   return {
-    randomInt: random,
+    // randomInt: random,
     reproduce
   };
 }

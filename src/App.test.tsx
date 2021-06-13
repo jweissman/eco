@@ -5,13 +5,13 @@ import Model from './ecosphere/Model';
 
 const build: () => Model = () => {
   const model = new Model('Space Station')
-  model.items.create('Power')
-  model.items.create('Air')
+  model.resources.create('Power')
+  model.resources.create('Air')
   model.people.create('Zachariah')
-  model.items.add(100, 'Power')
-  model.items.add(100, 'Air')
-  model.tools.create('Control Panel')
-  model.evolve(({ remove, t }) => {
+  model.resources.add(100, 'Power')
+  model.resources.add(100, 'Air')
+  model.machines.create('Control Panel')
+  model.evolution = (({ remove, t }) => {
     remove(1, 'Air')
     if (t % 3 === 0) { remove(1, 'Power') }
   });

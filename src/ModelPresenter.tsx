@@ -8,14 +8,14 @@ type ModelPresenterProps = {
 }
 
 export function ModelPresenter({ model, step, lastInventoryChanges }: ModelPresenterProps) {
-  const { items, people, tools } = model;
+  const { resources, people, machines } = model;
   return (
     <div className="Model">
       <ModelView
         modelName={model.name}
-        items={items.table()}
-        individuals={people.list()}
-        machines={tools.list()}
+        items={resources.report}
+        individuals={people.list}
+        machines={machines.list}
         lastInventoryChanges={lastInventoryChanges}
       />
       <button onClick={() => step(true)}>

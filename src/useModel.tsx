@@ -18,7 +18,7 @@ export function useModel(model: Model): ModelAPI {
     if (shouldStep) {
       let deltas = model.step();
       step(false);
-      setLastChanges(deltas.inventoryChanges);
+      setLastChanges(deltas.changed);
     }
   }, [shouldStep, model]);
 

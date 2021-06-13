@@ -1,3 +1,4 @@
+import { randomInt } from "crypto";
 import Model from "../ecosphere/Model"
 import { worldbuilding } from "../ecosphere/worldbuilding";
 
@@ -37,15 +38,18 @@ const commonElements = {
 
 const { Bread, Wheat, Fish, Fox, Deer, Rabbit, Bear, Ferret, Snake } = commonElements;
 
-world.items.create(Fish)
-world.items.create(Wheat)
-world.items.create(Bread)
-world.items.create(Fox)
-world.items.create(Deer)
-world.items.create(Rabbit)
-world.items.create(Bear)
-world.items.create(Ferret)
-world.items.create(Snake)
+const { create } = world.resources
+
+create(Fish)
+create(Wheat)
+create(Bread)
+
+create(Fox)
+create(Deer)
+create(Rabbit)
+create(Bear)
+create(Ferret)
+create(Snake)
 
 const People = {
   Zed: 'Zedediah',
@@ -64,9 +68,9 @@ world.people.create(Raz)
 
 // world.items.add(10, Wheat)
 // world.items.add(1000, Fish)
-world.items.add(1000, Fox)
-world.items.add(1000, Rabbit)
-world.items.add(1000, Bear)
+world.resources.add(1000, Fox)
+world.resources.add(1000, Rabbit)
+world.resources.add(1000, Bear)
 // world.items.add(1000, Ferret)
 // world.items.add(1000, Snake)
 
@@ -82,10 +86,10 @@ world.items.add(1000, Bear)
 // world.sources.add(1000, Fish, Pond)
 
 // todo machines
-// const Mill = 'mill';
+const Windmill = 'mill';
 // const Stove = 'stove';
 
-// world.machine(Mill);
+world.machines.create(Windmill);
 // world.machine(Stove, []);
 
 // todo jobs
@@ -104,8 +108,9 @@ world.items.add(1000, Bear)
 //   produces: { Bread: 2 },
 // })
 
-world.evolve(({ add, remove, count }) => {
-  const { randomInt, reproduce } = worldbuilding({ add, remove, count })
+// todo okay really need to add add/remove count blocks for each resource
+world.evolution = (({ add, remove, count }) => {
+  const { reproduce } = worldbuilding({ add, remove, count })
 
   // bake bread
   if (count(Wheat) >= 5) {

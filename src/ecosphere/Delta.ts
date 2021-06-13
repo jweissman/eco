@@ -1,17 +1,15 @@
-import { Inventory } from "./Inventory";
 import { Model } from "./Model";
+import { Stocks } from "./Stocks";
+import { Substance } from "./types";
 
 export class Delta {
-  private inventory: Inventory = new Inventory(
-    this.model.items.lookup,
-    this.model.items.lookupById,
-    {}
-  );
+  private changingResources: Stocks<Substance> = new Stocks('resources (delta)', this.model.resources.list);
   constructor(public model: Model) { }
-  get storage() { return this.inventory.storage }
-  timeEvolution(t: number): void {
-    const { add, remove } = this.inventory; 
-    const { count } = this.model.items;
+  get storage() { return this.changingResources._store }
+  evolve(t: number): Delta {
+    const { add, remove } = this.changingResources; 
+    const { count } = this.model.resources;
     this.model.evolution({ add, remove, count, t });
+    return this;
   }
 }

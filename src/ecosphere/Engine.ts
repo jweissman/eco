@@ -5,23 +5,18 @@ import { StepResult } from "./types";
 export class Engine {
   constructor(public model: Model) { }
   step(t: number): StepResult {
+    const { add, list } = this.model.resources;
     const delta = new Delta(this.model);
-
-    // do all the calculations for the step and THEN apply changes
-    delta.timeEvolution(t);
-
-    // apply delta
-    // delta.
+    delta.evolve(t);
     const { storage: updated } = delta;
-    const changes: { [elementName: string]: number; } = {};
-    this.model.items.list().forEach(({ id, name }) => {
+    const changed: { [elementName: string]: number; } = {};
+    list.forEach(({ id, name }) => {
       if (updated[id]) {
         const deltaAmount = updated[id];
-        this.model.items.add(deltaAmount, name);
-        changes[name] = deltaAmount;
+        add(deltaAmount, name);
+        changed[name] = deltaAmount;
       }
     });
-
-    return { inventoryChanges: changes };
+    return { changed };
   }
 }
