@@ -9,3 +9,5 @@ export type BasicEntity = {
   name: string;
   rarity?: Rarity;
 };
+
+export type BasicEntityKind = { name: string }

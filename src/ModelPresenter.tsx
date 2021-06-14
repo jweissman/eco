@@ -14,8 +14,8 @@ export function ModelPresenter({ model, step, lastInventoryChanges }: ModelPrese
       <ModelView
         modelName={model.name}
         items={resources.report}
-        individuals={people.list}
-        machines={machines.list}
+        individuals={people.list()}
+        machines={machines.list()}
         lastInventoryChanges={lastInventoryChanges}
       />
       <button onClick={() => step(true)}>

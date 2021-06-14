@@ -1,6 +1,6 @@
-import { BasicEntity } from "./BasicEntity";
 import { isString } from "./isString";
 import { boundMethod } from "autobind-decorator";
+import { Entity } from "./types";
 
 class SetHelper {
   static first<T>(set: Set<T>): T {
@@ -9,13 +9,16 @@ class SetHelper {
 }
 
 // a collection of named individuals...
-export class Population<T extends BasicEntity> {
+export class Population<U, T extends Entity<U>> {
   constructor(
     public name: string,
-    private individuals: Set<T> = new Set()
-  ) {}
+    public species?: U,
+    private individuals: Set<T> = new Set(),
+  ) {
+    // console.log(individuals)
+  }
 
-  get list() { 
+  list() { 
     const theList: T[] = []
     this.individuals.forEach(individual => theList.push(individual))
     return theList;

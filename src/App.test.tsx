@@ -2,7 +2,7 @@ import React from 'react';
 import { within, fireEvent, render, screen } from '@testing-library/react';
 import App from './App';
 import Model from './ecosphere/Model';
-import { Evolution, ManageStocks } from './ecosphere/types';
+import { Evolution } from './ecosphere/types';
 
 const build: () => Model = () => {
   const model = new Model('Space Station')
@@ -13,7 +13,7 @@ const build: () => Model = () => {
   model.resources.add(100, 'Air')
   model.machines.create('Control Panel')
   model.evolve((e: Evolution, t: number) => { //remove, t }) => {
-    console.log(e.resources)
+    // console.log(e.resources)
     e.resources.remove(1, 'Air')
     if (t % 3 === 0) { e.resources.remove(1, 'Power') }
   });
@@ -66,7 +66,7 @@ it('renders tools', () => {
   expect(tool).toBeInTheDocument();
 });
 
-it('steps through time', async () => {
+it('tracks resources over time', async () => {
   expect(await Eco.items.count('Air')).toEqual(100)
   expect(await Eco.items.count('Power')).toEqual(100)
   const stepButton = await screen.findByText("Step")
@@ -83,3 +83,5 @@ it('steps through time', async () => {
   expect(await Eco.items.count('Air')).toEqual(96)
   expect(await Eco.items.count('Power')).toEqual(98)
 })
+
+// xit('simulates animal populations through time')

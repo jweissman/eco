@@ -1,9 +1,6 @@
 import Model from "../ecosphere/Model"
 import { Evolution, ManageStocks, TimeEvolution } from "../ecosphere/types"
 import { worldbuilding } from "../ecosphere/worldbuilding"
-// import { worldbuilding } from "../ecosphere/worldbuilding"
-// import { randomInt } from "../ecosphere/randomInt"
-// import { worldbuilding } from "../ecosphere/worldbuilding";
 
 // create model
 const world = new Model('Township of Writ-upon-Water')
@@ -152,7 +149,7 @@ const evolution: TimeEvolution = (
   evolveAnimals(animals)
 }
 
-world.evolve = evolution
+world.evolve(evolution)
 
 export { world }
 

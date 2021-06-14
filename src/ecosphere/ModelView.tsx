@@ -1,10 +1,10 @@
 import { prettyAmount } from "./prettyAmount";
-import { Individual, Machine } from "./types";
+import { Machine, Person } from "./types";
 
 type ModelViewProps = {
   modelName: string;
   items: { name: string; amount: number; }[];
-  individuals: Individual[];
+  individuals: Person[];
   machines: Machine[];
   lastInventoryChanges: { [elementName: string]: number };
 }

@@ -1,11 +1,13 @@
 import Model from "./Model"
-import { Evolution, Individual, TimeEvolution } from "./types";
+import { Evolution, Person, TimeEvolution } from "./types";
 
 describe('Model', () => {
   const model = new Model('Avernus');
   beforeEach(() => {
-    model.resources.clear()
-    model.machines.clear()
+    model.reset()
+    // model.resources.clear()
+    // model.machines.clear()
+    // model.animals.clear()
   }) // maybe want a harder Sim.reset??
 
   it('has a name', () => {
@@ -13,27 +15,27 @@ describe('Model', () => {
   })
 
   it('defines elements', () => {
-    expect(model.resources.list).toEqual([])
+    expect(model.resources.list()).toEqual([])
     const carbon = model.resources.create("Carbon")
     expect(carbon.item.name).toEqual('Carbon')
     const diamond = model.resources.create({ name: "Diamond", rarity: 'infrequent' })
     expect(diamond.item.rarity).toEqual('infrequent')
     expect(diamond.item.name).toEqual('Diamond')
-    expect(model.resources.list).toEqual([carbon.item, diamond.item])
+    expect(model.resources.list()).toEqual([carbon.item, diamond.item])
   })
 
   it('defines individuals', () => {
-    expect(model.people.list).toEqual([])
-    const jed: Individual = model.people.create({ name: "Jed", age: 47 });
+    expect(model.people.list()).toEqual([])
+    const jed: Person = model.people.create({ name: "Jed", age: 47 });
     expect(jed.name).toEqual("Jed")
     expect(jed.age).toEqual(47)
-    expect(model.people.list).toEqual([jed])
-    const tom: Individual = model.people.create("Tom");
+    expect(model.people.list()).toEqual([jed])
+    const tom: Person = model.people.create("Tom");
     expect(tom.name).toEqual("Tom")
-    expect(model.people.list).toEqual([jed, tom])
-    const harry: Individual = model.people.create("Harry");
+    expect(model.people.list()).toEqual([jed, tom])
+    const harry: Person = model.people.create("Harry");
     expect(harry.name).toEqual("Harry")
-    expect(model.people.list).toEqual([jed, tom, harry])
+    expect(model.people.list()).toEqual([jed, tom, harry])
   })
 
   it('defines global inventory (stocks of items)', () => {
@@ -58,12 +60,6 @@ describe('Model', () => {
     model.resources.create('Carbon')
     model.resources.zero('Carbon')
     const evolve: TimeEvolution = (e: Evolution, t: number) => {
-      // console.log("EVOLVE", { e })
-      // const { resources } = e; 
-      // console.log({ resources })
-      // const { add, count } = resources;
-      // debugger;
-      // console.log(resources.add)
       const carbonCount = e.resources.count('Carbon');
       e.resources.add(carbonCount, 'Carbon')
     } 
@@ -88,6 +84,19 @@ describe('Model', () => {
     expect(fox).not.toBe(null)
     Fox.death()
     expect(Fox.count).toEqual(0)
+  })
+
+  it('evolves wildlife', () => {
+    const Fox = model.animals.create('Fox')
+    const evolve: TimeEvolution = (e: Evolution, t: number) => {
+      const { count, add } = e.animals
+      add(count('Fox'), 'Fox')
+    } 
+    model.evolve(evolve)
+    Fox.birth()
+    expect(model.animals.count('Fox')).toEqual(1)
+    model.step()
+    expect(model.animals.count('Fox')).toEqual(2)
   })
 
   it('reports', () => {
@@ -127,12 +136,12 @@ describe('Model', () => {
   // todo(jweissman) think about how this works
   it('machines', () => {
      const FishingPole = model.machines.create('Fishing Pole')
-     expect(model.machines.list).toEqual([FishingPole.item]);
+     expect(model.machines.list()).toEqual([FishingPole.item]);
   })
 
   it('recipes, tasks, jobs', () => {
      const Windmill = model.machines.create('Windmill')
-     expect(model.machines.list).toEqual([Windmill.item]);
+     expect(model.machines.list()).toEqual([Windmill.item]);
   // })
   // it('recipes', () => {
      model.resources.create('Grain')

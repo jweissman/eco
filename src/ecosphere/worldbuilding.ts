@@ -1,8 +1,12 @@
+import { ManageStocks } from "./types";
+
 type ReproduceOptions = {
   growthRate: number, cap?: number
 }
 
-export function worldbuilding({ add, remove, count }: { add: Function; remove: Function; count: Function; }) {
+export function worldbuilding(manager: ManageStocks) {
+  const { add, remove, count }: { add: Function; remove: Function; count: Function; } = manager;
+
   const reproduce = (element: string, options: ReproduceOptions) => {
     const { growthRate, cap } = options;
     const initialPop = count(element);

@@ -15,6 +15,7 @@ class BasicCollection<T> implements IList<T> {
   get count(): number { return this.items.length; }
   add(it: T) { this.items.push(it) }
   each(cb: (it: T) => any) { this.items.forEach(cb) }
+  clear() { this.items = [] }
 }
 
 class Collection<T extends BasicEntity> extends BasicCollection<T> implements IList<T> {

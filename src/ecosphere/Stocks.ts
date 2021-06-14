@@ -13,22 +13,6 @@ class StockManager<T extends BasicEntity> implements ManageStock<T> {
   get item(): T { return this.stocks.lookupById(this.stockId) }
 }
 
-// class WarehouseManager<T extends BasicEntity> implements ManageStocks {
-//   constructor(private stocks: Stocks<T>) {}
-
-//   @boundMethod
-//   add(amount: number, name: string): void { return this.stocks.add(amount, name)};
-
-//   @boundMethod
-//   remove(amount: number, name: string): void { return this.stocks.remove(amount, name)};
-
-//   @boundMethod
-//   count(name: string): number { return this.stocks.count(name) }
-
-//   @boundMethod
-//   list(): T[] { return this.stocks.list }
-// }
-
 export class Stocks<T extends BasicEntity> {
   private storage: { [key: number]: number; } = {}
 
@@ -37,7 +21,9 @@ export class Stocks<T extends BasicEntity> {
     private elements: T[] = []
   ) { }
 
-  get list() { return this.elements }
+  @boundMethod
+  list() { return this.elements }
+
   get _store() { return this.storage }
 
   public clear() { this.elements = []; this.storage = {} }
@@ -59,10 +45,10 @@ export class Stocks<T extends BasicEntity> {
       return this.manage(name);
     }
     if (!isString(name)) { throw new Error("Name must be a string") }
-    const elementIds: number[] = this.list.map(({ id }) => id);
+    const elementIds: number[] = this.list().map(({ id }) => id);
     const id = Math.max(0, ...elementIds) + 1;
     const theEntity: T = { id, name, ...attributes } as T
-    this.list.push(theEntity);
+    this.list().push(theEntity);
     const manage: ManageStock<T> = this.manage(name as string)
     return manage
   }
@@ -106,8 +92,11 @@ export class Stocks<T extends BasicEntity> {
     const matching = this.elements.find(where('name', name))
     if (matching) {
       return matching as T;
+    } else {
+      return this.create(name).item
+      // throw new Error(`No such ${this.name} with name ${name}`);
+      // return null
     }
-    throw new Error(`No such ${this.name} with name ${name}`);
   }
 
   get report(): (T & { amount: number })[] {
@@ -127,7 +116,7 @@ export class Stocks<T extends BasicEntity> {
   }
 
   // nice to return an obj here but :/
-  manageAll(): ManageStocks<T> {
+  manageAll(): ManageStocks {
     // return new WarehouseManager(this)
     const { add, remove, count } = this
     return { add, remove, count, list: () => this.elements }
