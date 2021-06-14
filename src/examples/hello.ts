@@ -126,8 +126,9 @@ world.machines.create(Windmill);
 // })
 // todo okay really need to add add/remove count blocks for each resource..
 const evolveAnimals = (animals: ManageStocks) => { //add, remove, count }) => {
-  const { reproduce } = worldbuilding(animals) //{ add, remove, count })
-  reproduce(Fox,    { growthRate: 0.029, cap: Math.floor(0.4 * animals.count(Rabbit))})
+  // const { reproduce } = worldbuilding(animals) //{ add, remove, count })
+  // reproduce(Fox,    { growthRate: 0.029, cap: Math.floor(0.4 * animals.count(Rabbit))})
+  animals.add(1, Fox)
 }
 
 const evolveResources = (resources: ManageStocks) => {

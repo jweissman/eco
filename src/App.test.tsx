@@ -12,6 +12,9 @@ const build: () => Model = () => {
   model.resources.add(100, 'Power')
   model.resources.add(100, 'Air')
   model.machines.create('Control Panel')
+  // model.machines.add(1, 'Cat')
+  model.animals.create('Cat')
+  model.animals.add(1, 'Cat')
   model.evolve((e: Evolution, t: number) => { //remove, t }) => {
     // console.log(e.resources)
     e.resources.remove(1, 'Air')
@@ -29,6 +32,22 @@ class Eco {
     return screen.getByLabelText('Global Items')
   }
 
+  static get globalAnimals() {
+    return screen.getByLabelText('Global Animals')
+  }
+
+  static animals = {
+    get: (name: string) => {
+      const animals = within(Eco.globalAnimals);
+      const theAnimal = (animals.getByTitle(name));
+      return theAnimal;
+    },
+    count: async (name: string) => {
+      const it = Eco.animals.get(name);
+      const amount = await within(it).findByTestId('Count')
+      return Number(amount.textContent);
+    }
+  }
   static items = {
     get: (itemName: string) => {
       const items = within(Eco.globalItems);
@@ -37,7 +56,7 @@ class Eco {
     },
     count: async (itemName: string) => {
       const it = Eco.items.get(itemName);
-      const amount = await within(it).findByTestId('Item Count')
+      const amount = await within(it).findByTestId('Count')
       return Number(amount.textContent);
     }
   }
@@ -51,9 +70,14 @@ it('renders model name', () => {
   expect(Eco.modelName).toHaveTextContent('Space Station')
 });
 
-it('renders element inventories', async () => {
+it('renders resources', async () => {
   expect(await Eco.items.count('Air')).toEqual(100)
   expect(await Eco.items.count('Power')).toEqual(100)
+});
+
+it('renders animals', async () => {
+  expect(await Eco.animals.count('Cat')).toEqual(1)
+  // expect(await Eco.items.count('Power')).toEqual(100)
 });
 
 it('renders individuals', () => {

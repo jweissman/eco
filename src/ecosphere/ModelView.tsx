@@ -4,6 +4,7 @@ import { Machine, Person } from "./types";
 type ModelViewProps = {
   modelName: string;
   items: { name: string; amount: number; }[];
+  animals: { name: string; amount: number }[];
   individuals: Person[];
   machines: Machine[];
   lastInventoryChanges: { [elementName: string]: number };
@@ -14,15 +15,17 @@ export function ModelView({
   items,
   individuals,
   machines,
+  animals,
   lastInventoryChanges
 }: ModelViewProps) {
-  const presentItem = ({ name, amount }: { name: string, amount: number }) => <li key={name} title={name} className='Item'>
-    <span data-testid='Item Name'>{name}</span>
-    <span data-testid='Item Count'>
+  // console.log(animals)
+  const presentIt = ({ name, amount }: { name: string, amount: number }) => <li key={name} title={name} className='Item'>
+    <span data-testid='Name'>{name}</span>
+    <span data-testid='Count'>
       {prettyAmount(amount)}
     </span>
     {lastInventoryChanges[name] && (
-      <span className='delta' data-testid='Item Delta'>
+      <span className='delta' data-testid='Delta'>
         {lastInventoryChanges[name]}
       </span>
     )}
@@ -34,7 +37,15 @@ export function ModelView({
     <div>
       <h5>ITEMS</h5>
       <ul aria-label='Global Items'>
-        {items.map(presentItem)}
+        {items.map(presentIt)}
+      </ul>
+    </div>
+
+
+    <div>
+      <h5>ANIMALS</h5>
+      <ul aria-label='Global Animals'>
+        {animals.map(presentIt)}
       </ul>
     </div>
 

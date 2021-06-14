@@ -64,7 +64,7 @@ export class Model extends Simulation implements IModel  {
     this.dynamics.each(dynamism => dynamism(flow, t));
     this.apply(resourceDelta, 'resources')
     this.apply(animalDelta, 'animals')
-    console.log(animalDelta.changes.report)
+    // console.log(animalDelta.changes.report)
     return {
       changed: {
         // resources: resourceDelta.changes.report
@@ -76,7 +76,7 @@ export class Model extends Simulation implements IModel  {
     const source: DeltaSource = (this as any)[target] as DeltaSource
     const manager = source.manager
     const list = manager.list()
-    console.log(list)
+    // console.log(list)
     // if (list.length === 0) return
     const { storage: updated } = delta;
     const changed: { [elementName: string]: number; } = {};
@@ -85,7 +85,7 @@ export class Model extends Simulation implements IModel  {
       if (updated[item.id]) {
         const deltaAmount = updated[item.id];
         manager.add(deltaAmount, item.name);
-        console.log({ deltaAmount, name: item.name })
+        // console.log({ deltaAmount, name: item.name })
         changed[item.name] = deltaAmount;
       }
     });

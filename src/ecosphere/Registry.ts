@@ -65,7 +65,7 @@ export class Registry<U extends BasicEntity, T extends Entity<U>> {
     // console.log(Object.keys(this.species))
     // return Object.values(this.populations).flatMap(pop => pop.count > 0 ? pop.first : [])
 
-    console.log(this.species)
+    // console.log(this.species)
     return Object.values(this.species)
   // throw new Error('not impl')
   }
@@ -80,7 +80,7 @@ export class Registry<U extends BasicEntity, T extends Entity<U>> {
       return this.lookup(name);
     }
     let theSpecies: U = { ...species, name, id: this.list().length+1 } as unknown as U; // species.kind points back to name...
-    console.log("create species: " + theSpecies.name)
+    // console.log("create species: " + theSpecies.name)
     let population = new Population<U,T>(name, theSpecies);
     this.populations[name] = population;
     this.species[name] = theSpecies;
@@ -97,10 +97,22 @@ export class Registry<U extends BasicEntity, T extends Entity<U>> {
   get populationList(): Population<U,T>[] { return Object.values(this.populations)}
 
   get report() {
-    const pops = this.populationList.map((population: Population<U,T>) =>
-      [population.name, population.count]
+    // console.log(this.populationList.length)
+    const pops = this.populationList.flatMap((population: Population<U,T>) => {
+      const pop = population //this.lookupById(Number(elementId))
+      // console.log(pop.name)
+      // console.log(pop.count)
+      // console.log(pop.count)
+      if (pop.count > 0) {
+        return { name: pop.name, amount: pop.count}
+      } else {
+        return []
+      }
+    }
+      // [population.name, population.count]
     )
-    return Object.fromEntries(pops)
+    // console.log(pops)
+    return pops // Object.fromEntries(pops)
   };
 
   @boundMethod
