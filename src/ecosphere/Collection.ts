@@ -4,24 +4,20 @@ export interface IList<T> {
   first: T
   last: T
   count: number
-  // create(attributes: Partial<T>): T
 }
 
-// for things that aren't basic entity
-class SimpleCollection<T> implements IList<T> {
+// helpful for things that aren't basic entity
+class BasicCollection<T> implements IList<T> {
   protected items: T[] = [];
   protected get it() { return this.items }
   get first(): T { return this.items[0]; }
   get last(): T { return this.items[this.count - 1]; }
   get count(): number { return this.items.length; }
+  add(it: T) { this.items.push(it) }
+  each(cb: (it: T) => any) { this.items.forEach(cb) }
 }
 
-class Collection<T extends BasicEntity> extends SimpleCollection<T> implements IList<T> {
-  // private items: T[] = [];
-  // get first(): T { return this.items[0]; }
-  // get last(): T { return this.items[this.count - 1]; }
-  // get count(): number { return this.items.length; }
-  // private get it() { return this.items }
+class Collection<T extends BasicEntity> extends BasicCollection<T> implements IList<T> {
   private get ids() { return this.it.map(({ id }) => id) }
   create(attributes: Partial<T>): T {
     const id = Math.max(0, ...this.ids) + 1;
@@ -31,4 +27,4 @@ class Collection<T extends BasicEntity> extends SimpleCollection<T> implements I
   }
 }
 
-export { SimpleCollection, Collection }
+export { BasicCollection as SimpleCollection, Collection }

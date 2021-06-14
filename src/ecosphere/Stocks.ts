@@ -13,18 +13,21 @@ class StockManager<T extends BasicEntity> implements ManageStock<T> {
   get item(): T { return this.stocks.lookupById(this.stockId) }
 }
 
-class WarehouseManager<T extends BasicEntity> implements ManageStocks {
-  constructor(private stocks: Stocks<T>) {}
+// class WarehouseManager<T extends BasicEntity> implements ManageStocks {
+//   constructor(private stocks: Stocks<T>) {}
 
-  @boundMethod
-  add(amount: number, name: string): void { return this.stocks.add(amount, name)};
+//   @boundMethod
+//   add(amount: number, name: string): void { return this.stocks.add(amount, name)};
 
-  @boundMethod
-  remove(amount: number, name: string): void { return this.stocks.remove(amount, name)};
+//   @boundMethod
+//   remove(amount: number, name: string): void { return this.stocks.remove(amount, name)};
 
-  @boundMethod
-  count(name: string): number { return this.stocks.count(name) }
-}
+//   @boundMethod
+//   count(name: string): number { return this.stocks.count(name) }
+
+//   @boundMethod
+//   list(): T[] { return this.stocks.list }
+// }
 
 export class Stocks<T extends BasicEntity> {
   private storage: { [key: number]: number; } = {}
@@ -40,7 +43,7 @@ export class Stocks<T extends BasicEntity> {
   public clear() { this.elements = []; this.storage = {} }
 
   public create(name: string): ManageStock<T>
-  public create(attributes: { name: string } & Partial<T>): ManageStock<T>
+  public create(attributes: { name: string } & Omit<T, 'id' | 'name'>): ManageStock<T>
   /** Create a new type of element to store */
   @boundMethod
   public create(attrs: any) {
@@ -55,14 +58,14 @@ export class Stocks<T extends BasicEntity> {
     if (isString(name) && this.has(name)) {
       return this.manage(name);
     }
+    if (!isString(name)) { throw new Error("Name must be a string") }
     const elementIds: number[] = this.list.map(({ id }) => id);
     const id = Math.max(0, ...elementIds) + 1;
-    const theEntity: T = { id, name, ...attributes } as unknown as T;
+    const theEntity: T = { id, name, ...attributes } as T
     this.list.push(theEntity);
     const manage: ManageStock<T> = this.manage(name as string)
     return manage
   }
-
 
   @boundMethod
   add(amount: number, name: string) {
@@ -123,11 +126,14 @@ export class Stocks<T extends BasicEntity> {
     return new StockManager<T>(this, this.lookup(name).id)
   }
 
-  manageAll(): ManageStocks {
-    return new WarehouseManager(this)
-    // const { add, remove, count } = this
-    // return { add, remove, count }
+  // nice to return an obj here but :/
+  manageAll(): ManageStocks<T> {
+    // return new WarehouseManager(this)
+    const { add, remove, count } = this
+    return { add, remove, count, list: () => this.elements }
   }
+
+  get manager() { return this.manageAll() }
 
   private setAmount(name: string, amount: number): void {
     const element: T = this.lookup(name);

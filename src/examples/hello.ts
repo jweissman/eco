@@ -1,4 +1,7 @@
 import Model from "../ecosphere/Model"
+import { Evolution, ManageStocks, TimeEvolution } from "../ecosphere/types"
+import { worldbuilding } from "../ecosphere/worldbuilding"
+// import { worldbuilding } from "../ecosphere/worldbuilding"
 // import { randomInt } from "../ecosphere/randomInt"
 // import { worldbuilding } from "../ecosphere/worldbuilding";
 
@@ -36,7 +39,7 @@ const commonElements = {
   ...wildAnimals,
 }
 
-const { Bread, Wheat, Fish, Fox } = commonElements;
+const { Bread, Wheat, Fish, Fox, Rabbit } = commonElements;
 
 const { create } = world.resources
 
@@ -48,6 +51,7 @@ create(Bread)
 
 // track foxes as discrete pop of individuals
 world.animals.create(Fox)
+world.animals.create(Rabbit)
 
 // 'link' fox resource to 'simply track' more granular fox population
 // the idea is add/remove will create/destroy individuals!! but maybe not relevant??
@@ -123,58 +127,32 @@ world.machines.create(Windmill);
 //   const { add, remove, count } = animals
 //   // const { reproduce } = worldbuilding(animals) //{ add, remove, count })
 // })
-// todo okay really need to add add/remove count blocks for each resource
-world.dynamics = (({ resources }) => { //add, remove, count }) => {
-  const { add, remove, count } = resources
-  // const { reproduce } = worldbuilding(animals) //{ add, remove, count })
+// todo okay really need to add add/remove count blocks for each resource..
+const evolveAnimals = (animals: ManageStocks) => { //add, remove, count }) => {
+  const { reproduce } = worldbuilding(animals) //{ add, remove, count })
+  reproduce(Fox,    { growthRate: 0.029, cap: Math.floor(0.4 * animals.count(Rabbit))})
+}
 
+const evolveResources = (resources: ManageStocks) => {
+  const { add, remove, count } = resources
   // bake bread
   if (count(Wheat) >= 5) {
     add(1, Bread)
     remove(5, Wheat)
   }
-
   add(1, Wheat)
+}
 
-  // harvest wheat
-  // if (randomInt(0,20) < 2) {
-  //   add(randomInt(1,5), Wheat) 
-  // }
+const evolution: TimeEvolution = (
+  evolution: Evolution,
+  _ticks: number
+) => {
+  const { resources, animals } = evolution
+  evolveResources(resources)
+  evolveAnimals(animals)
+}
 
-  // wildlife populations
-  // reproduce(Fish,   { growthRate: 0.001, cap: 100000 })
-  // const rabbitPop = count(Rabbit)
-  // const tenthRabbitPop = count(Rabbit)
-  // reproduce(Fox,    { growthRate: 0.029, cap: Math.floor(0.4 * count(Rabbit))})
-  // reproduce(Rabbit, { growthRate: 0.04,  cap: 1000 })
-  // reproduce(Bear,   { growthRate: 0.001, cap: Math.floor(0.25 * count(Rabbit)) + Math.floor(0.15 * count(Fox))})
-  // reproduce(Ferret, { growthRate: 0.001, cap: count(Rabbit) })
-  // reproduce(Snake,  { growthRate: 0.001, cap: count(Rabbit) })
-
-  // predation
-  // remove(Math.floor(count(Fox)/25), Rabbit)
-  // remove(Math.floor(count(Bear)/20), Rabbit)
-  // remove(Math.floor(count(Bear)/30), Fox)
-  // if (count(Fox) > 5) { remove(Math.floor(count(Fox)/5), Rabbit) }
-  // if (count(Ferret) > 5) { remove(Math.floor(count(Ferret)/5), Rabbit) }
-  // if (count(Snake) > 5) { remove(Math.floor(count(Snake)/5), Rabbit) }
-  // if (count(Bear) > 5) {
-  //   remove(Math.floor(count(Bear)/5), Rabbit)
-  //   remove(Math.floor(count(Bear)/5), Fish)
-  //   remove(Math.floor(count(Bear)/5), Ferret)
-  // }
-
-  // fox and rabbit
-  // every fox eats a rabbit?
-  // if (count(Rabbit) < count(Fox)) {
-  //   remove(count(Fox) - count(Rabbit), Fox)
-  // }
-  // remove(Math.floor(count(Fox)/3), Rabbit)
-  // add(1+randomInt(0,3), Rabbit)
-  // add(4+randomInt(0,1), Fox)
-  // reproduce(Fox, { birthRate: 0.16, deathRate: 0.13 })
-  // reproduce(Rabbit, { birthRate: 0.46, deathRate: 0.27 })
-})
+world.evolve = evolution
 
 export { world }
 

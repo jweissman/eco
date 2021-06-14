@@ -1,5 +1,5 @@
 import Model from "./Model"
-import { Individual } from "./types";
+import { Evolution, Individual, TimeEvolution } from "./types";
 
 describe('Model', () => {
   const model = new Model('Avernus');
@@ -57,7 +57,17 @@ describe('Model', () => {
   it('steps through time', () => {
     model.resources.create('Carbon')
     model.resources.zero('Carbon')
-    model.dynamics = ({ resources: { add, count }}) => add(count('Carbon'), 'Carbon')
+    const evolve: TimeEvolution = (e: Evolution, t: number) => {
+      // console.log("EVOLVE", { e })
+      // const { resources } = e; 
+      // console.log({ resources })
+      // const { add, count } = resources;
+      // debugger;
+      // console.log(resources.add)
+      const carbonCount = e.resources.count('Carbon');
+      e.resources.add(carbonCount, 'Carbon')
+    } 
+    model.evolve(evolve)
     expect(model.resources.count('Carbon')).toEqual(0)
     model.resources.add(1, 'Carbon')
     expect(model.resources.count('Carbon')).toEqual(1)

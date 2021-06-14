@@ -27,12 +27,18 @@ export type Recipe = BasicEntity & {
   requiresMachine?: string // machine name
 }
 
+export type Task = BasicEntity & {
+  machine?: string
+  recipe: string
+}
+
 // export type Job = { machine: Machine }
 
-export type ManageStocks = {
+export type ManageStocks<T> = {
   add: (amount: number, name: string) => void,
   remove: (amount: number, name: string) => void,
   count: (name: string) => number,
+  list: () => T[]
 }
 
 export type ManageStock<T> = {
@@ -60,6 +66,8 @@ export interface Evolution {
   // animals: ManagePopulationRegistry<Animal>
 }
 export type TimeEvolution = (evolution: Evolution, ticks: number) => void
+  // mode: TimeEvolutionMode
+// }
 
 export type StepResult = {
   changed: { [elementName: string]: number }

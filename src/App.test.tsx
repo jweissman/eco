@@ -2,6 +2,7 @@ import React from 'react';
 import { within, fireEvent, render, screen } from '@testing-library/react';
 import App from './App';
 import Model from './ecosphere/Model';
+import { Evolution, ManageStocks } from './ecosphere/types';
 
 const build: () => Model = () => {
   const model = new Model('Space Station')
@@ -11,9 +12,10 @@ const build: () => Model = () => {
   model.resources.add(100, 'Power')
   model.resources.add(100, 'Air')
   model.machines.create('Control Panel')
-  model.dynamics = (({ resources }, t) => { //remove, t }) => {
-    resources.remove(1, 'Air')
-    if (t % 3 === 0) { resources.remove(1, 'Power') }
+  model.evolve((e: Evolution, t: number) => { //remove, t }) => {
+    console.log(e.resources)
+    e.resources.remove(1, 'Air')
+    if (t % 3 === 0) { e.resources.remove(1, 'Power') }
   });
   return model;
 }
