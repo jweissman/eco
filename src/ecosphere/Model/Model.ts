@@ -5,6 +5,7 @@ import { Population } from "../Population"
 import { Collection, IList } from "../Collection"
 import { IMap, Map } from "../Map"
 import { ISimulation, Simulation } from "./Simulation"
+import { boundMethod } from "autobind-decorator"
 
 // todo -- mix multiple models... class Assembly { addModel(name: string, model: Model) {} }
 
@@ -35,6 +36,47 @@ export class Model extends Simulation implements IModel  {
     this.machines.clear()
     this.animals.clear()
     this.dynamics.clear()
+  }
+
+  // simple labor model
+
+  @boundMethod
+  work({ resources }: { resources: { add: Function, remove: Function, count: Function }}): void {
+    console.log(this.jobs.report)
+    console.log(this.recipes)
+    const { report } = this.jobs
+    Object.entries(report).forEach(([workerName, job]) => {
+      const recipe: Recipe = this.recipes.lookup((job as Task).recipe) as Recipe
+      let mayProduce = true;
+      if (recipe.consumes) {
+        Object.entries(recipe.consumes).forEach(([resource, amount]) => {
+          if (resources.count(resource) < amount) {
+            mayProduce = false;
+            console.warn(`${workerName} not able to perform ${recipe.name} (required resources not present)`)
+          }
+        })
+      }
+
+      if (recipe.requiresMachine) {
+        const machineCount = this.machines.count(recipe.requiresMachine)
+        if (machineCount < 1) {
+          mayProduce = false;
+          console.warn(`${workerName} not able to perform ${recipe.name} (required machine ${recipe.requiresMachine} not present)`)
+        }
+      }
+
+      if (mayProduce) {
+        console.log(`${workerName} is at work ${recipe.name}`)
+        if (recipe.consumes) {
+          Object.entries(recipe.consumes).forEach(([resource, amount]) => {
+            resources.remove(amount, resource)
+          })
+        }
+        Object.entries(recipe.produces).forEach(([resource, amount]) => {
+          resources.add(amount, resource)
+        })
+      }
+    })
   }
 }
 

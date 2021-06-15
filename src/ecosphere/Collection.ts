@@ -26,6 +26,10 @@ class Collection<T extends BasicEntity> extends BasicCollection<T> implements IL
     this.items.push(theEntity);
     return theEntity
   }
+
+  lookup(name: string) {
+    return this.items.find(it => it.name === name)
+  }
 }
 
 export { BasicCollection as SimpleCollection, Collection }

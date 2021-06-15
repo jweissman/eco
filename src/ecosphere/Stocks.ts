@@ -71,8 +71,12 @@ export class Stocks<T extends BasicEntity> {
   @boundMethod
   count(name: string): number {
     const element: T = this.lookup(name);
-    this.storage[element.id] = this.storage[element.id] || 0;
-    return this.storage[element.id];
+
+    // this.storage[element.id] = 
+    const amount = this.storage[element.id] || 0;
+    console.log(this.list())
+    console.log(`[Stocks] count ${element.name}: ${amount}`)
+    return amount; // this.storage[element.id];
   }
 
   has(name: string): boolean {
@@ -105,13 +109,13 @@ export class Stocks<T extends BasicEntity> {
     const items: T[] = this.list()
     const table = items.flatMap((item: T) => {
       const id = Number(item.id)
-      const amount = this.storage[id]
+      const amount = this.storage[id] || 0
       // console.log({item, amount})
-      if (amount > 0) {
+      // if (amount > 0) {
         return { ...item, amount }
-      } else {
-        return []
-      }
+      // } else {
+        // return []
+      // }
     })
     // console.log(table)
     return table

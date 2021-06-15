@@ -43,14 +43,15 @@ export abstract class Simulation implements ISimulation {
     const table: { [key: string]: any } = {}
     Object.entries(flow).forEach(([name, flow]) => { 
       const theDelta = flow._delta
-      this.apply(theDelta, name)
+      // this.apply(theDelta, name)
       table[name] = Object.fromEntries(
-        Object.entries(theDelta.storage)
-              .map(entry => {
-                const [id, amount] = entry
-                const name = flow.lookupById(Number(id)).name
-                return [ name, amount ]
-              })
+        Object
+          .entries(theDelta.storage)
+          .map(entry => {
+            const [id, amount] = entry
+            const name = flow.lookupById(Number(id)).name
+            return [ name, amount ]
+          })
       )
     })
     return table
@@ -59,6 +60,14 @@ export abstract class Simulation implements ISimulation {
   private flux(t: number) {
     const flow: Evolution = this.flows() as any as Evolution // todo fix type if possible...
     this.dynamics.each(dynamism => dynamism(flow, t));
+
+    // interesting that we can compute this without actually performing it --
+    // ie we could forecast deltas too!
+
+    Object.entries(flow).forEach(([name, flow]) => { 
+      const theDelta = (flow as any)._delta
+      this.apply(theDelta, name)
+    })
     return { changed: this.flowsReport(flow) }
   }
 

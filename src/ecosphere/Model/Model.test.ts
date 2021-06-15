@@ -44,7 +44,11 @@ describe('Model', () => {
     const diamond = model.resources.create("Diamond")
     model.resources.add(5, 'Carbon')
     expect(model.resources.count('Carbon')).toEqual(5)
-    expect(model.resources.report).toEqual([{ ...carbon.item, amount: 5 }])
+    console.log(model.resources.report)
+    expect(model.resources.report).toEqual([
+      { ...carbon.item, amount: 5 },
+      { ...diamond.item, amount: 0 }
+    ])
     model.resources.add(3, 'Diamond')
     expect(model.resources.report).toEqual([{ ...carbon.item, amount: 5 }, { ...diamond.item, amount: 3 }])
     model.resources.remove(2, 'Diamond')
@@ -143,54 +147,38 @@ describe('Model', () => {
   it('machines', () => {
      const FishingPole = model.machines.create('Fishing Pole')
      expect(model.machines.list()).toEqual([FishingPole.item]);
+     expect(model.machines.count('Fishing Pole')).toEqual(0)
+     model.machines.add(1, 'Fishing Pole')
+     expect(model.machines.count('Fishing Pole')).toEqual(1)
   })
 
-  it('recipes, tasks, jobs', () => {
-     const Windmill = model.machines.create('Windmill')
-     expect(model.machines.list()).toEqual([Windmill.item]);
-  // })
-  // it('recipes', () => {
-     model.resources.create('Grain')
-     model.resources.create('Flour')
-
-     expect(model.recipes.count).toEqual(0)
-     const Milling = 'Milling';
-     model.recipes.create({
-       name: Milling,
-       consumes: { Grain: 10, },
-       produces: { Flour: 20 },
-       requiresMachine: 'Windmill' // .item.name
-     })
-     expect(model.recipes.count).toEqual(1)
-     expect(model.recipes.first.name).toEqual(Milling)
-    //  const Harry = 'Harry';
-     const harry = model.people.create('Harry');
-     const mill = model.tasks.create({ recipe: Milling })
-     model.jobs.set(harry, mill)
-     expect(model.jobs.report).toEqual({ Harry: { ...mill } })
-
-    //  model.work(harry) //, windmill)
-    // maybe shouldn't be harry's status???
-     // expect(harry.status).toEqual('milling at Mill')
+  it('recipes, tasks and jobs', () => {
+    const Windmill = model.machines.create('Windmill')
+    expect(model.machines.list()).toEqual([Windmill.item]);
+    model.resources.create('Grain')
+    model.resources.create('Flour')
+    model.resources.add(10, 'Grain')
+    expect(model.recipes.count).toEqual(0)
+    const Milling = 'Milling';
+    model.recipes.create({
+      name: Milling,
+      consumes: { Grain: 10, },
+      produces: { Flour: 20 },
+      requiresMachine: 'Windmill' // .item.name
+    })
+    model.machines.create('Windmill')
+    model.machines.add(1, 'Windmill')
+    expect(model.recipes.count).toEqual(1)
+    expect(model.recipes.first.name).toEqual(Milling)
+    const harry = model.people.create('Harry');
+    const mill = model.tasks.create({ recipe: Milling })
+    model.jobs.set(harry, mill)
+    expect(model.jobs.report).toEqual({ Harry: { ...mill } })
+    model.evolve((e) => model.work({ resources: e.resources }))
+    expect(model.resources.count('Grain')).toEqual(10)
+    expect(model.resources.count('Flour')).toEqual(0)
+    model.step()
+    expect(model.resources.count('Grain')).toEqual(0)
+    expect(model.resources.count('Flour')).toEqual(20)
   })
-
-  //   model.job('milling', {
-  //     at: 'Windmill', consumes: { Grain: 10, }, produces: { Flour: 20 }
-  //   })
-
-  //   model.element('Grain')
-  //   model.element('Bread')
-  //   model.add(10, 'Grain')
-  //   model.individual('Sancho')
-  //   model.construct('Windmill')
-  //   // model.building('Windmill')
-  //   // model.furnish('Windmill', 'Mill')
-
-  //   expect(model.count('Grain')).toEqual(10)
-  //   expect(model.count('Bread')).toEqual(0)
-  //   model.work('Sancho', 'milling')
-  //   expect(model.status('Sancho')).toEqual('milling at Mill')
-  //   expect(model.count('Grain')).toEqual(0)
-  //   expect(model.count('Bread')).toEqual(1)
-  // });
 })
