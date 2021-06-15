@@ -1,7 +1,7 @@
-import { BasicEntity } from "./BasicEntity";
+import { BasicEntity } from "./types/BasicEntity";
 import { boundMethod } from 'autobind-decorator'
-import { where } from "./where";
-import { isString } from "./isString";
+import { where } from "./utils/where";
+import { isString } from "./utils/isString";
 import { ManageStock, ManageStocks } from "./types";
 
 class StockManager<T extends BasicEntity> implements ManageStock<T> {
@@ -80,6 +80,7 @@ export class Stocks<T extends BasicEntity> {
     return !!matching;
   }
 
+  @boundMethod
   lookupById(id: number): T {
     const matching = this.elements.find(where('id', id))
     if (matching) {
@@ -100,15 +101,20 @@ export class Stocks<T extends BasicEntity> {
   }
 
   get report(): (T & { amount: number })[] {
-    const warehouse = Object.entries(this.storage)
-    return warehouse.flatMap(([elementId, amount]) => {
-      const element = this.lookupById(Number(elementId))
+    // console.log(this.storage)
+    const items: T[] = this.list()
+    const table = items.flatMap((item: T) => {
+      const id = Number(item.id)
+      const amount = this.storage[id]
+      // console.log({item, amount})
       if (amount > 0) {
-        return { ...element, amount }
+        return { ...item, amount }
       } else {
         return []
       }
     })
+    // console.log(table)
+    return table
   }
 
   manage(name: string): ManageStock<T> {

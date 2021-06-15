@@ -6,7 +6,7 @@ export type DeltaSource = Stocks<any> | Registry<any, any>
 export type DeltaSourceManager = { add: Function, remove: Function, count: Function, list: Function }
 export class Delta {
   public changes: Stocks<any>;
-  constructor(public model: Model, public getStocks: (model: Model) => DeltaSource) {
+  constructor(public model: any, public getStocks: (model: Model) => DeltaSource) {
     let baseline = this.getStocks(model)
     this.changes = new Stocks(`${baseline.name} (delta)`, baseline.list());
   }

@@ -1,11 +1,9 @@
-import { isString } from "./isString";
+import { isString } from "./utils/isString";
 import { boundMethod } from "autobind-decorator";
 import { Entity } from "./types";
 
 class SetHelper {
-  static first<T>(set: Set<T>): T {
-    return set.values().next().value
-  }
+  static first<T>(set: Set<T>): T { return set.values().next().value }
 }
 
 // a collection of named individuals...
@@ -14,33 +12,25 @@ export class Population<U, T extends Entity<U>> {
     public name: string,
     public species?: U,
     private individuals: Set<T> = new Set(),
-  ) {
-    // console.log(individuals)
-  }
+  ) {}
 
   list() { 
     const theList: T[] = []
     this.individuals.forEach(individual => theList.push(individual))
     return theList;
   }
-  get count() { return this.individuals.size } //.length }
+  get count() { return this.individuals.size }
   get first() { 
     return SetHelper.first(this.individuals)
-    // return this.individuals.values().next()
    }
   public lookup(name: string): T {
     let theIndividual = null;
     this.individuals.forEach(individual => {
       if (individual.name === name) {
         theIndividual = individual;
-        // break;
       }
     });
     if (theIndividual) { return theIndividual }
-    console.log(this.individuals.entries().next().value)
-    // if (theIndividual) {
-    //   return theIndividual
-    // }
     throw new Error(`Could not find individual with name '${name}' in the population of ${this.name}`)
   }
 
@@ -49,26 +39,19 @@ export class Population<U, T extends Entity<U>> {
     this.individuals.forEach(individual => {
       if (individual.id === id) {
         theIndividual = individual;
-        // break;
       }
     });
     if (theIndividual) { return theIndividual }
-    console.log(this.individuals.entries().next().value)
-    // if (theIndividual) {
-    //   return theIndividual
-    // }
     throw new Error(`Could not find individual with id ${id} in the population of ${this.name}`)
   };
 
   public birth(name: string = `${this.name} ${this.count}`): T {
     const newborn = this.create(name)
-    // console.log(`[Population.birth] ${name} is born`)
     return newborn
   }
 
   public death(name: string = this.first.name): T {
-    const doomed = this.destroy(name) //individuals.pop()
-    // console.log("[Population.death] " + name + " is doomed")
+    const doomed = this.destroy(name)
     if (doomed) {
       return doomed
     }

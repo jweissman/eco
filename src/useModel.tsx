@@ -1,17 +1,18 @@
 import { useState, useEffect, useRef } from 'react';
 
 import Model from './ecosphere/Model';
+import { IModel } from './ecosphere/Model/Model';
 
 type ModelAPI = {
   step: Function,
-  lastInventoryChanges: { [elementName: string]: number },
+  lastChanges: { [groupName: string]: { [elementName: string]: number }},
   setDelay: (milliseconds: number) => void
 }
 
 // ticks per sec
 const ticksPerSecond = (n: number) => n > 0 ? Math.floor(1000 / n) : 1
 const speeds = {slow: 10, fast: 25, faster: 50, fastest: 80};
-export function useModel(model: Model = new Model('Hello World')): ModelAPI {
+export function useModel(model: IModel = new Model('Hello World')): ModelAPI {
   const [lastChanges, setLastChanges] = useState({})
   const [delay, setDelay] = useState(ticksPerSecond(speeds.slow));
   const [shouldStep, step] = useState(false);
@@ -19,18 +20,17 @@ export function useModel(model: Model = new Model('Hello World')): ModelAPI {
 
   useEffect(() => {
     if (shouldStep) {
-      let deltas = model.step();
+      let { changed } = model.step();
       step(false);
-      setLastChanges(deltas.changed);
+      setLastChanges(changed);
     }
   }, [shouldStep, model]);
 
   useInterval(() => step(true), delay); 
-  // useInterval(performStep, delay); 
 
   return {
     step: performStep,
-    lastInventoryChanges: lastChanges,
+    lastChanges: lastChanges,
     setDelay,
   };
 }

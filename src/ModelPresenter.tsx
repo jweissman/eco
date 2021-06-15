@@ -1,15 +1,13 @@
-import Model from './ecosphere/Model';
-import { ModelView } from './ecosphere/ModelView';
+import Model, { ModelView } from './ecosphere/Model';
 
 type ModelPresenterProps = {
   model: Model
   step: Function 
-  lastInventoryChanges: { [elementName: string]: number }
+  lastInventoryChanges: { resources: { [elementName: string]: number }}
 }
 
 export function ModelPresenter({ model, step, lastInventoryChanges }: ModelPresenterProps) {
   const { resources, people, machines, animals } = model;
-  // console.log(animals.report)
   return (
     <div className="Model">
       <ModelView

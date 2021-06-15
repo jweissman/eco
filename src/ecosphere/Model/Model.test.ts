@@ -1,5 +1,5 @@
 import Model from "./Model"
-import { Evolution, Person, TimeEvolution } from "./types";
+import { Evolution, Person, TimeEvolution } from "../types";
 
 describe('Model', () => {
   const model = new Model('Avernus');
@@ -76,7 +76,7 @@ describe('Model', () => {
   })
 
   it('animals', () => {
-    const Fox = model.animals.create('Fox')
+    const Fox = model.animals.create('Fox', { size: 'fine', fitness: 'adequate' })
     expect(Fox.count).toEqual(0)
     Fox.birth()
     expect(Fox.count).toEqual(1)
@@ -87,7 +87,7 @@ describe('Model', () => {
   })
 
   it('evolves wildlife', () => {
-    const Fox = model.animals.create('Fox')
+    const Fox = model.animals.create('Fox', { size: 'fine', fitness: 'good'})
     const evolve: TimeEvolution = (e: Evolution, t: number) => {
       const { count, add } = e.animals
       add(count('Fox'), 'Fox')
@@ -105,10 +105,10 @@ describe('Model', () => {
     Gold.add(10)
     Silicon.add(5)
 
-    const Fox = model.animals.create('Fox')
-    const Lion = model.animals.create('Lion')
+    const Fox   = model.animals.create('Fox')
+    const Lion  = model.animals.create('Lion')
     const Tiger = model.animals.create('Tiger')
-    const Bear = model.animals.create('Bear')
+    const Bear  = model.animals.create('Bear')
 
     Fox.add(10)
     Lion.add(15)

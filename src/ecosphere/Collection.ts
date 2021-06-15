@@ -1,4 +1,4 @@
-import { BasicEntity } from "./BasicEntity";
+import { BasicEntity } from "./types/BasicEntity";
 
 export interface IList<T> {
   first: T

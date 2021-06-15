@@ -3,24 +3,21 @@ import { within, fireEvent, render, screen } from '@testing-library/react';
 import App from './App';
 import Model from './ecosphere/Model';
 import { Evolution } from './ecosphere/types';
+import { SpaceStation } from './examples/SpaceStation';
+import { IModel } from './ecosphere/Model/Model';
 
 const build: () => Model = () => {
-  const model = new Model('Space Station')
-  model.resources.create('Power')
-  model.resources.create('Air')
-  model.people.create('Zachariah')
-  model.resources.add(100, 'Power')
-  model.resources.add(100, 'Air')
-  model.machines.create('Control Panel')
-  // model.machines.add(1, 'Cat')
-  model.animals.create('Cat')
-  model.animals.add(1, 'Cat')
-  model.evolve((e: Evolution, t: number) => { //remove, t }) => {
-    // console.log(e.resources)
+  const atlantis = new SpaceStation('Atlantis Station')
+  atlantis.people.create('Zachariah')
+  atlantis.animals.create('Cat')
+  atlantis.animals.add(1, 'Cat')
+  atlantis.evolve((e: Evolution, t: number) => { //remove, t }) => {
     e.resources.remove(1, 'Air')
-    if (t % 3 === 0) { e.resources.remove(1, 'Power') }
+    if (t % 3 === 0) {
+      e.resources.remove(1, 'Power')
+    }
   });
-  return model;
+  return atlantis;
 }
 
 class Eco {
@@ -58,16 +55,24 @@ class Eco {
       const it = Eco.items.get(itemName);
       const amount = await within(it).findByTestId('Count')
       return Number(amount.textContent);
+    },
+    delta: async (itemName: string) => {
+      const it = Eco.items.get(itemName);
+      const amount = await within(it).findByTestId('Delta')
+      return Number(amount.textContent);
     }
   }
 }
 
-const model: Model = build()
-beforeEach(() => render(<App model={model} />))
+beforeEach(() => {
+  const model: IModel = build()
+  // model.reset()
+  render(<App model={model} />)
+})
 
 it('renders model name', () => {
   expect(Eco.modelName).toBeInTheDocument();
-  expect(Eco.modelName).toHaveTextContent('Space Station')
+  expect(Eco.modelName).toHaveTextContent('Atlantis Station')
 });
 
 it('renders resources', async () => {
@@ -108,4 +113,18 @@ it('tracks resources over time', async () => {
   expect(await Eco.items.count('Power')).toEqual(98)
 })
 
+it('tracks resource deltas over time', async () => {
+  expect(await Eco.items.count('Air')).toEqual(100)
+  expect(await Eco.items.count('Power')).toEqual(100)
+  const stepButton = await screen.findByText("Step")
+  fireEvent.click(stepButton);
+  expect(await Eco.items.count('Air')).toEqual(99)
+  expect(await Eco.items.count('Power')).toEqual(99)
+  expect(await Eco.items.delta('Air')).toEqual(-1)
+  expect(await Eco.items.delta('Power')).toEqual(-1)
+})
+ 
 // xit('simulates animal populations through time')
+// xit('starts/stops/slows down')
+// xit('timekeeping')
+// xit('events')

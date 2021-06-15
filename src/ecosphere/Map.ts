@@ -1,6 +1,6 @@
-import { BasicEntity } from "./BasicEntity";
+import { BasicEntity } from "./types/BasicEntity";
 
-interface IMap<K,V> {
+export interface IMap<K,V> {
   set(k: K, v: V): void
   get(k: K): V
 }

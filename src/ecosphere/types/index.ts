@@ -1,13 +1,13 @@
 import { BasicEntity } from "./BasicEntity"
 
-type Quality = 'terrible' | 'poor' | 'adequate' | 'good' | 'fine' | 'excellent'
+type Quality = 'terrible' | 'poor' | 'adequate' | 'good' | 'excellent'
 type Size = 'fine' | 'small' | 'medium' | 'large' | 'huge'
 
 export type Substance = BasicEntity
 export type Species = BasicEntity & {
   name: string
-  size: Size
-  fitness: Quality
+  size?: Size
+  fitness?: Quality
 }
 
 export type Entity<T> = BasicEntity & { kind: T }
