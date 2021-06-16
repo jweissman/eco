@@ -10,9 +10,10 @@ type ModelPresenterProps = {
   lastChanges: LastDelta
 }
 
-const view = (model: IModel, lastChanges: LastDelta): ModelViewProps => {
+const view = (model: IModel, lastChanges: LastDelta) => {
   const { resources, people, machines, animals } = model;
-  return {
+
+  const props = {
     modelName: model.name,
     items: resources.report,
     individuals: people.list(),
@@ -20,13 +21,13 @@ const view = (model: IModel, lastChanges: LastDelta): ModelViewProps => {
     animals: animals.report,
     lastChanges,
   }
+
+  return props
 }
 
 export function ModelPresenter({ model, step, lastChanges }: ModelPresenterProps) {
-  return (
-    <div className="Model">
-      <ModelView {...view(model, lastChanges)} />
-      <button onClick={() => step(true)}>Step</button>
-    </div>
-  );
+  return <>
+    <ModelView {...view(model, lastChanges)} />
+    <button onClick={() => step(true)}>Step</button>
+  </>;
 }

@@ -1,6 +1,5 @@
 import Model from "../ecosphere/Model"
 
-
 const domesticCrops = {
   Wheat: 'wheat',
   Corn: 'corn',

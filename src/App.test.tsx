@@ -150,8 +150,7 @@ it('tracks resource deltas over time', async () => {
   expect(await Eco.items.delta('Power')).toEqual(-51)
 })
  
-xit('displays assigned tasks', async () => {
-})
+test.todo('displays assigned tasks') //, async () => { })
 // xit('simulates animal populations through time')
 // xit('starts/stops/slows down')
 // xit('timekeeping')

@@ -1,4 +1,5 @@
-import { world } from './hello';
+import { world } from './World';
+
 describe('hello', () => {
   it('runs without error', () => {
     expect(world.name).toMatch(/Writ/)

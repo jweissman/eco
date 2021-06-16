@@ -2,7 +2,7 @@
 import './App.css';
 import { IModel } from "./ecosphere/Model/IModel";
 import { SpaceStation } from './examples/SpaceStation';
-import { world } from './examples/hello';
+import { world } from './examples/World';
 import { ModelSelector } from './ModelSelector';
 
 type ApplicationProps = {
