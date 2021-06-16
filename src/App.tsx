@@ -1,19 +1,20 @@
+
 import './App.css';
 import { IModel } from "./ecosphere/Model/IModel";
-import { ModelPresenter } from './ModelPresenter';
-import { useModel } from './useModel';
+import { SpaceStation } from './examples/SpaceStation';
+import { world } from './examples/hello';
+import { ModelSelector } from './ModelSelector';
 
 type ApplicationProps = {
   model: IModel
 }
 
-function App({ model }: ApplicationProps) {
-  const { step, lastChanges } = useModel(model)
+function App({ model: initialModel }: ApplicationProps) {
+  const station = new SpaceStation('My Very Own Space Station')
   return <div className="App">
-    <ModelPresenter
-      step={step}
-      model={model}
-      lastChanges={lastChanges}
+    <ModelSelector
+      models={[ world, station ]}
+      initialModel={initialModel}
     />
   </div>;
 }
