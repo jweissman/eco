@@ -71,12 +71,8 @@ export class Stocks<T extends BasicEntity> {
   @boundMethod
   count(name: string): number {
     const element: T = this.lookup(name);
-
-    // this.storage[element.id] = 
     const amount = this.storage[element.id] || 0;
-    console.log(this.list())
-    console.log(`[Stocks] count ${element.name}: ${amount}`)
-    return amount; // this.storage[element.id];
+    return amount;
   }
 
   has(name: string): boolean {
@@ -99,25 +95,16 @@ export class Stocks<T extends BasicEntity> {
       return matching as T;
     } else {
       return this.create(name).item
-      // throw new Error(`No such ${this.name} with name ${name}`);
-      // return null
     }
   }
 
   get report(): (T & { amount: number })[] {
-    // console.log(this.storage)
     const items: T[] = this.list()
     const table = items.flatMap((item: T) => {
       const id = Number(item.id)
       const amount = this.storage[id] || 0
-      // console.log({item, amount})
-      // if (amount > 0) {
-        return { ...item, amount }
-      // } else {
-        // return []
-      // }
+      return { ...item, amount }
     })
-    // console.log(table)
     return table
   }
 
@@ -125,9 +112,7 @@ export class Stocks<T extends BasicEntity> {
     return new StockManager<T>(this, this.lookup(name).id)
   }
 
-  // nice to return an obj here but :/
   manageAll(): ManageStocks {
-    // return new WarehouseManager(this)
     const { add, remove, count } = this
     return { add, remove, count, list: () => this.elements }
   }

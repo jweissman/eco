@@ -1,11 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 
 import Model from './ecosphere/Model';
-import { IModel } from './ecosphere/Model/Model';
+import { IModel } from "./ecosphere/Model/IModel";
+import { LastDelta } from './ModelPresenter';
 
-type ModelAPI = {
+export type ModelAPI = {
   step: Function,
-  lastChanges: { [groupName: string]: { [elementName: string]: number }},
+  lastChanges: LastDelta,
+    // [groupName: string]: { [elementName: string]: number }
+    // resources: { [elementName: string]: number }
+    // animals: { [elementName: string]: number }
+  // },
   setDelay: (milliseconds: number) => void
 }
 
@@ -13,7 +18,7 @@ type ModelAPI = {
 const ticksPerSecond = (n: number) => n > 0 ? Math.floor(1000 / n) : 1
 const speeds = {slow: 10, fast: 25, faster: 50, fastest: 80};
 export function useModel(model: IModel = new Model('Hello World')): ModelAPI {
-  const [lastChanges, setLastChanges] = useState({})
+  const [lastChanges, setLastChanges] = useState({} as LastDelta)
   const [delay, setDelay] = useState(ticksPerSecond(speeds.slow));
   const [shouldStep, step] = useState(false);
   const performStep = () => { step(true); };
@@ -30,7 +35,7 @@ export function useModel(model: IModel = new Model('Hello World')): ModelAPI {
 
   return {
     step: performStep,
-    lastChanges: lastChanges,
+    lastChanges: lastChanges as LastDelta,
     setDelay,
   };
 }

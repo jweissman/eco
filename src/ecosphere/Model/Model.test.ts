@@ -44,7 +44,6 @@ describe('Model', () => {
     const diamond = model.resources.create("Diamond")
     model.resources.add(5, 'Carbon')
     expect(model.resources.count('Carbon')).toEqual(5)
-    console.log(model.resources.report)
     expect(model.resources.report).toEqual([
       { ...carbon.item, amount: 5 },
       { ...diamond.item, amount: 0 }

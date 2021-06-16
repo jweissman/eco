@@ -1,16 +1,8 @@
-import { IList, SimpleCollection } from "../Collection";
+import { SimpleCollection } from "../Collection";
 import { Delta, DeltaSource } from "../Delta";
-import { Entity, Evolution, StepResult, TimeEvolution } from "../types";
+import { Entity, Evolution, TimeEvolution } from "../types";
+import { ISimulation } from "./ISimulation";
 
-export interface ISimulation {
-  name: string
-  dynamics: IList<TimeEvolution>
-  report: { [key: string]: { [key: string]: number }}
-  evolve(tickFn: TimeEvolution): void
-  step(): StepResult 
-}
-
-// todo type Flows = { [key: string]: { _delta: Delta, lookupById: Function, add: Function } }
 export abstract class Simulation implements ISimulation {
   private ticks: number = 0;
   protected tracking: string[] = []
@@ -43,7 +35,6 @@ export abstract class Simulation implements ISimulation {
     const table: { [key: string]: any } = {}
     Object.entries(flow).forEach(([name, flow]) => { 
       const theDelta = flow._delta
-      // this.apply(theDelta, name)
       table[name] = Object.fromEntries(
         Object
           .entries(theDelta.storage)
@@ -58,12 +49,8 @@ export abstract class Simulation implements ISimulation {
   }
 
   private flux(t: number) {
-    const flow: Evolution = this.flows() as any as Evolution // todo fix type if possible...
+    const flow: Evolution = this.flows() as any as Evolution
     this.dynamics.each(dynamism => dynamism(flow, t));
-
-    // interesting that we can compute this without actually performing it --
-    // ie we could forecast deltas too!
-
     Object.entries(flow).forEach(([name, flow]) => { 
       const theDelta = (flow as any)._delta
       this.apply(theDelta, name)

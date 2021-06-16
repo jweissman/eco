@@ -4,7 +4,7 @@ import App from './App';
 import Model from './ecosphere/Model';
 import { Evolution } from './ecosphere/types';
 import { SpaceStation } from './examples/SpaceStation';
-import { IModel } from './ecosphere/Model/Model';
+import { IModel } from "./ecosphere/Model/IModel";
 
 const build: () => Model = () => {
   const atlantis = new SpaceStation('Atlantis Station')
@@ -24,7 +24,6 @@ const build: () => Model = () => {
     produces: { Xenocite: 100 },
     consumes: { Power: 20 }
   })
-  // console.log(atlantis.recipes.count)
 
   const drive = 'Drive Ship'
   atlantis.recipes.create({
@@ -33,20 +32,15 @@ const build: () => Model = () => {
     consumes: { Power: 30 }
   })
 
-  // console.log(atlantis.recipes.count)
-  // console.log(atlantis.recipes.first)
-  // console.log(atlantis.recipes.last)
-
   const mainThrusters = atlantis.tasks.create({ name: 'Accelerate', recipe: drive })
   const makeXenocite = atlantis.tasks.create({ name: 'Make Xenocite', recipe: synthXenocite })
 
   atlantis.jobs.set(captain, makeXenocite)
   atlantis.jobs.set(firstOfficer, mainThrusters)
 
-  atlantis.evolve((e: Evolution, t: number) => { //remove, t }) => {
+  atlantis.evolve((e: Evolution, t: number) => {
     e.resources.remove(1, 'Air')
     if (t % 3 === 0) { e.resources.remove(1, 'Power') }
-    // console.log(this)
     atlantis.work({ resources: e.resources })
   });
 

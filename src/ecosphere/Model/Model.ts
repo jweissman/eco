@@ -2,22 +2,11 @@ import { Substance, Machine, Animal, Recipe, Task, Species, Group, Person } from
 import { Stocks } from "../Stocks"
 import { Registry } from "../Registry"
 import { Population } from "../Population"
-import { Collection, IList } from "../Collection"
-import { IMap, Map } from "../Map"
-import { ISimulation, Simulation } from "./Simulation"
+import { Collection } from "../Collection"
+import { Map } from "../Map"
+import { Simulation } from "./Simulation"
 import { boundMethod } from "autobind-decorator"
-
-// todo -- mix multiple models... class Assembly { addModel(name: string, model: Model) {} }
-
-export interface IModel extends ISimulation {
-  resources: Stocks<Substance>
-  machines: Stocks<Machine>
-  animals: Registry<Species, Animal>
-  people: Population<Group, Person>
-  recipes: IList<Recipe>
-  tasks: IList<Task>
-  jobs: IMap<Person, Task>
-}
+import { IModel } from "./IModel"
 
 export class Model extends Simulation implements IModel  {
   public resources = new Stocks<Substance>('resources')
@@ -42,8 +31,6 @@ export class Model extends Simulation implements IModel  {
 
   @boundMethod
   work({ resources }: { resources: { add: Function, remove: Function, count: Function }}): void {
-    console.log(this.jobs.report)
-    console.log(this.recipes)
     const { report } = this.jobs
     Object.entries(report).forEach(([workerName, job]) => {
       const recipe: Recipe = this.recipes.lookup((job as Task).recipe) as Recipe
@@ -52,8 +39,7 @@ export class Model extends Simulation implements IModel  {
         Object.entries(recipe.consumes).forEach(([resource, amount]) => {
           if (resources.count(resource) < amount) {
             mayProduce = false;
-            console.warn(`${workerName} not able to perform ${recipe.name} (required resources not present)`)
-          }
+            console.warn(`${workerName} not able to perform ${recipe.name} (required resource ${resource} not present)`) }
         })
       }
 
@@ -66,7 +52,7 @@ export class Model extends Simulation implements IModel  {
       }
 
       if (mayProduce) {
-        console.log(`${workerName} is at work ${recipe.name}`)
+        console.log(`${workerName}: ${(job as any).name}`)
         if (recipe.consumes) {
           Object.entries(recipe.consumes).forEach(([resource, amount]) => {
             resources.remove(amount, resource)
