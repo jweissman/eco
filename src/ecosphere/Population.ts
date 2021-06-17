@@ -34,6 +34,7 @@ export class Population<U, T extends Entity<U>> {
     throw new Error(`Could not find individual with name '${name}' in the population of ${this.name}`)
   }
 
+  @boundMethod
   public lookupById(id: number): T {
     let theIndividual = null;
     this.individuals.forEach(individual => {
@@ -107,5 +108,11 @@ export class Population<U, T extends Entity<U>> {
     this.individuals.delete(theIndividual);
     // this.individuals = this.individuals.remofilter(it => it.id === theIndividual.id);
     return theIndividual;
+  }
+
+  get report() {
+    return Object.fromEntries(this.list().map(individual => {
+      return [individual.id, individual.name];
+    }))
   }
 }

@@ -153,13 +153,14 @@ describe('Model', () => {
 
   it('recipes, tasks and jobs', () => {
     const Windmill = model.machines.create('Windmill')
+    const { recipes } = model.people
     expect(model.machines.list()).toEqual([Windmill.item]);
     model.resources.create('Grain')
     model.resources.create('Flour')
     model.resources.add(10, 'Grain')
-    expect(model.recipes.count).toEqual(0)
+    expect(recipes.count).toEqual(0)
     const Milling = 'Milling';
-    model.recipes.create({
+    recipes.create({
       name: Milling,
       consumes: { Grain: 10, },
       produces: { Flour: 20 },
@@ -167,13 +168,13 @@ describe('Model', () => {
     })
     model.machines.create('Windmill')
     model.machines.add(1, 'Windmill')
-    expect(model.recipes.count).toEqual(1)
-    expect(model.recipes.first.name).toEqual(Milling)
+    expect(recipes.count).toEqual(1)
+    expect(recipes.first.name).toEqual(Milling)
     const harry = model.people.create('Harry');
-    const mill = model.tasks.create({ recipe: Milling })
-    model.jobs.set(harry, mill)
-    expect(model.jobs.report).toEqual({ Harry: { ...mill } })
-    model.evolve((e) => model.work({ resources: e.resources }))
+    const mill = model.people.tasks.create({ recipe: Milling })
+    model.people.jobs.set(harry, mill)
+    expect(model.people.jobs.report).toEqual({ Harry: { ...mill } })
+    model.evolve((e) => model.people.work({ resources: e.resources }))
     expect(model.resources.count('Grain')).toEqual(10)
     expect(model.resources.count('Flour')).toEqual(0)
     model.step()

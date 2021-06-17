@@ -11,11 +11,9 @@ type ApplicationProps = {
 
 function App({ model: initialModel }: ApplicationProps) {
   const station = new SpaceStation('My Very Own Space Station')
+  const models = [ world, station ]
   return <div className="App">
-    <ModelSelector
-      models={[ world, station ]}
-      initialModel={initialModel}
-    />
+    <ModelSelector models={models} initialModel={initialModel} />
   </div>;
 }
 

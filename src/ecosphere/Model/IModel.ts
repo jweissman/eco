@@ -11,7 +11,7 @@ export interface IModel extends ISimulation {
   machines: Stocks<Machine>;
   animals: Registry<Species, Animal>;
   people: Population<Group, Person>;
-  recipes: IList<Recipe>;
-  tasks: IList<Task>;
-  jobs: IMap<Person, Task>;
+  // recipes: IList<Recipe>;
+  // tasks: IList<Task>;
+  // jobs: IMap<Person, Task>;
 }

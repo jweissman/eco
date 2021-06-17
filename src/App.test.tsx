@@ -19,29 +19,29 @@ const build: () => Model = () => {
   atlantis.animals.add(1, 'Cat')
 
   const synthXenocite = 'Synthesize Xenocite'
-  atlantis.recipes.create({
+  atlantis.people.recipes.create({
     name: synthXenocite,
     produces: { Xenocite: 100 },
     consumes: { Power: 20 }
   })
 
   const drive = 'Drive Ship'
-  atlantis.recipes.create({
+  atlantis.people.recipes.create({
     name: drive,
     produces: { Thrust: 100 },
     consumes: { Power: 30 }
   })
 
-  const mainThrusters = atlantis.tasks.create({ name: 'Accelerate', recipe: drive })
-  const makeXenocite = atlantis.tasks.create({ name: 'Make Xenocite', recipe: synthXenocite })
+  const mainThrusters = atlantis.people.tasks.create({ name: 'Accelerate', recipe: drive })
+  const makeXenocite = atlantis.people.tasks.create({ name: 'Make Xenocite', recipe: synthXenocite })
 
-  atlantis.jobs.set(captain, makeXenocite)
-  atlantis.jobs.set(firstOfficer, mainThrusters)
+  atlantis.people.jobs.set(captain, makeXenocite)
+  atlantis.people.jobs.set(firstOfficer, mainThrusters)
 
   atlantis.evolve((e: Evolution, t: number) => {
     e.resources.remove(1, 'Air')
     if (t % 3 === 0) { e.resources.remove(1, 'Power') }
-    atlantis.work({ resources: e.resources })
+    atlantis.people.work({ resources: e.resources })
   });
 
   return atlantis;
@@ -52,12 +52,31 @@ class Eco {
     return screen.getByLabelText('Model Title')
   }
 
-  static get individuals() {
-    return screen.getByLabelText('Individuals')
+  // static get individuals() {
+  //   return screen.getByLabelText('Individuals')
+  // }
+
+  static people = {
+    container: () => screen.getByLabelText('People'),
+    get: (name: string) => {
+      const people = within(Eco.people.container())
+      const thePerson = people.getByTitle(name)
+      return thePerson;
+    },
+    status: async (name: string) => {
+      const them = Eco.people.get(name);
+      const amount = await within(them).findByTestId('Status')
+      return String(amount.textContent);
+    },
+    task: async (name: string) => {
+      const them = Eco.people.get(name);
+      const amount = await within(them).findByTestId('Task')
+      return String(amount.textContent);
+    }
   }
 
   static animals = {
-    container: () => screen.getByLabelText('Global Animals'),
+    container: () => screen.getByLabelText('Animals'),
     get: (name: string) => {
       const animals = within(Eco.animals.container());
       const theAnimal = (animals.getByTitle(name));
@@ -71,7 +90,7 @@ class Eco {
   }
 
   static items = {
-    container: () => screen.getByLabelText('Global Items'),
+    container: () => screen.getByLabelText('Resources'),
     get: (itemName: string) => {
       const items = within(Eco.items.container());
       const theItem = (items.getByTitle(itemName));
@@ -111,9 +130,9 @@ it('renders animals', async () => {
   // expect(await Eco.items.count('Power')).toEqual(100)
 });
 
-it('renders individuals', () => {
-  const zed = screen.getByText(/Zech/i);
-  expect(zed).toBeInTheDocument();
+it('renders individuals and tasks', async () => {
+  expect(await Eco.people.status('Curtis Zechariah')).toEqual('Make Xenocite')
+  expect(await Eco.people.status('Lance Hammond')).toEqual('Accelerate')
 });
 
 it('renders tools', () => {
@@ -150,7 +169,7 @@ it('tracks resource deltas over time', async () => {
   expect(await Eco.items.delta('Power')).toEqual(-51)
 })
  
-test.todo('displays assigned tasks') //, async () => { })
+// test.todo('displays assigned tasks') //, async () => { })
 // xit('simulates animal populations through time')
 // xit('starts/stops/slows down')
 // xit('timekeeping')

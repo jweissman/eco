@@ -17,6 +17,7 @@ const view = (model: IModel, lastChanges: LastDelta) => {
     modelName: model.name,
     items: resources.report,
     individuals: people.list(),
+    work: people.report,
     machines: machines.list(),
     animals: animals.report,
     lastChanges,

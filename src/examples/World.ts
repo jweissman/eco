@@ -32,7 +32,8 @@ const { Zed, Cash, Raz } = People;
 const Windmill = 'Windmill';
 
 const world = new Model('Township of Writ-upon-Water')
-const { resources, animals, people, machines, recipes, jobs, tasks } = world
+const { resources, animals, people, machines } = world
+const { recipes, jobs, tasks } = people
 
 resources.create(Fish)
 resources.create(Wheat)
@@ -54,7 +55,7 @@ jobs.set(zed, baking)
 world.evolve(({ resources, animals }) => {
   animals.add(1, Fox)
   resources.add(1, Wheat)
-  world.work({ resources })
+  world.people.work({ resources })
   // if (resources.count(Wheat) >= 5) {
   //   resources.add(1, Bread)
   //   resources.remove(5, Wheat)
