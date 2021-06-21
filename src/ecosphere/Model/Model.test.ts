@@ -1,5 +1,5 @@
 import Model from "./Model"
-import { Evolution, Person, TimeEvolution } from "../types";
+import { EvolvingStocks, Person, TimeEvolution } from "../types";
 
 describe('Model', () => {
   const model = new Model('Avernus');
@@ -62,7 +62,7 @@ describe('Model', () => {
   it('steps through time', () => {
     model.resources.create('Carbon')
     model.resources.zero('Carbon')
-    const evolve: TimeEvolution = (e: Evolution, t: number) => {
+    const evolve: TimeEvolution = (e: EvolvingStocks, t: number) => {
       const carbonCount = e.resources.count('Carbon');
       e.resources.add(carbonCount, 'Carbon')
     } 
@@ -91,7 +91,7 @@ describe('Model', () => {
 
   it('evolves wildlife', () => {
     const Fox = model.animals.create('Fox', { size: 'fine', fitness: 'good'})
-    const evolve: TimeEvolution = (e: Evolution, t: number) => {
+    const evolve: TimeEvolution = (e: EvolvingStocks, t: number) => {
       const { count, add } = e.animals
       add(count('Fox'), 'Fox')
     } 
@@ -160,7 +160,7 @@ describe('Model', () => {
     model.resources.add(10, 'Grain')
     expect(recipes.count).toEqual(0)
     const Milling = 'Milling';
-    recipes.create({
+    const mill = recipes.create({
       name: Milling,
       consumes: { Grain: 10, },
       produces: { Flour: 20 },
@@ -171,7 +171,7 @@ describe('Model', () => {
     expect(recipes.count).toEqual(1)
     expect(recipes.first.name).toEqual(Milling)
     const harry = model.people.create('Harry');
-    const mill = model.people.tasks.create({ recipe: Milling })
+    // const mill = model.people.tasks.create({ recipe: Milling })
     model.people.jobs.set(harry, mill)
     expect(model.people.jobs.report).toEqual({ Harry: { ...mill } })
     model.evolve((e) => model.people.work({ resources: e.resources }))

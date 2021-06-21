@@ -1,16 +1,16 @@
-import { SimpleCollection } from "../Collection";
+import { List } from "../../collections";
 import { Delta, DeltaSource } from "../Delta";
-import { Entity, Evolution, TimeEvolution } from "../types";
+import { Entity, EvolvingStocks, TimeEvolution } from "../types";
 import { ISimulation } from "./ISimulation";
 
 export abstract class Simulation implements ISimulation {
   private ticks: number = 0;
   protected tracking: string[] = []
-  public dynamics = new SimpleCollection<TimeEvolution>()
+  public dynamics = new List<TimeEvolution>()
   constructor(public name: string) { }
-
   public evolve(e: TimeEvolution) { this.dynamics.add(e) }
   public step() { return this.flux(this.ticks++) }
+
   public get report() {
     return Object.fromEntries(this.tracking.map(target =>
       [target, (this as any)[target].report]
@@ -49,7 +49,7 @@ export abstract class Simulation implements ISimulation {
   }
 
   private flux(t: number) {
-    const flow: Evolution = this.flows() as any as Evolution
+    const flow: EvolvingStocks = this.flows() as any as EvolvingStocks
     this.dynamics.each(dynamism => dynamism(flow, t));
     Object.entries(flow).forEach(([name, flow]) => { 
       const theDelta = (flow as any)._delta

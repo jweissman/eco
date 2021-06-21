@@ -1,20 +1,11 @@
 import Model from "../ecosphere/Model"
 
-const domesticCrops = {
-  Wheat: 'wheat',
-  Corn: 'corn',
-  Rice: 'rice',
-}
-const food = { Bread: 'bread', }
+const domesticCrops = { Wheat: 'wheat' }
+const food = { Bread: 'bread' }
 const wildAnimals = {
   Fish: 'fishes',
-  Fowl: 'fowl',
   Fox: 'fox',
-  Deer: 'deer',
   Rabbit: 'rabbit',
-  Bear: 'bear',
-  Ferret: 'ferret',
-  Snake: 'snake',
 }
 const commonElements = {
   ...domesticCrops,
@@ -33,7 +24,7 @@ const Windmill = 'Windmill';
 
 const world = new Model('Township of Writ-upon-Water')
 const { resources, animals, people, machines } = world
-const { recipes, jobs, tasks } = people
+const { recipes, jobs } = people
 
 resources.create(Fish)
 resources.create(Wheat)
@@ -48,23 +39,18 @@ people.create(Raz)
 
 machines.create(Windmill);
 
-recipes.create({ name: 'Bread', produces: { [Bread]: 1 }, consumes: { [Wheat]: 5 }})
-const baking = tasks.create({ name: 'Bake Bread', recipe: 'Bread' })
-jobs.set(zed, baking)
+const bread = recipes.create({
+  name: 'Bread',
+  produces: { [Bread]: 1 },
+  consumes: { [Wheat]: 5 }
+})
+jobs.set(zed, bread)
 
 world.evolve(({ resources, animals }) => {
   animals.add(1, Fox)
   resources.add(1, Wheat)
   world.people.work({ resources })
-  // if (resources.count(Wheat) >= 5) {
-  //   resources.add(1, Bread)
-  //   resources.remove(5, Wheat)
-  // }
 })
 
 export { world }
-
-// const fisherman = cash.hauls(fishingHole)
-
-// const kitchen = world.machine([{ input: fish, output: fishSticks }])
 

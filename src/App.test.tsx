@@ -2,7 +2,7 @@ import React from 'react';
 import { within, fireEvent, render, screen } from '@testing-library/react';
 import App from './App';
 import Model from './ecosphere/Model';
-import { Evolution } from './ecosphere/types';
+import { EvolvingStocks } from './ecosphere/types';
 import { SpaceStation } from './examples/SpaceStation';
 import { IModel } from "./ecosphere/Model/IModel";
 
@@ -18,27 +18,27 @@ const build: () => Model = () => {
   atlantis.animals.create('Cat')
   atlantis.animals.add(1, 'Cat')
 
-  const synthXenocite = 'Synthesize Xenocite'
-  atlantis.people.recipes.create({
-    name: synthXenocite,
+  // const synthXenocite = 'Synthesize Xenocite'
+  const xenocite = atlantis.people.recipes.create({
+    name: 'Xenocite',
     produces: { Xenocite: 100 },
     consumes: { Power: 20 }
   })
 
-  const drive = 'Drive Ship'
-  atlantis.people.recipes.create({
-    name: drive,
+  // const drive = 'Drive Ship'
+  const drive = atlantis.people.recipes.create({
+    name: 'Drive',
     produces: { Thrust: 100 },
     consumes: { Power: 30 }
   })
 
-  const mainThrusters = atlantis.people.tasks.create({ name: 'Accelerate', recipe: drive })
-  const makeXenocite = atlantis.people.tasks.create({ name: 'Make Xenocite', recipe: synthXenocite })
+  // const mainThrusters = atlantis.people.tasks.create({ name: 'Accelerate', recipe: drive })
+  // const makeXenocite = atlantis.people.tasks.create({ name: 'Make Xenocite', recipe: synthXenocite })
 
-  atlantis.people.jobs.set(captain, makeXenocite)
-  atlantis.people.jobs.set(firstOfficer, mainThrusters)
+  atlantis.people.jobs.set(captain, xenocite)
+  atlantis.people.jobs.set(firstOfficer, drive)
 
-  atlantis.evolve((e: Evolution, t: number) => {
+  atlantis.evolve((e: EvolvingStocks, t: number) => {
     e.resources.remove(1, 'Air')
     if (t % 3 === 0) { e.resources.remove(1, 'Power') }
     atlantis.people.work({ resources: e.resources })
@@ -131,8 +131,8 @@ it('renders animals', async () => {
 });
 
 it('renders individuals and tasks', async () => {
-  expect(await Eco.people.status('Curtis Zechariah')).toEqual('Make Xenocite')
-  expect(await Eco.people.status('Lance Hammond')).toEqual('Accelerate')
+  expect(await Eco.people.status('Curtis Zechariah')).toEqual('Xenocite')
+  expect(await Eco.people.status('Lance Hammond')).toEqual('Drive')
 });
 
 it('renders tools', () => {
