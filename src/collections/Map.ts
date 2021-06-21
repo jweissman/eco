@@ -8,7 +8,7 @@ export class Map<K, V> implements IMap<K, V> {
   ) { }
   set(k: K, v: V) { this._data[this.idFor(k)] = v; }
   get(k: K): V { return this._data[this.idFor(k)]; }
-  get report(): { [name: string]: V } { //name: (it: K) => string) {
+  get report(): { [name: string]: V } {
     const namesAndValues = Object.entries(this._data)
       .map(([k, v]) => [this.nameFor(this.lookup(Number(k))), v]);
     return Object.fromEntries(namesAndValues);

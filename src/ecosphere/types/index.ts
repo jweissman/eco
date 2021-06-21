@@ -16,39 +16,44 @@ export type Individual<T> = Entity<T> & {
 }
 
 export type Creature<T> = Individual<T> & {
-  health:   'dying' | 'sick' | 'wounded' | 'healthy' | 'flourishing'
+  health: 'dying' | 'unwell' | 'flourishing' | 'triumphant'
 }
 
 export type Animal = Creature<Species> & {
-  spirit: 'languorous' | 'vigorous' | 'impetuous'
+  spirit: 'lazy' | 'languorous' | 'vigorous' | 'impetuous'
   strength: 'weak' | 'robust' | 'mighty' | 'indomitable'
-  cunning:  'dim' | 'attentive' | 'skillful' | 'wise'
-  agility:  'clumsy' | 'awkward' | 'nimble' | 'spry'
+  cunning:  'dim' | 'attentive' | 'creative' | 'ingenious'
+  agility:  'clumsy' | 'nimble' | 'spry' | 'balletic'
 }
 
 // major demographic groupings -- moieties (maybe *this* should be called a Community??)
 export type Moiety = BasicEntity & {
-  wealth: 'impoverished' | 'surviving' | 'luxurious' | 'decadent'
-  sophistication: 'uncultured' | 'savvy' | 'educated' | 'pompous'
-  power: 'marginal' | 'influential' | 'sovereign'
+  wealth: 'impoverished' | 'well-off' | 'luxuriant' | 'decadent'
+  sophistication: 'unpretentious' | 'savvy' | 'urbane' | 'sleek'
+  power: 'inconsequential' | 'marginal' | 'influential' | 'sovereign'
+  knowledge: 'clueless' | 'well-informed' | 'wise' | 'prescient'
 }
 
 type Body = Animal
 
 type Mind = {
-  insight: 'dense' | 'observant' | 'intuitive' | 'brilliant'
-  education: 'unlettered' | 'well-read' | 'scholarly'
+  insight: 'dense' | 'intuitive' | 'incisive' | 'brilliant'
   depth: 'superficial' | 'substantial' | 'profound' | 'inscrutable'
+  education: 'unlettered' | 'literate' | 'tutored' | 'well-read'
+  disposition: 'dismal' | 'hopeful' | 'propitious' | 'roseate'
 }
 
 type Soul = {
   wit: 'slow' | 'clever' | 'biting' | 'savage'
-  empathy: 'sadistic' | 'benevolent' | 'selfless'
+  empathy: 'sadistic' | 'generous' | 'benevolent' | 'selfless'
   serendipity: 'spontaneous' | 'casual' | 'stern' | 'rigid'
+  integrity: 'uncertain' | 'sound' | 'solid' | 'incorruptible'
 }
 
 // type Category = BasicEntity
 // type Item = Entity<Category> & {}
+// type Event = BasicEntity
+// type Incident = Entity<Incident>
 
 export type Person = Individual<Moiety> & {
   body: Body
@@ -58,12 +63,12 @@ export type Person = Individual<Moiety> & {
   // ie within my moiety, I am (thought of as)...
   rank: 'commoner' | 'wellborn'
   title?: string
-  reputation: 'unknown' | 'artless' | 'worthy' | 'revered'
-  destiny: 'commonplace' | 'exceptional'
-
-  // track items + currency
+  reputation: 'unknown' | 'worthy' | 'adored' | 'revered'
+  destiny: 'doomed' | 'commonplace' | 'exceptional' | 'free'
   currency: number
+  // memory: List<Event>
   // inventory: Stocks<Item> // hmmm, maybe we really want a map at a higher-level anyway
+  // philosophy?: Ideology
 }
 
 // const personId = sequence('id')

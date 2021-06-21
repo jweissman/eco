@@ -8,3 +8,5 @@ export interface IMap<K,V> {
   set(k: K, v: V): void
   get(k: K): V
 }
+
+export interface ISequence<T> { next: T }

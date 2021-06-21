@@ -2,8 +2,7 @@ import { Factory } from './Factory'
 
 describe('hello', () => {
   const factory = new Factory('Fancy Space Shoes', {});
-
-  beforeEach(() => factory.reboot())
+  beforeEach(factory.reboot)
 
   it('runs without error', () => {
     expect(factory.name).toMatch(/Shoes Factory/)
