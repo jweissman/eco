@@ -46,6 +46,13 @@ const bread = recipes.create({
 })
 jobs.set(zed, bread)
 
+// how could we model a simple merchant??
+// const bread = recipes.create({
+//   name: 'Bread',
+//   produces: { [Bread]: 1 },
+//   consumes: { [Wheat]: 5 }
+// })
+
 world.evolve(({ resources, animals }) => {
   animals.add(1, Fox)
   resources.add(1, Wheat)

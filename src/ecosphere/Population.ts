@@ -1,6 +1,7 @@
 import { isString } from "./utils/isString";
 import { boundMethod } from "autobind-decorator";
 import { Entity } from "./types";
+import { Sequence } from "../collections";
 
 class SetHelper {
   static first<T>(set: Set<T>): T { return set.values().next().value }
@@ -8,6 +9,7 @@ class SetHelper {
 
 // a collection of named individuals...
 export class Population<U, T extends Entity<U>> {
+  private ids: Sequence = new Sequence()
   constructor(
     public name: string,
     public species?: U,
@@ -75,6 +77,7 @@ export class Population<U, T extends Entity<U>> {
     return doneFor
   }
 
+
   public create(name: string): T;
   public create(attrs: Partial<T>): T;
   @boundMethod
@@ -88,17 +91,17 @@ export class Population<U, T extends Entity<U>> {
       ({ name, ...attributes } = attrs);
     }
     
-    const id = Math.max(0, ...this.ids) + 1;
+    const id = this.ids.next; //Math.max(0, ...this.ids) + 1;
     const theIndividual: T = { id, name, ...attributes } as unknown as T;
     this.individuals.add(theIndividual);
     return theIndividual;
   }
 
-  private get ids() {
-    const individualIds: number[] = []
-    this.individuals.forEach(({ id }) => individualIds.push(id));
-    return individualIds;
-  }
+  // private get ids() {
+  //   const individualIds: number[] = []
+  //   this.individuals.forEach(({ id }) => individualIds.push(id));
+  //   return individualIds;
+  // }
 
   public destroy(name: string): T;
   // public destroy(id: number): T;

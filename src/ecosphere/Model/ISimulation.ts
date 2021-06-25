@@ -1,6 +1,5 @@
-import { IList } from "../Collection";
+import { IList } from "../../collections/types";
 import { StepResult, TimeEvolution } from "../types";
-
 
 export interface ISimulation {
   name: string;

@@ -20,7 +20,7 @@ export type Creature<T> = Individual<T> & {
 }
 
 export type Animal = Creature<Species> & {
-  spirit: 'lazy' | 'languorous' | 'vigorous' | 'impetuous'
+  spirit: 'languorous' | 'vigorous' | 'impetuous' | 'ferocious'
   strength: 'weak' | 'robust' | 'mighty' | 'indomitable'
   cunning:  'dim' | 'attentive' | 'creative' | 'ingenious'
   agility:  'clumsy' | 'nimble' | 'spry' | 'balletic'
@@ -48,6 +48,7 @@ type Soul = {
   empathy: 'sadistic' | 'generous' | 'benevolent' | 'selfless'
   serendipity: 'spontaneous' | 'casual' | 'stern' | 'rigid'
   integrity: 'uncertain' | 'sound' | 'solid' | 'incorruptible'
+  beauty: 'ugly' | 'fair' | 'radiant' | 'resplendent'
 }
 
 // type Category = BasicEntity
@@ -64,11 +65,13 @@ export type Person = Individual<Moiety> & {
   rank: 'commoner' | 'wellborn'
   title?: string
   reputation: 'unknown' | 'worthy' | 'adored' | 'revered'
-  destiny: 'doomed' | 'commonplace' | 'exceptional' | 'free'
+
+  // individually...
   currency: number
   // memory: List<Event>
   // inventory: Stocks<Item> // hmmm, maybe we really want a map at a higher-level anyway
   // philosophy?: Ideology
+  // destiny: 'doomed' | 'commonplace' | 'exceptional' | 'free'
 }
 
 // const personId = sequence('id')

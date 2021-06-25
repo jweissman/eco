@@ -3,6 +3,7 @@ import { boundMethod } from 'autobind-decorator'
 import { where } from "./utils/where";
 import { isString } from "./utils/isString";
 import { ManageStock, ManageStocks } from "./types";
+import { Sequence } from "../collections";
 
 class StockManager<T extends BasicEntity> implements ManageStock<T> {
   constructor(private stocks: Stocks<T>, private stockId: number) {}
@@ -14,6 +15,7 @@ class StockManager<T extends BasicEntity> implements ManageStock<T> {
 }
 
 export class Stocks<T extends BasicEntity> {
+  private ids: Sequence = new Sequence()
   private storage: { [key: number]: number; } = {}
 
   constructor(
@@ -45,8 +47,8 @@ export class Stocks<T extends BasicEntity> {
       return this.manage(name);
     }
     if (!isString(name)) { throw new Error("Name must be a string") }
-    const elementIds: number[] = this.list().map(({ id }) => id);
-    const id = Math.max(0, ...elementIds) + 1;
+    // const elementIds: number[] = this.list().map(({ id }) => id);
+    const id = this.ids.next; //Math.max(0, ...elementIds) + 1;
     const theEntity: T = { id, name, ...attributes } as T
     this.list().push(theEntity);
     const manage: ManageStock<T> = this.manage(name as string)

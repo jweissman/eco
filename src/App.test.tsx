@@ -136,7 +136,7 @@ it('renders individuals and tasks', async () => {
 });
 
 it('renders tools', () => {
-  const tool = screen.getByText(/Control Panel/i);
+  const tool = screen.getByText(/Science Lab Controls/);
   expect(tool).toBeInTheDocument();
 });
 

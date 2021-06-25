@@ -9,11 +9,18 @@ export class Community extends Population<Moiety, Person> {
 
   get report(): { [personName: string]: string; } {
     const entries = this.list()
-      .map(person => [person.id, this.jobs.get(person).name]);
+      .map(person => [person.id, (this.jobs.get(person) || {name: '?'}).name]);
     return Object.fromEntries(entries);
   }
 
-  produce(recipe: Recipe, resources: { add: Function; remove: Function; count: Function; }) {
+  work({ resources }: { resources: { add: Function; remove: Function; count: Function; }; }): void {
+    const { report } = this.jobs;
+    Object.entries(report).forEach(([_workerName, recipe]: [string, Recipe]) => {
+      this.produce(recipe, resources);
+    });
+  }
+  
+  private produce(recipe: Recipe, resources: { add: Function; remove: Function; count: Function; }) {
     if (this.mayProduce(recipe, resources)) {
       if (recipe.consumes) {
         Object.entries(recipe.consumes).forEach(([resource, amount]) => {
@@ -38,10 +45,4 @@ export class Community extends Population<Moiety, Person> {
     return mayProduce;
   }
 
-  work({ resources }: { resources: { add: Function; remove: Function; count: Function; }; }): void {
-    const { report } = this.jobs;
-    Object.entries(report).forEach(([_workerName, recipe]: [string, Recipe]) => {
-      this.produce(recipe, resources);
-    });
-  }
 }

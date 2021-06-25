@@ -4,7 +4,7 @@ import './index.css';
 import App from './App';
 // import reportWebVitals from './reportWebVitals';
 // import Model from './ecosphere/Model';
-import { world } from './examples/hello';
+import { world } from './examples/World';
 
 const model = world; //new Model('hi')
 

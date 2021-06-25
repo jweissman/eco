@@ -3,7 +3,7 @@ import { BasicEntity } from "./types/BasicEntity";
 import { Entity, ManageStocks } from "./types";
 import { boundMethod } from "autobind-decorator";
 
-// eg map animal names to populations of individual animals...
+// eg map animal (species) names to populations of individual animals...
 export class Registry<U extends BasicEntity, T extends Entity<U>> {
   populations: { [species: string]: Population<U,T>; } = {};
   species: { [species: string]: U } = {}
@@ -57,7 +57,7 @@ export class Registry<U extends BasicEntity, T extends Entity<U>> {
       return this.lookup(name);
     }
     let theSpecies: U = { ...species, name, id: this.list().length+1 } as unknown as U; // species.kind points back to name...
-    let population = new Population<U,T>(name, theSpecies);
+    let population: Population<U,T> = new Population(name, theSpecies);
     this.populations[name] = population;
     this.species[name] = theSpecies;
     return population;
