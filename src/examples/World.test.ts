@@ -5,4 +5,8 @@ describe('hello', () => {
     expect(world.name).toMatch(/Writ/)
     expect(() => world.step()).not.toThrowError();
   })
+
+  it('has people', () => {
+    expect(world.people.count).toEqual(3)
+  })
 })

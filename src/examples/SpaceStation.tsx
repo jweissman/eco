@@ -1,7 +1,7 @@
 import Model from '../ecosphere/Model';
 
 // would be interesting to have parts as separate models
-// ie a model for the drive engine, the power system...
+// ie a model for the drive engine, the power system... :D
 
 export class SpaceStation extends Model {
   protected controls = {
@@ -20,6 +20,7 @@ export class SpaceStation extends Model {
     thrust: this.resources.create('Thrust'),
     xen: this.resources.create('Xenocite'),
   }
+
   constructor(name: string) {
     super(name);
     this.core.power.add(100);

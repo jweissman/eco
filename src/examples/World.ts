@@ -37,6 +37,10 @@ const zed = people.create(Zed)
 people.create(Cash)
 people.create(Raz)
 
+// zed.things.create('Gold')
+zed.things.add(10, 'Gold')
+zed.things.add(10, 'Apples')
+
 machines.create(Windmill);
 
 const bread = recipes.create({
@@ -57,6 +61,7 @@ world.evolve(({ resources, animals }) => {
   animals.add(1, Fox)
   resources.add(1, Wheat)
   world.people.work({ resources })
+  zed.things.remove(1, 'Gold')
 })
 
 export { world }

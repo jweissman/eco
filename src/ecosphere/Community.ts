@@ -1,17 +1,45 @@
 import { Map } from '../collections';
-import { Recipe, Moiety, Person } from "./types";
+import { Recipe, Moiety, Person, ManageStocks } from "./types";
 import { Population } from "./Population";
 import { Collection } from "./Collection";
+import { Stocks } from './Stocks';
+import { boundMethod } from 'autobind-decorator';
 
 export class Community extends Population<Moiety, Person> {
   public recipes = new Collection<Recipe>();
-  public jobs = new Map<Person, Recipe>(worker => worker.id, worker => worker.name, this.lookupById);
+  public jobs = new Map<Person, Recipe>(
+    worker => worker.id,
+    worker => worker.name,
+    this.lookupById
+  );
+
+  public inventories = new Map<Person, ManageStocks>(
+    worker => worker.id,
+    worker => worker.name,
+    this.lookupById
+  )
 
   get report(): { [personName: string]: string; } {
     const entries = this.list()
       .map(person => [person.id, (this.jobs.get(person) || {name: '?'}).name]);
     return Object.fromEntries(entries);
   }
+
+  // okay if we need to override create + build inventories let's do it ??
+  public create(name: string): Person;
+  public create(attrs: Partial<Person>): Person;
+  @boundMethod
+  public create(attrs: any) {
+    let person = super.create(attrs);
+    const inventory = new Stocks<any>(`${person.name}'s Things`)
+    person.things = inventory.manageAll()
+    return person
+  }
+
+  // people have inventories...
+  // and maybe they've declared what they want
+
+  // trade({ resources })
 
   work({ resources }: { resources: { add: Function; remove: Function; count: Function; }; }): void {
     const { report } = this.jobs;

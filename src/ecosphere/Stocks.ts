@@ -9,6 +9,7 @@ class StockManager<T extends BasicEntity> implements ManageStock<T> {
   constructor(private stocks: Stocks<T>, private stockId: number) {}
   add(amount: number): void { return this.stocks.add(amount, this.name) }
   remove(amount: number): void { return this.stocks.remove(amount, this.name) }
+  get list(): T[] { return this.stocks.list() }
   get count(): number { return this.stocks.count(this.name) }
   get name() { return this.item.name }
   get item(): T { return this.stocks.lookupById(this.stockId) }

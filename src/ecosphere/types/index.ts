@@ -46,7 +46,8 @@ type Mind = {
 type Soul = {
   wit: 'slow' | 'clever' | 'biting' | 'savage'
   empathy: 'sadistic' | 'generous' | 'benevolent' | 'selfless'
-  serendipity: 'spontaneous' | 'casual' | 'stern' | 'rigid'
+  // todo flip??
+  // serendipity: 'spontaneous' | 'casual' | 'stern' | 'rigid'
   integrity: 'uncertain' | 'sound' | 'solid' | 'incorruptible'
   beauty: 'ugly' | 'fair' | 'radiant' | 'resplendent'
 }
@@ -61,17 +62,19 @@ export type Person = Individual<Moiety> & {
   mind: Mind
   soul: Soul
 
+
   // ie within my moiety, I am (thought of as)...
   rank: 'commoner' | 'wellborn'
   title?: string
   reputation: 'unknown' | 'worthy' | 'adored' | 'revered'
 
   // individually...
+  things: ManageStocks //Stocks<Item> // hmmm, maybe we really want a map at a higher-level anyway
   currency: number
   // memory: List<Event>
-  // inventory: Stocks<Item> // hmmm, maybe we really want a map at a higher-level anyway
   // philosophy?: Ideology
   // destiny: 'doomed' | 'commonplace' | 'exceptional' | 'free'
+
 }
 
 // const personId = sequence('id')

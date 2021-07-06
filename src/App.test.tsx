@@ -12,6 +12,8 @@ const build: () => Model = () => {
   const captain = atlantis.people.create('Curtis Zechariah')
   const firstOfficer = atlantis.people.create('Lance Hammond')
 
+  captain.things.add(1000, 'Galactic Credits')
+
   atlantis.resources.create('Thrust')
   atlantis.resources.create('Xenocite')
 
@@ -42,6 +44,9 @@ const build: () => Model = () => {
     e.resources.remove(1, 'Air')
     if (t % 3 === 0) { e.resources.remove(1, 'Power') }
     atlantis.people.work({ resources: e.resources })
+
+    // cost of doin' business in this part of the galaxy
+    captain.things.remove(1, 'Galactic Credits')
   });
 
   return atlantis;
@@ -72,6 +77,12 @@ class Eco {
       const them = Eco.people.get(name);
       const amount = await within(them).findByTestId('Task')
       return String(amount.textContent);
+    },
+    count: async (name: string, itemName: string) => {
+      const them = Eco.people.get(name);
+      const inventory = await within(them).findByTestId('Inventory')
+      const item = await within(inventory).findByTestId(itemName)
+      return Number(item.textContent);
     }
   }
 
@@ -143,10 +154,16 @@ it('renders tools', () => {
 it('tracks resources over time', async () => {
   expect(await Eco.items.count('Air')).toEqual(100)
   expect(await Eco.items.count('Power')).toEqual(100)
+  expect(
+    await Eco.people.count('Curtis Zechariah', 'Galactic Credits')
+  ).toEqual(1000)
   const stepButton = await screen.findByText("Step")
   fireEvent.click(stepButton);
   expect(await Eco.items.count('Air')).toEqual(99)
   expect(await Eco.items.count('Power')).toEqual(49)
+  expect(
+    await Eco.people.count('Curtis Zechariah', 'Galactic Credits')
+  ).toEqual(999)
   fireEvent.click(stepButton);
   expect(await Eco.items.count('Air')).toEqual(98)
   expect(await Eco.items.count('Power')).toEqual(-1)

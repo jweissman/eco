@@ -8,6 +8,7 @@ describe('Factory', () => {
     expect(factory.name).toMatch(/Shoes Factory/)
     expect(() => factory.step()).not.toThrowError();
   })
+
   it('produces', () => {
     expect(factory.resources.count('Fancy Space Shoes')).toEqual(0)
     expect(factory.inventory.count).toEqual(0)
