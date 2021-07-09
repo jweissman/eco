@@ -8,13 +8,13 @@ export function presentIndividual(work: { [key: number]: string }) {
   return ({ id, name, things }: { id: number, name: string, things: ManageStocks }) => {
     // console.log(things.list())
     const itemNames = things.list().map(thing => thing.name)
-    console.log(itemNames)
+    // console.log(itemNames)
   return <li key={name} title={name} className='Item'>
     <span data-testid='Name'>{name}</span>
     <span data-testid='Status'>{work[id]}</span>
     <span data-testid='Inventory'>
       <ul>
-        {itemNames.map(it => <li>
+        {itemNames.map(it => <li key={it}>
           {it} <span data-testid={it}>{things.count(it)}</span>
         </li>)}
       </ul>

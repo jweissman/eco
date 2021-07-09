@@ -39,6 +39,8 @@ export class Community extends Population<Moiety, Person> {
   // people have inventories...
   // and maybe they've declared what they want
 
+  // measureTime(time: number): HumanCalendar {}
+
   // trade({ resources })
 
   work({ resources }: { resources: { add: Function; remove: Function; count: Function; }; }): void {
