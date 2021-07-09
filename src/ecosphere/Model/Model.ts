@@ -1,9 +1,10 @@
-import { Substance, Machine, Animal, Species } from "../types"
+import { Substance, Machine, Animal, Species, Action, Policy } from "../types"
 import { Stocks } from "../Stocks"
 import { Registry } from "../Registry"
 import { Simulation } from "./Simulation"
 import { IModel } from "./IModel"
 import { Community } from '../Community'
+import { Collection } from "../Collection"
 
 export class Model extends Simulation implements IModel  {
   public people    = new Community('people')
@@ -21,6 +22,39 @@ export class Model extends Simulation implements IModel  {
     this.machines.clear()
     this.animals.clear()
     this.dynamics.clear()
+  }
+
+  // interactive elements
+  public actions: Collection<Action> = new Collection<Action>()
+  public policies: Collection<Policy> = new Collection<Policy>()
+
+  send(actionName: string, args: any): void {
+    const action = this.actions.lookup(actionName) //[actionName]
+
+    if (action) {
+      action.act(args)
+    } else {
+      throw new Error(`No such action ${actionName}`)
+    }
+  }
+
+  currentPolicy: Policy | null = null
+  choose(policyName: string): void {
+    // console.log("[Model.choose]", policyName)
+    const policy = this.policies.lookup(policyName)
+    if (policy) {
+      this.currentPolicy = policy
+    } else {
+      throw new Error(`No such policy ${policyName}`)
+    }
+  }
+
+  public step() {
+    if (this.currentPolicy) {
+      // console.log("MANAGING", { policy: this.currentPolicy })
+      this.currentPolicy.manage()
+    }
+    return super.step()
   }
 }
 

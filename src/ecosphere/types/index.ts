@@ -3,7 +3,7 @@ import { BasicEntity } from "./BasicEntity"
 export type Substance = BasicEntity
 export type Entity<T> = BasicEntity & { kind: T }
 
-type Quality = 'terrible' | 'poor' | 'adequate' | 'good' | 'excellent'
+export type Quality = 'terrible' | 'poor' | 'adequate' | 'good' | 'excellent'
 type Size = 'fine' | 'small' | 'medium' | 'large' | 'huge'
 export type Species = BasicEntity & {
   name: string
@@ -135,3 +135,7 @@ export type StepResult = {
     [groupName: string]: { [elementName: string]: number }
   }
 }
+
+// todo move these model/sim things somewhere else???
+export type Action = { id: number, name: string, act: Function }
+export type Policy = { id: number, name: string, manage: Function }

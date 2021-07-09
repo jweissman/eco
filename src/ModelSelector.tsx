@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
 import { IModel } from "./ecosphere/Model/IModel";
@@ -6,8 +5,7 @@ import { ModelPresenter } from './ModelPresenter';
 import { useModel } from './useModel';
 
 export function ModelSelector({ initialModel, models }: { initialModel: IModel; models: IModel[]; }) {
-  const [model, setModel] = useState(initialModel);
-  const { step, lastChanges } = useModel(model);
+  const { step, send, choose, lastChanges, model, setModel } = useModel(initialModel);
   return <>
     <Dropdown
       options={models.map(model => model.name)}
@@ -19,7 +17,9 @@ export function ModelSelector({ initialModel, models }: { initialModel: IModel; 
       placeholder="Select a model" />
     <ModelPresenter
       step={step}
+      send={send}
       model={model}
+      choose={choose}
       lastChanges={lastChanges} />
   </>;
 }

@@ -6,12 +6,14 @@
   color: #eaeaea;
   padding: 10px;
   font-size: 10pt;
-  height: 100vh;
+  text-align: center;
+  /* height: 100vh; */
 }
 
 .App ul {
   padding: 7px;
 }
+
 .App ul > li {
   padding: 2px;
   list-style: none;

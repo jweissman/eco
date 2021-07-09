@@ -14,8 +14,11 @@ type ApplicationProps = {
 
 function App({ model: initialModel }: ApplicationProps) {
   const station = new SpaceStation('My Very Own Space Station')
-  const factory = new Factory('Socks')
+  const factory = new Factory('Zep')
   factory.reboot()
+  factory.product('Socks', {})
+  factory.product('Shoes', {})
+  factory.actions.create({ name: 'Spawn Worker', act: () => { factory.people.create('New Worker') }})
   const models = [ world, station, factory, town, Avernus ]
   return <div className="App">
     <ModelSelector models={models} initialModel={initialModel} />

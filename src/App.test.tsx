@@ -16,6 +16,7 @@ const build: () => Model = () => {
 
   atlantis.resources.create('Thrust')
   atlantis.resources.create('Xenocite')
+  atlantis.resources.create('Vigilance')
 
   atlantis.animals.create('Cat')
   atlantis.animals.add(1, 'Cat')
@@ -49,6 +50,24 @@ const build: () => Model = () => {
     captain.things.remove(1, 'Galactic Credits')
   });
 
+  atlantis.actions.create({
+    name: 'Ignite Thrusters',
+    act: () => {
+      atlantis.resources.add(1000, 'Thrust')
+    }
+  })
+
+  atlantis.policies.create({
+    name: 'Battle Stations',
+    manage: () => {
+      // console.log("BATTLE STATIONS!!!")
+      if (atlantis.resources.count('Vigilance') < 255) {
+        atlantis.resources.add(255, 'Vigilance')
+      }
+    }
+  })
+
+
   return atlantis;
 }
 
@@ -60,6 +79,23 @@ class Eco {
   // static get individuals() {
   //   return screen.getByLabelText('Individuals')
   // }
+  static actions = {
+    container: () => screen.getByLabelText('Actions'),
+    get: (name: string) => {
+      const actions = within(Eco.actions.container())
+      const theAction = actions.getByTitle(name)
+      return theAction
+    }
+  }
+
+  static policies = {
+    container: () => screen.getByLabelText('Policies'),
+    get: (name: string) => {
+      const policies = within(Eco.policies.container())
+      const thePolicy = policies.getByTitle(name)
+      return thePolicy
+    }
+  }
 
   static people = {
     container: () => screen.getByLabelText('People'),
@@ -184,6 +220,18 @@ it('tracks resource deltas over time', async () => {
   expect(await Eco.items.count('Power')).toEqual(49)
   expect(await Eco.items.delta('Air')).toEqual(-1)
   expect(await Eco.items.delta('Power')).toEqual(-51)
+})
+
+it('fires commands and sets policies for the sim', async () => {
+  const ignition = await Eco.actions.get('Ignite Thrusters')
+  fireEvent.click(ignition)
+  expect(await Eco.items.count('Thrust')).toEqual(1000)
+
+  const battleStations = await Eco.policies.get('Battle Stations')
+  fireEvent.click(battleStations)
+  const stepButton = await screen.findByText("Step")
+  fireEvent.click(stepButton);
+  expect(await Eco.items.count('Vigilance')).toEqual(255)
 })
  
 // test.todo('displays assigned tasks') //, async () => { })

@@ -1,15 +1,12 @@
 import { Machine, ManageStocks, Person } from "../types";
 import { LastDelta } from "../../ModelPresenter";
-import { presentItem } from "./presentItem";
+import { presentItem } from "../Model/presentItem";
+import './View.css';
 
-// jsx -- javascript extensions -- permits xhtml literals in code :)
-// tsx -- typing fragments that get erased as part of compile
 export function presentIndividual(work: { [key: number]: string }) {
   return ({ id, name, things }: { id: number, name: string, things: ManageStocks }) => {
-    // console.log(things.list())
-    const itemNames = things.list().map(thing => thing.name)
-    // console.log(itemNames)
-  return <li key={name} title={name} className='Item'>
+  const itemNames = things.list().map(thing => thing.name)
+  return <li key={id} title={name} className='Item'>
     <span data-testid='Name'>{name}</span>
     <span data-testid='Status'>{work[id]}</span>
     <span data-testid='Inventory'>
@@ -23,7 +20,6 @@ export function presentIndividual(work: { [key: number]: string }) {
   }
 }
 
-
 export type ModelViewProps = {
   modelName: string;
   items: { name: string; amount: number; }[];
@@ -31,10 +27,17 @@ export type ModelViewProps = {
   individuals: Person[];
   machines: Machine[];
   work: { [person: number]: string };
-  lastChanges: LastDelta; //{ resources: { [elementName: string]: number }};
+  lastChanges: LastDelta;
 }
 
-export function ModelView({
+const Tile: React.FC<{ title: string }> = ({ children, title }: { children?: React.ReactNode, title: string}) => {
+  return <div className={title}>
+    <h5>{title}</h5>
+    {children}
+  </div>
+}
+
+export function View({
   modelName,
   items,
   individuals,
@@ -43,27 +46,29 @@ export function ModelView({
   lastChanges,
   work
 }: ModelViewProps) {
-  return <>
+  return <div className='Model'>
     <h4 aria-label='Model Title'>{modelName}</h4>
-    <div>
-      <h5>ITEMS</h5>
+    <Tile title='Items'>
       <ul aria-label='Resources'>
         {items.map(presentItem(lastChanges.resources))}
       </ul>
-    </div>
-    <div>
-      <h5>ANIMALS</h5>
+    </Tile>
+    <Tile title='Animals'>
       <ul aria-label='Animals'>
         {animals.map(presentItem(lastChanges.animals))}
       </ul>
-    </div>
+    </Tile>
+    <div className='Tile'>
     <h5>INDIVIDUALS</h5>
     <ul aria-label='People'>
       {individuals.map(presentIndividual(work))} 
     </ul>
+    </div>
+    <div className='Tile'>
     <h5>MACHINES</h5>
     <ul>
       {machines.map(({ name }) => <li key={name}>{name}</li>)}
     </ul>
-  </>;
+    </div>
+  </div>;
 }

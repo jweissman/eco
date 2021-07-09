@@ -8,16 +8,16 @@ class SetHelper {
 }
 
 // a collection of named individuals...
-export class Population<U, T extends Entity<U>> {
+export class Population<Specie, Dividual extends Entity<Specie>> {
   private ids: Sequence = new Sequence()
   constructor(
     public name: string,
-    public species?: U,
-    private individuals: Set<T> = new Set(),
+    public species?: Specie,
+    private individuals: Set<Dividual> = new Set(),
   ) {}
 
   list() { 
-    const theList: T[] = []
+    const theList: Dividual[] = []
     this.individuals.forEach(individual => theList.push(individual))
     return theList;
   }
@@ -25,7 +25,7 @@ export class Population<U, T extends Entity<U>> {
   get first() { 
     return SetHelper.first(this.individuals)
    }
-  public lookup(name: string): T {
+  public lookup(name: string): Dividual {
     let theIndividual = null;
     this.individuals.forEach(individual => {
       if (individual.name === name) {
@@ -37,7 +37,7 @@ export class Population<U, T extends Entity<U>> {
   }
 
   @boundMethod
-  public lookupById(id: number): T {
+  public lookupById(id: number): Dividual {
     let theIndividual = null;
     this.individuals.forEach(individual => {
       if (individual.id === id) {
@@ -48,12 +48,12 @@ export class Population<U, T extends Entity<U>> {
     throw new Error(`Could not find individual with id ${id} in the population of ${this.name}`)
   };
 
-  public birth(name: string = `${this.name} ${this.count}`): T {
+  public birth(name: string = `${this.name} ${this.count}`): Dividual {
     const newborn = this.create(name)
     return newborn
   }
 
-  public death(name: string = this.first.name): T {
+  public death(name: string = this.first.name): Dividual {
     const doomed = this.destroy(name)
     if (doomed) {
       return doomed
@@ -78,12 +78,12 @@ export class Population<U, T extends Entity<U>> {
   }
 
 
-  public create(name: string): T;
-  public create(attrs: Partial<T>): T;
+  public create(name: string): Dividual;
+  public create(attrs: Partial<Dividual>): Dividual;
   @boundMethod
   public create(attrs: any) {
     let name = null;
-    let attributes: Partial<T> = {};
+    let attributes: Partial<Dividual> = {};
     if (isString(attrs)) {
       name = attrs;
       attributes.name = name;
@@ -92,7 +92,7 @@ export class Population<U, T extends Entity<U>> {
     }
     
     const id = this.ids.next; //Math.max(0, ...this.ids) + 1;
-    const theIndividual: T = { id, name, ...attributes } as unknown as T;
+    const theIndividual: Dividual = { id, name, ...attributes } as unknown as Dividual;
     this.individuals.add(theIndividual);
     return theIndividual;
   }
@@ -103,11 +103,11 @@ export class Population<U, T extends Entity<U>> {
   //   return individualIds;
   // }
 
-  public destroy(name: string): T;
+  public destroy(name: string): Dividual;
   // public destroy(id: number): T;
   @boundMethod
   public destroy(name: string) {
-    const theIndividual: T = this.lookup(name) //this.individuals.find((it) => it.name === name) as unknown as T;
+    const theIndividual: Dividual = this.lookup(name) //this.individuals.find((it) => it.name === name) as unknown as T;
     this.individuals.delete(theIndividual);
     // this.individuals = this.individuals.remofilter(it => it.id === theIndividual.id);
     return theIndividual;

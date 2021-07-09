@@ -1,0 +1,11 @@
+.Model {
+  display: flex;
+  flex-direction: column;
+  padding: 2px;
+}
+
+.Model .Tile {
+  padding: 2px;
+  color: #d0d0d0;
+}
+
