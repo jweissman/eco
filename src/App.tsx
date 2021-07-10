@@ -13,18 +13,29 @@ type ApplicationProps = {
   model: IModel
 }
 
-const ids = new Sequence()
-function App({ model: initialModel }: ApplicationProps) {
-  const station = new SpaceStation('My Very Own Space Station')
+const clothingFactory = () => {
   const factory = new Factory('Zep')
   factory.reboot()
   factory.product('Socks', {})
   factory.product('Shoes', {})
+  factory.product('Hat', {})
+  factory.product('Underwear', {})
+  factory.product('Pants', {})
+  // todo production diagrams!!
+  // factory.product('Outfit', { 'Pants': 1, 'Hat': 1, 'Shoes': 1 })
   factory.people.create('Operations Chief')
   factory.people.create('Engineer')
   factory.people.create('Plant Manager')
+
   factory.actions.create({ name: 'Spawn Worker', act: () => { factory.people.create(`Employee #${ids.next}`) }})
-  const models = [ world, station, factory, town, Avernus ]
+  return factory;
+}
+
+const ids = new Sequence()
+function App({ model: initialModel }: ApplicationProps) {
+  const station = new SpaceStation('My Very Own Space Station')
+  
+  const models = [ world, station, clothingFactory(), town, Avernus ]
   return <div className="App">
     <ModelSelector models={models} initialModel={initialModel} />
   </div>;

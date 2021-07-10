@@ -1,15 +1,14 @@
 import { boundMethod } from 'autobind-decorator'
-import { List } from '../collections'
+import { List, Sequence } from '../collections'
 import { Collection } from '../ecosphere/Collection';
 import Model from '../ecosphere/Model'
 import { ManageStocks, Person, Recipe, TimeEvolution } from '../ecosphere/types'
-import { randomInteger } from '../ecosphere/utils/randomInteger';
 import { unique } from '../ecosphere/utils/unique';
 import { where } from '../ecosphere/utils/where';
 
 type Currency = number
 type Order = { [itemName: string]: number }
-type Bill = { order: Order, price: Currency, account: Receivable }
+type Bill = { id: number, order: Order, price: Currency, account: Receivable }
 interface Receivable {
   receive(items: any[], bill: Bill): Currency
 }
@@ -26,9 +25,9 @@ export class Factory extends Model {
   private bills = new List<Bill>()
 
   metrics = {
-    'Delivery Speed': () => this.deliveryRate,
-    'Total Deliveries': () => this.fulfillmentEvents.length,
-    'Orders Queued': () => this.bills.count
+    'Production Speed': () => this.deliveryRate,
+    'Total Fulfillments': () => this.fulfillmentEvents.length,
+    'Orders In Queue': () => this.bills.count
   }
 
   metricGrain = 100
@@ -36,7 +35,7 @@ export class Factory extends Model {
     // let grain = 100
     // check for event order:fulfilled??
     // return this.events.list().filter(e => e.at > this.ticks-grain).length / grain
-    return this.recentEvents.filter(e => e.kind === 'order:fulfilled').length / this.metricGrain
+    return this.recentEvents.filter(where('kind', 'order:fulfilled')).length / this.metricGrain
   }
 
   get recentEvents() {
@@ -44,7 +43,7 @@ export class Factory extends Model {
   }
 
   get fulfillmentEvents() {
-    return this.events.list().filter(e => e.kind === 'order:fulfilled')
+    return this.events.list().filter(where('kind', 'order:fulfilled'))
   }
 
   // TODO measure delivery rate? 'metric' model??
@@ -80,27 +79,32 @@ export class Factory extends Model {
     this.evolve(this.evolution)
 
     this.policies.create({ name: 'FIFO', manage: () => {
-      const { unfulfilled } = this
-      if (unfulfilled.length > 0) {
+      // const { unfulfilled } = this
+      // if (unfulfilled.length > 0) {
         const firstUnfulfilled = this.unfulfilled(this.bills.first)[0]
         const produceUnfulfilled = this.workers.recipes.lookup(firstUnfulfilled)
         if (produceUnfulfilled) {
           this.workers.list().forEach(worker => this.assign(worker, produceUnfulfilled))
         }
-      }
+      // }
     }})
     this.policies.create({ name: 'Round Robin', manage: () => {
-      const { unfulfilled } = this
-      if (unfulfilled.length > 0) {
-        const allUnfulfilled = unique(this.bills.items.flatMap(bill => this.unfulfilled(bill)))
+      // const { unfulfilled } = this
+      // if (unfulfilled.length > 0) {
+        // console.log({ items: this.bills.items })
+        // okay, so we'll ONLY work on things we can't have *any* orders of..
+        const allBillsRequested = unique(this.bills.items.flatMap(bill => {
+          return this.unfulfilled(bill)
+        }))
+        // console.log("ROUND ROBIN", { billCount: this.bills.count, allUnfulfilled, billItems: this.bills.items })
         this.workers.list().forEach((worker, i) => {
-          const nextUnfulfilled = allUnfulfilled[i % allUnfulfilled.length]
+          const nextUnfulfilled = allBillsRequested[(i % (allBillsRequested.length))]
           const produceUnfulfilled = this.workers.recipes.lookup(nextUnfulfilled)
           if (produceUnfulfilled) {
             this.assign(worker, produceUnfulfilled)
           }
         })
-      }
+      // }
     }})
 
     this.choose('FIFO')
@@ -117,6 +121,7 @@ export class Factory extends Model {
         unfulfilled.push(item)
       }
     })
+    // console.log("Unfulfilled from bill: " + inspect(bill.order))
     return unfulfilled
   }
 
@@ -129,8 +134,10 @@ export class Factory extends Model {
   }
 
 
+  orderIds = new Sequence()
   order(count: number, itemName: string, account: Receivable): Bill {
     const bill: Bill = {
+      id: this.orderIds.next,
       order: { [itemName]: count },
       account,
       price: count
@@ -143,19 +150,22 @@ export class Factory extends Model {
   private manage(resources: ManageStocks) {
     if (this.bills.count === 0) return;
 
-    const bill = this.bills.first;
-    const orderItemNames = Object.keys(bill.order)
-    const unfilled = this.unfulfilled(bill)
-    const allFulfilled = unfilled.length === 0
+    // const bill = this.bills.first;
+    this.bills.each(bill => {
+      const orderItemNames = Object.keys(bill.order)
+      const unfilled = this.unfulfilled(bill)
+      const allFulfilled = unfilled.length === 0
 
-    if (allFulfilled) {
-      bill.account.receive([], bill)
-      orderItemNames.forEach(item => {
-        resources.remove(bill.order[item], item)
-      })
-      this.bills.remove(bill)
-      this.emit('order:fulfilled', `An order for ${orderItemNames.join(',')} has been fulfilled`)
-    }
+      if (allFulfilled) {
+        bill.account.receive([], bill)
+        orderItemNames.forEach(item => {
+          this.resources.remove(bill.order[item], item)
+        })
+        this.bills.remove(bill)
+        this.emit('order:fulfilled', `An order for ${orderItemNames.join(',')} has been fulfilled`)
+      }
+    })
+
     if (this.currentPolicy) {
       this.currentPolicy.manage()
     } else {

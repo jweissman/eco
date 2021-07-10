@@ -53,7 +53,8 @@ export function ModelPresenter({ model, send, choose, step, lastChanges }: Model
         </button>)}
       </span>
 
-      <span title='Policies'>
+      {model.policies.count > 0 && <div className='Policy' title='Policies'>
+        {/* <h5>Policies</h5> */}
         {model.policies.list().map(({ name }) => <label key={name}><input
           type='radio'
           checked={model.currentPolicy?.name === name}
@@ -63,7 +64,7 @@ export function ModelPresenter({ model, send, choose, step, lastChanges }: Model
         />
         {name}
         </label>)}
-      </span>
+      </div>}
     </div>
   </>;
 }

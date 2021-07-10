@@ -1,11 +1,52 @@
 .Model {
   display: flex;
-  flex-direction: column;
+  flex-direction: row-wrap;
   padding: 2px;
 }
 
 .Model .Tile {
-  padding: 2px;
-  color: #d0d0d0;
+  /* margin-top: 10px; */
+  font-size: 10px;
+  min-width: 200px;
+  min-height: 140px;
+  /* height: 50%; */
+  color: #7d7d7d;
+  overflow: hidden;
+  overflow-y: overlay;
+  /* border: 1px solid #4d6543; */
+  margin: 20px 1px;
+  padding: 2px 4px;
+  background: #101010
 }
 
+.Model .Tile .Title {
+  font-size: 12px;
+  /* color: #474747; */
+  /* color: #eaeaea; */
+  color: #306d54;
+}
+
+.Model .Tile > .Title {
+  font-size: 12px;
+  /* color: #474747; */
+  /* color: #eaeaea; */
+  color: #309a6e;
+}
+
+.Item .Subitems {
+  font-size: 8px;
+  padding: 1px;
+  border-radius: 8px;
+  margin-bottom: 4px;
+}
+
+.Item .Subitems .Count {
+  /* color: #aab2c1; */
+}
+
+.Policy {
+  color: #eaeaea;
+  width: 200px;
+  margin: 14px auto;
+  padding: 4px;
+}
