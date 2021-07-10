@@ -38,7 +38,7 @@ export function useModel(initialModel: IModel): ModelAPI { //model: IModel = new
 
   useEffect(() => {
     if (shouldManage) {
-      if (command) { model.choose(policy, {}) }
+      if (policy) { model.choose(policy, {}) }
       doManage(false)
     }
   }, [policy, model, shouldManage]);

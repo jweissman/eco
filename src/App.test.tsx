@@ -67,6 +67,8 @@ const build: () => Model = () => {
     }
   })
 
+  atlantis.metrics = { 'Deuterium Burn Rate': () => 100 }
+
 
   return atlantis;
 }
@@ -80,7 +82,7 @@ class Eco {
   //   return screen.getByLabelText('Individuals')
   // }
   static actions = {
-    container: () => screen.getByLabelText('Actions'),
+    container: () => screen.getByTitle('Actions'),
     get: (name: string) => {
       const actions = within(Eco.actions.container())
       const theAction = actions.getByTitle(name)
@@ -89,11 +91,25 @@ class Eco {
   }
 
   static policies = {
-    container: () => screen.getByLabelText('Policies'),
+    container: () => screen.getByTitle('Policies'),
     get: (name: string) => {
       const policies = within(Eco.policies.container())
       const thePolicy = policies.getByTitle(name)
       return thePolicy
+    }
+  }
+
+  static metrics = {
+    container: () => screen.getByTitle('Metrics'),
+    get: (name: string) => {
+      const measurements = within(Eco.metrics.container());
+      const theMetric = (measurements.getByTitle(name));
+      return theMetric;
+    },
+    count: async (name: string) => {
+      const it = Eco.metrics.get(name);
+      const amount = await within(it).findByTestId('Count')
+      return Number(amount.textContent);
     }
   }
 
@@ -222,16 +238,23 @@ it('tracks resource deltas over time', async () => {
   expect(await Eco.items.delta('Power')).toEqual(-51)
 })
 
-it('fires commands and sets policies for the sim', async () => {
+it('fires commands to the sim', async () => {
   const ignition = await Eco.actions.get('Ignite Thrusters')
   fireEvent.click(ignition)
   expect(await Eco.items.count('Thrust')).toEqual(1000)
+})
 
+it('sets policies for the sim', async () => {
   const battleStations = await Eco.policies.get('Battle Stations')
   fireEvent.click(battleStations)
   const stepButton = await screen.findByText("Step")
   fireEvent.click(stepButton);
   expect(await Eco.items.count('Vigilance')).toEqual(255)
+})
+
+it('displays metrics from the sim', async () => {
+  const fuelBurn = await Eco.metrics.count('Deuterium Burn Rate')
+  expect(fuelBurn).toEqual(100)
 })
  
 // test.todo('displays assigned tasks') //, async () => { })

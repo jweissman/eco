@@ -4,7 +4,7 @@ import { Entity, EvolvingStocks, TimeEvolution } from "../types";
 import { ISimulation } from "./ISimulation";
 
 export abstract class Simulation implements ISimulation {
-  private ticks: number = 0;
+  protected ticks: number = 0;
   protected tracking: string[] = []
   public dynamics = new List<TimeEvolution>()
   constructor(public name: string) { }

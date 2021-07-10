@@ -4,7 +4,10 @@ describe('Factory', () => {
   const factory = new Factory('Zep Step');
   beforeEach(() => {
     factory.reboot()
+    factory.people.create("A Worker")
+    factory.choose('FIFO')
     factory.product('Fancy Space Shoes', {})
+    factory.product('Fancy Space Helmet', {})
   })
 
   it('runs without error', () => {
@@ -62,5 +65,18 @@ describe('Factory', () => {
   it('defines a policy', () => {
     expect(factory.policies.names).toContain('FIFO')
     expect(factory.policies.names).toContain('Round Robin')
+
+    factory.people.create("Another Worker")
+    factory.choose('Round Robin')
+    let receiver = jest.fn()
+    factory.send('Order Fancy Space Shoes', { count: 3, deliverTo: { receive: receiver } })
+    factory.send('Order Fancy Space Helmet', { count: 3, deliverTo: { receive: receiver } })
+    factory.step()
+    factory.step()
+    factory.step() // okay but :) yeah this is flaky
+
+    expect(receiver).not.toHaveBeenCalled()
+    factory.step()
+    expect(receiver).toHaveBeenCalled()
   })
 })

@@ -28,10 +28,11 @@ export type ModelViewProps = {
   machines: Machine[];
   work: { [person: number]: string };
   lastChanges: LastDelta;
+  metrics: { [name: string]: number }; //[ { name: string, value: number} ];
 }
 
 const Tile: React.FC<{ title: string }> = ({ children, title }: { children?: React.ReactNode, title: string}) => {
-  return <div className={title}>
+  return <div className={title} title={title}>
     <h5>{title}</h5>
     {children}
   </div>
@@ -44,6 +45,7 @@ export function View({
   machines,
   animals,
   lastChanges,
+  metrics,
   work
 }: ModelViewProps) {
   return <div className='Model'>
@@ -53,22 +55,29 @@ export function View({
         {items.map(presentItem(lastChanges.resources))}
       </ul>
     </Tile>
-    <Tile title='Animals'>
-      <ul aria-label='Animals'>
-        {animals.map(presentItem(lastChanges.animals))}
+    {animals.length > 0 && (
+      <Tile title='Animals'>
+        <ul aria-label='Animals'>
+          {animals.map(presentItem(lastChanges.animals))}
+        </ul>
+      </Tile>)}
+    {individuals.length > 0 && <Tile title='Individuals'>
+      <ul aria-label='People'>
+        {individuals.map(presentIndividual(work))}
+      </ul>
+    </Tile>}
+    {machines.length > 0 && <Tile title='Machines'>
+      <ul>
+        {machines.map(({ name }) => <li key={name}>{name}</li>)}
+      </ul>
+    </Tile>}
+    <Tile title='Metrics'>
+      <ul>
+        {Object.entries(metrics).map(([name, value]) => <li title={name} key={name}>
+          {name}
+          <span data-testid='Count'>{value}</span>
+        </li>)}
       </ul>
     </Tile>
-    <div className='Tile'>
-    <h5>INDIVIDUALS</h5>
-    <ul aria-label='People'>
-      {individuals.map(presentIndividual(work))} 
-    </ul>
-    </div>
-    <div className='Tile'>
-    <h5>MACHINES</h5>
-    <ul>
-      {machines.map(({ name }) => <li key={name}>{name}</li>)}
-    </ul>
-    </div>
   </div>;
 }

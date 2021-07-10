@@ -12,7 +12,7 @@ type ModelPresenterProps = {
 }
 
 const view = (model: IModel, lastChanges: LastDelta) => {
-  const { actions, resources, people, machines, animals } = model;
+  const { actions, resources, people, machines, animals, metrics } = model;
 
   const props = {
     modelName: model.name,
@@ -22,6 +22,10 @@ const view = (model: IModel, lastChanges: LastDelta) => {
     machines: machines.list(),
     animals: animals.report,
     actions: actions.list(),
+    metrics: Object.fromEntries(
+      Object.entries(metrics).map(
+        ([key, value]) => [key, (value as any as Function)()])
+      ),
     lastChanges,
   }
 
@@ -31,25 +35,35 @@ const view = (model: IModel, lastChanges: LastDelta) => {
 export function ModelPresenter({ model, send, choose, step, lastChanges }: ModelPresenterProps) {
   return <>
     <div aria-label='View'>
+      {/* <h5>MODEL VIEW</h5> */}
+
       <ModelView {...view(model, lastChanges)} />
     </div>
 
-    <div aria-label='Run'>
-      <button onClick={() => step(true)}>Step</button>
+    <div aria-label='Controls'>
+      {/* <h5>CONTROLS</h5> */}
+
+      <span title='Run' style={{display: 'none'}}>
+        <button onClick={() => step(true)}>Step</button>
+      </span>
+
+      <span title='Actions'>
+        {model.actions.list().map(({ name }) => <button title={name} key={name} onClick={() => send(name)}>
+          {name}
+        </button>)}
+      </span>
+
+      <span title='Policies'>
+        {model.policies.list().map(({ name }) => <label key={name}><input
+          type='radio'
+          checked={model.currentPolicy?.name === name}
+          title={name}
+          key={name}
+          onChange={() => choose(name)}
+        />
+        {name}
+        </label>)}
+      </span>
     </div>
-
-    {/* <h5>Commands</h5> */}
-    <ul aria-label='Actions'>
-      {model.actions.list().map(({ name }) => <button title={name} key={name} onClick={() => send(name)}>
-        {name}
-      </button>)}
-    </ul>
-
-    {/* <h5>Policies</h5> */}
-    <ul aria-label='Policies'>
-      {model.policies.list().map(({ name }) => <button title={name} key={name} onClick={() => choose(name)}>
-        {name}
-      </button>)}
-    </ul>
   </>;
 }

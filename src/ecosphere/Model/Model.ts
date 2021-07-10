@@ -22,7 +22,11 @@ export class Model extends Simulation implements IModel  {
     this.machines.clear()
     this.animals.clear()
     this.dynamics.clear()
+
   }
+
+  // measurements
+  public metrics: { [name: string]: () => number } = {}
 
   // interactive elements
   public actions: Collection<Action> = new Collection<Action>()
@@ -38,7 +42,7 @@ export class Model extends Simulation implements IModel  {
     }
   }
 
-  currentPolicy: Policy | null = null
+  currentPolicy: Policy | undefined
   choose(policyName: string): void {
     // console.log("[Model.choose]", policyName)
     const policy = this.policies.lookup(policyName)
