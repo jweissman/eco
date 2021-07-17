@@ -7,6 +7,6 @@ describe('hello', () => {
   })
 
   it('has people', () => {
-    expect(world.people.count).toEqual(3)
+    expect(world.people.lookup('Rippenwaterans').count).toEqual(3)
   })
 })

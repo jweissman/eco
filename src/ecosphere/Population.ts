@@ -8,7 +8,9 @@ class SetHelper {
 }
 
 // a collection of named individuals...
+const populationIds: Sequence = new Sequence()
 export class Population<Specie, Dividual extends Entity<Specie>> {
+  public id = populationIds.next
   private ids: Sequence = new Sequence()
   constructor(
     public name: string,

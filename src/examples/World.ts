@@ -24,7 +24,8 @@ const Windmill = 'Windmill';
 
 const world = new Model('Township of Writ-upon-Water')
 const { resources, animals, people, machines } = world
-const { recipes, jobs } = people
+const townsfolk = people.create('Rippenwaterans')
+const { recipes, jobs } = townsfolk
 
 resources.create(Fish)
 resources.create(Wheat)
@@ -33,9 +34,9 @@ resources.create(Bread)
 animals.create(Fox)
 animals.create(Rabbit)
 
-const zed = people.create(Zed)
-people.create(Cash)
-people.create(Raz)
+const zed = townsfolk.create(Zed)
+townsfolk.create(Cash)
+townsfolk.create(Raz)
 
 // zed.things.create('Gold')
 zed.things.add(10, 'Gold')
@@ -60,7 +61,7 @@ jobs.set(zed, bread)
 world.evolve(({ resources, animals }) => {
   animals.add(1, Fox)
   resources.add(1, Wheat)
-  world.people.work({ resources })
+  townsfolk.work({ resources })
   zed.things.remove(1, 'Gold')
 })
 

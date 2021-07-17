@@ -21,8 +21,12 @@ export class SpaceStation extends Model {
     xen: this.resources.create('Xenocite'),
   }
 
+  get crew() { return this.people.lookup('Crew') }
+
   constructor(name: string) {
     super(name);
+    this.people.create('Crew')
+
     this.core.power.add(100);
     this.core.thrust.add(0);
     this.core.cpu.add(100);

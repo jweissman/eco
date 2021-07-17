@@ -1,9 +1,11 @@
 import { Substance, Machine, Animal, Species, Person, Moiety, Action, Policy } from "../types";
 import { Stocks } from "../Stocks";
 import { Registry } from "../Registry";
-import { Population } from "../Population";
+// import { Population } from "../Population";
 import { ISimulation } from "./ISimulation";
 import { Collection } from "../Collection";
+import { Community } from "../Community";
+import { Population } from "../Population";
 
 export interface IModel extends ISimulation {
   currentPolicy?: Policy;
@@ -15,8 +17,10 @@ export interface IModel extends ISimulation {
 
   resources: Stocks<Substance>;
   machines: Stocks<Machine>;
-  animals: Registry<Species, Animal>;
-  people: Population<Moiety, Person>;
+  animals: Registry<Species, Animal, Population<Species, Animal>>;
+  people: Registry<Moiety, Person, Community>;
+  // people: Registry<Moiety, Person>
+  // people: Registry<Moiety, Population<Moiety, Person>>;
   metrics: { [key: string]: () => number };
   // recipes: IList<Recipe>;
   // tasks: IList<Task>;

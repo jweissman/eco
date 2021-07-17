@@ -18,8 +18,9 @@ const view = (model: IModel, lastChanges: LastDelta) => {
   const props = {
     modelName: model.name,
     items: resources.report,
-    individuals: people.list(),
-    work: people.report,
+    communities: people.populationList, //.populations,
+    // individuals: people.list(),
+    // work: people.report,
     machines: machines.list(),
     animals: animals.report,
     actions: actions.list(),
@@ -38,6 +39,7 @@ export function ModelPresenter({ model, send, choose, step, lastChanges }: Model
     <div aria-label='View'>
       {/* <h5>MODEL VIEW</h5> */}
 
+      {/* @ts-ignore */}
       <ModelView {...view(model, lastChanges)} />
     </div>
 

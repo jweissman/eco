@@ -16,8 +16,10 @@ const { people, animals } = town
 
 animals.create('Fish')
 
-const wishes = people.create('Aloysius')
-const bart = people.create('Bartholomew')
+const townies = people.create('Townsfolk')
+
+const wishes = townies.create('Aloysius')
+const bart = townies.create('Bartholomew')
 // const cash = people.create('Cassius')
 // const flipCoin = () => Math.random() > 0.5 
 

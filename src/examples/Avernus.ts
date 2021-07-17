@@ -10,20 +10,21 @@ const give = (recipient: Person, supplier: Person, n: number, item: string) => {
 
 const world = new Model('Avernus')
 const { resources, animals, people, machines } = world
-const { recipes, jobs } = people
+const folks = people.create('Townspeople')
+const { recipes, jobs } = folks
 
 animals.create('Fish')
 // resources.create('Fish')
 
 
 // const king = people.create('Maurice')
-const miner = people.create('Goldstrom')
-const minter = people.create('Octavius')
-const smelter = people.create('Smeltmore')
+const miner = folks.create('Goldstrom')
+const minter = folks.create('Octavius')
+const smelter = folks.create('Smeltmore')
 // //const sheriff = people.create('Donald')
 // const claydigger = people.create('Bartlett')
 // const artist = people.create('Joseph')
-const fisherman = people.create('Harold')
+const fisherman = folks.create('Harold')
 // const chef = people.create('Jethro')
 // const merchant = people.create('Reginald')
 
@@ -109,7 +110,7 @@ jobs.set(smelter, smeltGold)
 world.evolve(({ resources, animals }, t) => {
   // animals.add(1, 'Swimming Fish')
 
-  world.people.work({ resources })
+  folks.work({ resources })
 
   // employment
   if (t % 10 === 0) {

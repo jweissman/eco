@@ -9,8 +9,8 @@ import { IModel } from "./ecosphere/Model/IModel";
 const build: () => Model = () => {
   const atlantis = new SpaceStation('Atlantis Station')
 
-  const captain = atlantis.people.create('Curtis Zechariah')
-  const firstOfficer = atlantis.people.create('Lance Hammond')
+  const captain = atlantis.crew.create('Curtis Zechariah')
+  const firstOfficer = atlantis.crew.create('Lance Hammond')
 
   captain.things.add(1000, 'Galactic Credits')
 
@@ -22,14 +22,14 @@ const build: () => Model = () => {
   atlantis.animals.add(1, 'Cat')
 
   // const synthXenocite = 'Synthesize Xenocite'
-  const xenocite = atlantis.people.recipes.create({
+  const xenocite = atlantis.crew.recipes.create({
     name: 'Xenocite',
     produces: { Xenocite: 100 },
     consumes: { Power: 20 }
   })
 
   // const drive = 'Drive Ship'
-  const drive = atlantis.people.recipes.create({
+  const drive = atlantis.crew.recipes.create({
     name: 'Drive',
     produces: { Thrust: 100 },
     consumes: { Power: 30 }
@@ -38,13 +38,13 @@ const build: () => Model = () => {
   // const mainThrusters = atlantis.people.tasks.create({ name: 'Accelerate', recipe: drive })
   // const makeXenocite = atlantis.people.tasks.create({ name: 'Make Xenocite', recipe: synthXenocite })
 
-  atlantis.people.jobs.set(captain, xenocite)
-  atlantis.people.jobs.set(firstOfficer, drive)
+  atlantis.crew.jobs.set(captain, xenocite)
+  atlantis.crew.jobs.set(firstOfficer, drive)
 
   atlantis.evolve((e: EvolvingStocks, t: number) => {
     e.resources.remove(1, 'Air')
     if (t % 3 === 0) { e.resources.remove(1, 'Power') }
-    atlantis.people.work({ resources: e.resources })
+    atlantis.crew.work({ resources: e.resources })
 
     // cost of doin' business in this part of the galaxy
     captain.things.remove(1, 'Galactic Credits')

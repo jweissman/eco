@@ -4,17 +4,21 @@ import { Entity, ManageStocks } from "./types";
 import { boundMethod } from "autobind-decorator";
 
 // eg map animal (species) names to populations of individual animals...
-export class Registry<U extends BasicEntity, T extends Entity<U>> {
-  populations: { [species: string]: Population<U,T>; } = {};
+
+export class Registry<U extends BasicEntity, T extends Entity<U>, Pop extends Population<U,T>> {
+  populations: { [species: string]: Pop } = {};
   species: { [species: string]: U } = {}
-  constructor(public name: string) { }
+  constructor(
+    public name: string,
+    public popCtor: new (name: string, specie: U) => Pop
+  ) {}
 
   clear() {
     this.populations = {}
   }
 
   @boundMethod
-  lookup(name: string): Population<U,T> {
+  lookup(name: string): Pop {
     if (this.has(name)) {
       return this.populations[name];
     } else {
@@ -52,12 +56,12 @@ export class Registry<U extends BasicEntity, T extends Entity<U>> {
   }
 
   @boundMethod
-  create(name: string, species?: Omit<U, 'name' | 'id'>): Population<U,T> {
+  create(name: string, species?: Omit<U, 'name' | 'id'>): Pop { //Population<U,T> {
     if (this.has(name)) {
       return this.lookup(name);
     }
     let theSpecies: U = { ...species, name, id: this.list().length+1 } as unknown as U; // species.kind points back to name...
-    let population: Population<U,T> = new Population(name, theSpecies);
+    let population: Pop = new this.popCtor(name, theSpecies);
     this.populations[name] = population;
     this.species[name] = theSpecies;
     return population;

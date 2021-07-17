@@ -63,6 +63,7 @@ export class Factory extends Model {
   @boundMethod
   reboot() {
     this.reset()
+    this.people.create('Workers')
     this.bills.clear()
     this.evolve(this.evolution)
     this.policies.create({ name: 'FIFO', manage: () => {
@@ -175,7 +176,7 @@ export class Factory extends Model {
     return bill
   }
 
-  private get workers() { return this.people }
+  get workers() { return this.people.lookup('Workers') }
   private manage(resources: ManageStocks) {
     if (this.bills.count === 0) return;
 

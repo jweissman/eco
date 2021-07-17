@@ -1,7 +1,7 @@
 import { Model } from "./Model";
 import { Registry } from "./Registry";
 import { Stocks } from "./Stocks";
-export type DeltaSource = Stocks<any> | Registry<any, any> 
+export type DeltaSource = Stocks<any> | Registry<any, any, any> 
 //<U extends BasicEntity, T extends Entity<U>> = Stocks<T> | Registry<U,T>
 export type DeltaSourceManager = { add: Function, remove: Function, count: Function, list: Function }
 export class Delta {

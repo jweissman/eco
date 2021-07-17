@@ -1,20 +1,27 @@
-import { Substance, Machine, Animal, Species, Action, Policy } from "../types"
+import { Substance, Machine, Animal, Species, Action, Policy, Moiety, Person } from "../types"
 import { Stocks } from "../Stocks"
 import { Registry } from "../Registry"
 import { Simulation } from "./Simulation"
 import { IModel } from "./IModel"
-import { Community } from '../Community'
+// import { Community } from '../Community'
 import { Collection } from "../Collection"
+import { Community } from "../Community"
+import { Population } from "../Population"
+// import { Population } from "../Population"
 
+type Fauna = Population<Species, Animal>
 export class Model extends Simulation implements IModel  {
   // todo groups within communities...
-  // public moieties: = []
-  public people    = new Community('people') //, this.moieties)
+  // public moieties: Moiety[] = []
+  // public people    = new Community('people') //, this.moieties)
+
+  public people = new Registry<Moiety, Person, Community>('people', Community)
+
   public resources = new Stocks<Substance>('resources')
   public machines  = new Stocks<Machine>('machines')
 
   // do 'animals' really belong on a general model...? (if i keep asking that q we end up with no people/machines either)
-  public animals   = new Registry<Species, Animal>('wildlife')
+  public animals   = new Registry<Species, Animal, Fauna>('wildlife', Population)
 
 
   // stocks or registries to expose for evolution (will also track deltas)
@@ -24,6 +31,7 @@ export class Model extends Simulation implements IModel  {
     this.resources.clear()
     this.machines.clear()
     this.animals.clear()
+    this.people.clear()
     this.dynamics.clear()
 
   }

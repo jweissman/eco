@@ -13,9 +13,10 @@ const ids = new Sequence()
   factory.product('Underwear', {});
   factory.product('Pants', {});
   factory.product('Outfit', { 'Pants': 1, 'Belt': 1, 'Hat': 1, 'Socks': 1, 'Shoes': 1 });
-  factory.people.create('Operations Chief');
-  factory.people.create('Engineer');
-  factory.people.create('Plant Manager');
+  const managers = factory.people.create('Management')
+  managers.create('Operations Chief');
+  // managers.create('Engineer');
+  managers.create('Plant Manager');
 
-  factory.actions.create({ name: 'Spawn Worker', act: () => { factory.people.create(`Employee #${ids.next}`); } });
+  factory.actions.create({ name: 'Spawn Worker', act: () => { factory.workers.create(`Employee #${ids.next}`); } });
   export default factory;

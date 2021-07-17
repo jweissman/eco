@@ -3,6 +3,7 @@ import { LastDelta } from "../../ModelPresenter";
 import { presentItem } from "../Model/presentItem";
 import './View.css';
 import { Tile } from "./Tile";
+import { Community } from "../Community";
 
 export function presentIndividual(work: { [key: number]: string }) {
   return ({ id, name, things }: { id: number, name: string, things: ManageStocks }) => {
@@ -20,14 +21,24 @@ export function presentIndividual(work: { [key: number]: string }) {
   </li>;
   }
 }
+export function presentCommunity(community: Community) {
+      // console.log(community.name);
+      return <Tile title={community.name} key={community.id}>
+        {/* <h6>{community.name}</h6> */}
+        <ul aria-label='People'>
+          {community.list().map(presentIndividual(community.report))}
+        </ul>
+      </Tile>;
+    }
 
 export type ModelViewProps = {
   modelName: string;
   items: { name: string; amount: number; }[];
   animals: { name: string; amount: number }[];
-  individuals: Person[];
+  // individuals: Person[];
+  communities: Community[]; //{ [name:]}
   machines: Machine[];
-  work: { [person: number]: string };
+  // work: { [person: number]: string };
   lastChanges: LastDelta;
   metrics: { [name: string]: number }; //[ { name: string, value: number} ];
 }
@@ -35,13 +46,16 @@ export type ModelViewProps = {
 export function View({
   modelName,
   items,
-  individuals,
+  // individuals,
+  communities,
   machines,
   animals,
   lastChanges,
   metrics,
-  work
+  // work
 }: ModelViewProps) {
+  const folks = communities.map(presentCommunity)
+  // console.log({ community: communities[0].list() })
   return <div className='Model'>
     <h4 aria-label='Model Title' style={{display: 'none'}}>{modelName}</h4>
     <Tile title='Items'>
@@ -55,11 +69,7 @@ export function View({
           {animals.map(presentItem(lastChanges.animals))}
         </ul>
       </Tile>)}
-    {individuals.length > 0 && <Tile title='Individuals'>
-      <ul aria-label='People'>
-        {individuals.map(presentIndividual(work))}
-      </ul>
-    </Tile>}
+      {communities.length > 0 && <div title='Individuals'>{folks}</div>}
     {machines.length > 0 && <Tile title='Machines'>
       <ul>
         {machines.map(({ name }) => <li key={name}>{name}</li>)}
