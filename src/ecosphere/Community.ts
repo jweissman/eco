@@ -31,8 +31,12 @@ export class Community extends Population<Moiety, Person> {
   @boundMethod
   public create(attrs: any) {
     let person = super.create(attrs);
+    console.log(person.name)
     const inventory = new Stocks<any>(`${person.name}'s Things`)
     person.things = inventory.manageAll()
+
+    // PersonFactory.generate(person)
+
     return person
   }
 

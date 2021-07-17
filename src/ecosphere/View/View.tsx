@@ -49,7 +49,7 @@ export function View({
         {items.map(presentItem(lastChanges.resources))}
       </ul>
     </Tile>
-    {animals.length > 0 && (
+    {(
       <Tile title='Animals'>
         <ul aria-label='Animals'>
           {animals.map(presentItem(lastChanges.animals))}

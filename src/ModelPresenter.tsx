@@ -1,3 +1,4 @@
+// import { IAssembly } from './ecosphere/Assembly';
 import { ModelView } from './ecosphere/Model';
 import { IModel } from "./ecosphere/Model/IModel";
 

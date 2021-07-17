@@ -9,10 +9,10 @@ const ids = new Sequence()
   factory.product('Socks', {});
   factory.product('Shoes', { 'Soles': 2, 'Laces': 2 });
   factory.product('Hat', {});
+  factory.product('Belt', {});
   factory.product('Underwear', {});
   factory.product('Pants', {});
-  // todo production diagrams!!
-  factory.product('Outfit', { 'Pants': 1, 'Hat': 1, 'Shoes': 1 });
+  factory.product('Outfit', { 'Pants': 1, 'Belt': 1, 'Hat': 1, 'Socks': 1, 'Shoes': 1 });
   factory.people.create('Operations Chief');
   factory.people.create('Engineer');
   factory.people.create('Plant Manager');

@@ -1,8 +1,7 @@
 // An empty world!!!
 
-import { useState } from "react";
 import Model from "../ecosphere/Model";
-import { ManageStocks, Person } from "../ecosphere/types";
+import { Person } from "../ecosphere/types";
 
 // ideas: calendar, tracking time it takes to do things
 
@@ -11,23 +10,15 @@ const give = (recipient: Person, supplier: Person, n: number, item: string) => {
   recipient.things.add(n, item)
 }
 
-// person takes from community?
-// const take = (recipient: Person, n: number, item: string) => {}
-
-// const huntWildlife = (name: string, { resources, animals }: { resources: ManageStocks, animals: ManageStocks }) => {
-  // resources.add(1, name)
-  // animals.remove(1, name)
-// }
-
 let town = new Model('Town');
 
 const { people, animals } = town
 
-const wishes = people.create('Aloysius')
-const fish = animals.create('Fish')
+animals.create('Fish')
 
+const wishes = people.create('Aloysius')
 const bart = people.create('Bartholomew')
-const cash = people.create('Cassius')
+// const cash = people.create('Cassius')
 // const flipCoin = () => Math.random() > 0.5 
 
 town.resources.create('Clay Pot')
@@ -57,10 +48,6 @@ town.evolve(({ resources, animals }, t) => {
     // time to trade with cash???
     give(bart, wishes, 1, 'Fish')
     give(wishes, bart, 1, 'Clay Pot')
-  // supplier.things.remove(n, item)
-  // recipient.things.add(n, item)
-  // supplier.things.remove(n, item)
-  // recipient.things.add(n, item)
   }
 
   if (t % 30 === 0) {

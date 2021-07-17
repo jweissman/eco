@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
+import { IAssembly } from './ecosphere/Assembly';
 import { IModel } from "./ecosphere/Model/IModel";
 import { LastDelta } from './ModelPresenter';
+import { isModel } from './ModelSelector';
 
 export type ModelAPI = {
-  model: IModel
-  setModel(model: IModel): void
+  model: IModel | IAssembly
+  setModel(model: IModel | IAssembly): void
   step: Function,
   lastChanges: LastDelta,
   send: (actionName: string, args: any) => void,
@@ -15,7 +17,7 @@ export type ModelAPI = {
 // ticks per sec
 const ticksPerSecond = (n: number) => n > 0 ? Math.floor(1000 / n) : 1
 const speeds = {slow: 10, fast: 25, faster: 50, fastest: 80};
-export function useModel(initialModel: IModel): ModelAPI { //model: IModel = new Model('Hello World')): ModelAPI {
+export function useModel(initialModel: IModel | IAssembly): ModelAPI { //model: IModel = new Model('Hello World')): ModelAPI {
   const [model, setModel] = useState(initialModel) //new Model('Hello World'))
 
   const [lastChanges, setLastChanges] = useState({} as LastDelta)
@@ -31,14 +33,14 @@ export function useModel(initialModel: IModel): ModelAPI { //model: IModel = new
 
   useEffect(() => {
     if (shouldSend) {
-      if (command) { model.send(command, {}) }
+      if (command && isModel(model)) { model.send(command, {}) }
       doSend(false)
     }
   }, [command, model, shouldSend]);
 
   useEffect(() => {
     if (shouldManage) {
-      if (policy) { model.choose(policy, {}) }
+      if (policy && isModel(model)) { model.choose(policy, {}) }
       doManage(false)
     }
   }, [policy, model, shouldManage]);
@@ -55,7 +57,7 @@ export function useModel(initialModel: IModel): ModelAPI { //model: IModel = new
   }
 
   useEffect(() => {
-    if (shouldStep) {
+    if (shouldStep && isModel(model)) {
       let { changed } = model.step();
       step(false);
       setLastChanges(changed);
