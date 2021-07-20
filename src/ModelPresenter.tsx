@@ -37,15 +37,10 @@ const view = (model: IModel, lastChanges: LastDelta) => {
 export function ModelPresenter({ model, send, choose, step, lastChanges }: ModelPresenterProps) {
   return <>
     <div aria-label='View'>
-      {/* <h5>MODEL VIEW</h5> */}
-
-      {/* @ts-ignore */}
       <ModelView {...view(model, lastChanges)} />
     </div>
 
     <div aria-label='Controls'>
-      {/* <h5>CONTROLS</h5> */}
-
       <span title='Run' style={{display: 'none'}}>
         <button onClick={() => step(true)}>Step</button>
       </span>

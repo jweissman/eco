@@ -55,10 +55,19 @@ export class Population<Specie, Dividual extends Entity<Specie>> {
     return newborn
   }
 
-  public death(name: string = this.first.name): Dividual {
-    const doomed = this.destroy(name)
-    if (doomed) {
-      return doomed
+  @boundMethod
+  public death(name?: string): Dividual {
+    if (name) {
+      const doomed = this.destroy(name)
+      if (doomed) {
+        return doomed
+      }
+    } else {
+      const doomed = this.first
+      if (doomed) {
+        this.destroy(doomed.name)
+        return doomed
+      }
     }
     throw new Error("Population already empty!")
   }

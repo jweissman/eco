@@ -15,8 +15,9 @@ const ids = new Sequence()
   factory.product('Outfit', { 'Pants': 1, 'Belt': 1, 'Hat': 1, 'Socks': 1, 'Shoes': 1 });
   const managers = factory.people.create('Management')
   managers.create('Operations Chief');
-  // managers.create('Engineer');
   managers.create('Plant Manager');
+  // factory.workers.create('Engineer')
+  factory.machines.create('Robot')
 
   factory.actions.create({ name: 'Spawn Worker', act: () => { factory.workers.create(`Employee #${ids.next}`); } });
   export default factory;
