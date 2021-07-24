@@ -1,11 +1,13 @@
-import { Map } from '../collections';
-import { Recipe, Moiety, Person, ManageStocks } from "./types";
+import { List, Map } from '../collections';
+import { Recipe, Moiety, Person, ManageStocks, createPerson, createMoiety } from "./types";
 import { Population } from "./Population";
 import { Collection } from "./Collection";
 import { Stocks } from './Stocks';
 import { boundMethod } from 'autobind-decorator';
 
 export class Community extends Population<Moiety, Person> {
+  moieties: List<Moiety> = new List<Moiety>();
+   
   public recipes = new Collection<Recipe>();
   public jobs = new Map<Person, Recipe>(
     worker => worker.id,
@@ -30,13 +32,11 @@ export class Community extends Population<Moiety, Person> {
   public create(attrs: Partial<Person>): Person;
   @boundMethod
   public create(attrs: any) {
-    let person = super.create(attrs);
-    console.log(person.name)
-    const inventory = new Stocks<any>(`${person.name}'s Things`)
-    person.things = inventory.manageAll()
-
-    // PersonFactory.generate(person)
-
+    const personAttrs = super.build(attrs);
+    const { name, age } = personAttrs;
+    const person: Person = createPerson(name, createMoiety(`${name}'s Gens`)) //, this.species)
+    person.age = age
+    this.individuals.add(person)
     return person
   }
 

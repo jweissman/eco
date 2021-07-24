@@ -15,7 +15,7 @@ export class Population<Specie, Dividual extends Entity<Specie>> {
   constructor(
     public name: string,
     public species?: Specie,
-    private individuals: Set<Dividual> = new Set(),
+    protected individuals: Set<Dividual> = new Set(),
   ) {}
 
   list() { 
@@ -88,11 +88,7 @@ export class Population<Specie, Dividual extends Entity<Specie>> {
     return doneFor
   }
 
-
-  public create(name: string): Dividual;
-  public create(attrs: Partial<Dividual>): Dividual;
-  @boundMethod
-  public create(attrs: any) {
+  protected build(attrs: any) {
     let name = null;
     let attributes: Partial<Dividual> = {};
     if (isString(attrs)) {
@@ -104,6 +100,25 @@ export class Population<Specie, Dividual extends Entity<Specie>> {
     
     const id = this.ids.next; //Math.max(0, ...this.ids) + 1;
     const theIndividual: Dividual = { id, name, ...attributes } as unknown as Dividual;
+    return theIndividual;
+  }
+
+
+  public create(name: string): Dividual;
+  public create(attrs: Partial<Dividual>): Dividual;
+  @boundMethod
+  public create(attrs: any) {
+    // let name = null;
+    // let attributes: Partial<Dividual> = {};
+    // if (isString(attrs)) {
+    //   name = attrs;
+    //   attributes.name = name;
+    // } else {
+    //   ({ name, ...attributes } = attrs);
+    // }
+    
+    // const id = this.ids.next; //Math.max(0, ...this.ids) + 1;
+    const theIndividual: Dividual = this.build(attrs) //{ id, name, ...attributes } as unknown as Dividual;
     this.individuals.add(theIndividual);
     return theIndividual;
   }

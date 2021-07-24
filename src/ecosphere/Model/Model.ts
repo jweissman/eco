@@ -3,29 +3,18 @@ import { Stocks } from "../Stocks"
 import { Registry } from "../Registry"
 import { Simulation } from "./Simulation"
 import { IModel } from "./IModel"
-// import { Community } from '../Community'
 import { Collection } from "../Collection"
 import { Community } from "../Community"
 import { Population } from "../Population"
-// import { Population } from "../Population"
 
 type Fauna = Population<Species, Animal>
 export class Model extends Simulation implements IModel  {
-  // todo groups within communities...
-  // public moieties: Moiety[] = []
-  // public people    = new Community('people') //, this.moieties)
+  tracking = [ 'animals', 'resources' ]
 
   public people = new Registry<Moiety, Person, Community>('people', Community)
-
   public resources = new Stocks<Substance>('resources')
   public machines  = new Stocks<Machine>('machines')
-
-  // do 'animals' really belong on a general model...? (if i keep asking that q we end up with no people/machines either)
   public animals   = new Registry<Species, Animal, Fauna>('wildlife', Population)
-
-
-  // stocks or registries to expose for evolution (will also track deltas)
-  tracking = [ 'animals', 'resources' ]
 
   reset() {
     this.resources.clear()
@@ -33,7 +22,6 @@ export class Model extends Simulation implements IModel  {
     this.animals.clear()
     this.people.clear()
     this.dynamics.clear()
-
   }
 
   // measurements
@@ -44,7 +32,7 @@ export class Model extends Simulation implements IModel  {
   public policies: Collection<Policy> = new Collection<Policy>()
 
   send(actionName: string, args: any): void {
-    const action = this.actions.lookup(actionName) //[actionName]
+    const action = this.actions.lookup(actionName)
 
     if (action) {
       action.act(args)

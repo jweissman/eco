@@ -25,7 +25,7 @@ type Rarity = 'mundane'         // common (species) - Orc
 export type BasicEntity = {
   id: number;
   name: string;
-  rarity?: Rarity;
+  // rarity?: Rarity;
 };
 
 // export type BasicEntityKind = { name: string }
