@@ -1,7 +1,8 @@
 import { List, Sequence } from "../collections";
+import { IList } from "../collections/types";
 import { BasicEntity } from "./types/BasicEntity";
 
-class Collection<T extends BasicEntity> extends List<T> {
+class Collection<T extends BasicEntity> extends List<T> implements IList<T> {
   list() { return this.items }
   private ids = new Sequence()
   get names(): string[] {

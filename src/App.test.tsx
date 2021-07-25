@@ -13,6 +13,10 @@ const build: () => Model = () => {
   const firstOfficer = atlantis.crew.create('Lance Hammond')
 
   captain.things.add(1000, 'Galactic Credits')
+  captain.traits.add(3, 'Leadership') // { name: 'Leadership', rank: 3 })
+  captain.traits.add(1, 'Empathy')
+  console.log(captain.traits.list())
+  // captain.traits.add({ name: 'Empathy', rank: 1 })
 
   atlantis.resources.create('Thrust')
   atlantis.resources.create('Xenocite')
@@ -125,16 +129,26 @@ class Eco {
       const amount = await within(them).findByTestId('Status')
       return String(amount.textContent);
     },
-    task: async (name: string) => {
-      const them = Eco.people.get(name);
-      const amount = await within(them).findByTestId('Task')
-      return String(amount.textContent);
-    },
+    // task: async (name: string) => {
+    //   const them = Eco.people.get(name);
+    //   const amount = await within(them).findByTestId('Task')
+    //   return String(amount.textContent);
+    // },
+
+    // count personal items
     count: async (name: string, itemName: string) => {
       const them = Eco.people.get(name);
       const inventory = await within(them).findByTestId('Inventory')
       const item = await within(inventory).findByTestId(itemName)
       return Number(item.textContent);
+    },
+
+    // get trait rank
+    rank: async (name: string, traitName: string) => {
+      const them = Eco.people.get(name);
+      const traits = await within(them).findByTestId('Trait Ranks')
+      const trait = await within(traits).findByTestId(traitName)
+      return Number(trait.textContent);
     }
   }
 
@@ -193,12 +207,23 @@ it('renders animals', async () => {
   // expect(await Eco.items.count('Power')).toEqual(100)
 });
 
-it('renders individuals and tasks', async () => {
-  expect(await Eco.people.status('Curtis Zechariah')).toEqual('Xenocite')
-  expect(await Eco.people.status('Lance Hammond')).toEqual('Drive')
-});
+describe('people', () => {
+  it('tasks', async () => {
+    expect(await Eco.people.status('Curtis Zechariah')).toEqual('Xenocite')
+    expect(await Eco.people.status('Lance Hammond')).toEqual('Drive')
+  });
+  
+  it('inventories', async () => {
+    expect(await Eco.people.count('Curtis Zechariah', 'Galactic Credits')).toEqual(1000)
+  });
 
-it('renders tools', () => {
+  it('traits', async () => {
+    expect(await Eco.people.rank('Curtis Zechariah', 'Leadership')).toEqual(3)
+    expect(await Eco.people.rank('Curtis Zechariah', 'Empathy')).toEqual(1)
+  });
+})
+
+it('renders tools/machines', () => {
   const tool = screen.getByText(/Science Lab Controls/);
   expect(tool).toBeInTheDocument();
 });

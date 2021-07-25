@@ -32,12 +32,12 @@ export function View({
   // console.log({ community: communities[0].list() })
   return <div className='Model'>
     <h4 aria-label='Model Title' style={{display: 'none'}}>{modelName}</h4>
-    <Tile title='Items'>
+    {items.length > 0 && (<Tile title='Items'>
       <ul aria-label='Resources'>
         {items.map(presentItem(lastChanges.resources))}
       </ul>
-    </Tile>
-    {(
+    </Tile>)}
+    {animals.length > 0 && (
       <Tile title='Animals'>
         <ul aria-label='Animals'>
           {animals.map(presentItem(lastChanges.animals))}

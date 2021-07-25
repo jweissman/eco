@@ -12,6 +12,7 @@ export class List<T> implements IList<T> {
   remove(it: T) { this.items = this.items.filter(item => item !== it); }
   each(cb: (it: T) => any) { this.items.forEach(cb); }
   clear() { this.items = []; }
+  map<U>(fn: (it: T) => any): U[] { return this.items.map(fn) }
 
   get sample(): T {
     throw new Error('Method not implemented.');

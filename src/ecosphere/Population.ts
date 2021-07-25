@@ -91,6 +91,7 @@ export class Population<Specie, Dividual extends Entity<Specie>> {
   protected build(attrs: any) {
     let name = null;
     let attributes: Partial<Dividual> = {};
+    // console.log(attrs)
     if (isString(attrs)) {
       name = attrs;
       attributes.name = name;
@@ -108,34 +109,16 @@ export class Population<Specie, Dividual extends Entity<Specie>> {
   public create(attrs: Partial<Dividual>): Dividual;
   @boundMethod
   public create(attrs: any) {
-    // let name = null;
-    // let attributes: Partial<Dividual> = {};
-    // if (isString(attrs)) {
-    //   name = attrs;
-    //   attributes.name = name;
-    // } else {
-    //   ({ name, ...attributes } = attrs);
-    // }
-    
-    // const id = this.ids.next; //Math.max(0, ...this.ids) + 1;
-    const theIndividual: Dividual = this.build(attrs) //{ id, name, ...attributes } as unknown as Dividual;
+    const theIndividual: Dividual = this.build(attrs)
     this.individuals.add(theIndividual);
     return theIndividual;
   }
 
-  // private get ids() {
-  //   const individualIds: number[] = []
-  //   this.individuals.forEach(({ id }) => individualIds.push(id));
-  //   return individualIds;
-  // }
-
   public destroy(name: string): Dividual;
-  // public destroy(id: number): T;
   @boundMethod
   public destroy(name: string) {
-    const theIndividual: Dividual = this.lookup(name) //this.individuals.find((it) => it.name === name) as unknown as T;
+    const theIndividual: Dividual = this.lookup(name)
     this.individuals.delete(theIndividual);
-    // this.individuals = this.individuals.remofilter(it => it.id === theIndividual.id);
     return theIndividual;
   }
 

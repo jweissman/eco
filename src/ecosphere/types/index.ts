@@ -1,4 +1,6 @@
-import { Sequence } from "../../collections"
+import { List, Sequence } from "../../collections"
+import { IList } from "../../collections/types"
+import { Collection } from "../Collection"
 import { Stocks } from "../Stocks"
 import { sample } from "../utils/sample"
 import { BasicEntity } from "./BasicEntity"
@@ -111,6 +113,8 @@ export const createSoul = (): Soul => {
 // type Event = BasicEntity
 // type Incident = Entity<Incident>
 
+// export type Trait = { id: number, name: string, rank: 0 | 1 | 2 | 3 | 4 | 5 }
+
 export type Person = Individual<Moiety> & {
   body: Body
   mind: Mind
@@ -118,23 +122,28 @@ export type Person = Individual<Moiety> & {
 
 
   // ie within my moiety, I am (thought of as)...
-  rank: 'commoner' | 'wellborn'
-  title?: string
-  reputation: 'unknown' | 'worthy' | 'adored' | 'revered'
+  // rank: 'commoner' | 'wellborn'
+  // title?: string
+  // reputation: 'unknown' | 'worthy' | 'adored' | 'revered'
 
   // individually...
   things: ManageStocks //Stocks<Item> // hmmm, maybe we really want a map at a higher-level anyway
+  // stats: ManageStocks //Stocks<Item> // hmmm, maybe we really want a map at a higher-level anyway
+
   currency: number
+  traits: ManageStocks // IList<Trait>
   // memory: List<Event>
   // philosophy?: Ideology
   // destiny: 'doomed' | 'commonplace' | 'exceptional' | 'free'
 }
 
 const personId = new Sequence()
-const human: Species = { id: -1, name: 'Human Being' }
+const human: Species = { id: -1, name: 'Human Being', size: 'medium' }
 export const createPerson = (name: string, moiety: Moiety): Person => {
 
   const inventory = new Stocks<any>(`${name}'s Things`)
+  const traits = new Stocks<any>(`${name}'s Traits`)
+  // const state = new Stocks<any>(`${name}'s State`)
     // personAttrs.things = inventory.manageAll()
   return {
     id: personId.next,
@@ -145,10 +154,12 @@ export const createPerson = (name: string, moiety: Moiety): Person => {
     body: createAnimal(name, human),
     mind: createMind(),
     soul: createSoul(),
-    rank: 'commoner',
-    reputation: 'unknown',
+    // rank: 'commoner',
+    // reputation: 'unknown',
     currency: 0,
     things: inventory.manageAll(),
+    traits: traits.manageAll()
+    // stats: state.manageAll()
     // things: new M
   }
 
@@ -173,6 +184,8 @@ export type Machine = BasicEntity
 //   machine?: string
 //   recipe: string
 // }
+
+// type ManageList = {}
 
 export type ManageStocks = {
   add: (amount: number, name: string) => void,

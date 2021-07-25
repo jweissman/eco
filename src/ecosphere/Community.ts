@@ -7,6 +7,7 @@ import { boundMethod } from 'autobind-decorator';
 
 export class Community extends Population<Moiety, Person> {
   moieties: List<Moiety> = new List<Moiety>();
+  obscured: boolean = false // don't display details
    
   public recipes = new Collection<Recipe>();
   public jobs = new Map<Person, Recipe>(

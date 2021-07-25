@@ -6,7 +6,8 @@ import { presentIndividual } from "./presentIndividual";
 export function presentCommunity(community: Community) {
   return <Tile title={community.name} key={community.id}>
     <ul aria-label='People'>
-      {community.list().map(presentIndividual(community.report))}
+      {community.obscured ? community.list().map(individual => <li key={individual.id}>{individual.name}</li>)
+                          : community.list().map(presentIndividual(community.report))}
     </ul>
   </Tile>;
 }

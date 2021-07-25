@@ -1,4 +1,5 @@
 import { Avernus } from "./Avernus"
+import arena from "./combat"
 import { Society } from "./Society"
 import { SpaceStation } from "./SpaceStation"
 // import town from "./Town"
@@ -9,6 +10,7 @@ import zep from "./zep"
 const station = new SpaceStation('My Very Own Space Station')
 const models = [
   // world,
+  arena,
   station,
   zep,
   // town,

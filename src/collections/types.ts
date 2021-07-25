@@ -1,4 +1,5 @@
 export interface IList<T> {
+  map<U>(fn: (it: T) => any): U[];
   first: T
   last: T
   count: number
