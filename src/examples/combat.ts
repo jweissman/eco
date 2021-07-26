@@ -47,7 +47,7 @@ class PlayerHandbook {
         'speed', 'absorb', 'regen', 'bonus damage', 'magic damage',
         'gold per step', 'xp per turn', 'holy damage', 'heal',
         'damage to all', 'hp per encounter',
-        'magic defense', 'holy defense',
+        'magic defense', 'holy defense', 'max chain',
       ]
       for (let i=0; i<1; i++) {
         const levelAttr = sample(legendaryAttrs)
@@ -56,7 +56,7 @@ class PlayerHandbook {
       }
     }
 
-    if (pc.things.count('level') % 3 === 0) {
+    if (pc.things.count('level') % 3 === 1) {
       const perks = [
         'Finesse', // +25% to crit chance per rank
         'Precision', // bonus % to crit dmg
@@ -67,21 +67,22 @@ class PlayerHandbook {
         'Swiftness', // +% to counter
         'Ethereal', // small dodge bonuses (+15% to evade per rank, +10% to defense)
         'Perspicuous', // bonus pers for xp (+10% per rank)
+        'Medic', // bonus to healing
+        'Efficacious', // small bonuses to many skills
       ]
       const perk = sample(perks)
       console.log(`Gain rank in ${perk}`)
       pc.traits.add(1, perk)
     }
 
-    if (pc.things.count('level') % 4 === 0) {
+    if (pc.things.count('level') % 5 === 1) {
       const rarePerks = [
         'Perfectionist', // bonus pers for xp/hp/gold (+25% per rank)
-        'Whirlwind', // bonus % to chain chance
+        'Whirlwind', // bonus % to chain chance + damage to all
         'Fine Raiment', // bonus % to magic defense
         'Combat Veteran', // + small % to lots of battle-related stats
         'Royal Armorer', // bonus % to defense 
         'Eternal Victory', // resurrection charge
-        'Medic', // bonus to healing
         // 'Cloaking Robe of Elvenkind', // large % bonus to evade
         // 'Vampirism', // bonus to absorb?
         // 'Noble', // like a saga with different effects per degree... 
@@ -103,8 +104,6 @@ class MonsterManual {
   }
 
   challengingCreatures = {
-    Skeleton: { hp: 68, evasion: 2, absorb: 1, regen: 1 },
-    Zombie: { hp: 72, evasion: 1, regen: 1, strength: 1 },
     Kobold: { hp: 80, strength: 1, speed: 2 },
     Orc: { hp: 94, strength: 2, speed: 1, counter: 1 },
     Ghost: { hp: 160, 'magic damage': 1, evasion: 1, counter: 1, speed: 1, absorb: 1, defense: 1 },
@@ -180,9 +179,15 @@ class MonsterManual {
     Elusive: { evasion: 1, defense: 1, regen: 1 },
     Augmented: { strength: 1, 'magic damage': 1, 'bonus damage': 1 },
     Skillful: { strength: 1, speed: 2, evasion: 2, counter: 2  },
-    Undead: { strength: 1, regen: 1, absorb: 1, speed: 1, evasion: 1 },
+
+    Skeletal: { hp: -5, evasion: 2, absorb: 1, regen: 1 },
+    Undead: { hp: -10, strength: 1, regen: 1, absorb: 1, speed: 1, evasion: 1 },
+    Zombie: { hp: -20, evasion: 1, regen: 2, strength: 1 },
+
     Favored: { hp: 10, strength: 2, speed: 2, 'magic damage': 1, regen: 1, evasion: 1 },
+
     Fiendish: { hp: 20, strength: 3, speed: 3, defense: 1, regen: 1, evasion: 2 },
+
     Fierce: { hp: 30, strength: 4, speed: 4, defense: 2, absorb: 2, evasion: 3, },
     Cruel: { hp: 50, strength: 5, speed: 5, 'magic damage': 3, 'bonus damage': 2, absorb: 3, regen: 1, evasion: 4 },
   }
@@ -218,6 +223,7 @@ class MonsterManual {
   monsterIds = new Sequence()
 
   difficulty = 1 // global multiplier on monster stats
+
   generate(creature: Person, li: number = 0) {
     // const simpleCreatures = ['Snake', 'Blob', 'Bat', 'Wisp']
     let base = li === 0 ? sample(Object.keys(this.basicCreatures)) : sample(Object.keys(this.challengingCreatures))
@@ -311,9 +317,12 @@ class Arena extends Model {
     hero.things.add(10, 'xp per encounter')
     hero.things.add(25, 'xp per victory')
     hero.things.add(1000, 'xp per li')
+    hero.things.add(20, 'hp per day')
     hero.things.add(hero.things.count('hp'), 'max hp')
-    // for (let i = 0; i<7; i++) {}
-    // PlayerHandbook.levelUp(hero)
+    for (let i = 0; i<this.resources.count('li'); i++) {
+      PlayerHandbook.levelUp(hero)
+      PlayerHandbook.levelUp(hero)
+    }
   }
 
   @boundMethod
@@ -333,10 +342,13 @@ class Arena extends Model {
   get party() { return this.people.lookup('Adventurers') }
   get enemies() { return this.people.lookup('Enemies') }
 
+  // todo extract healing to own fn? to handle going over max uniformly..
+
   private strike(aggressor: Person, defender: Person, onKill?: Function) {
     const holyDefense = Math.floor(defender.things.count('holy defense')
                       * (1+ (0.25 * defender.traits.count('Holy Symbol'))))
                       * (1 + (0.1 * defender.traits.count('Faith')))
+                      * (1 + (0.05 * defender.traits.count('Efficacious')))
     const holyDamage = Math.max(0,
       aggressor.things.count('holy damage')
       * (1+ (0.25 * aggressor.traits.count('Holy Symbol')))
@@ -345,7 +357,10 @@ class Arena extends Model {
     )
 
     const magicDefense = Math.floor(defender.things.count('magic defense')
-                       * (1+ (0.1 * defender.traits.count('Fine Raiment'))))
+                      * (1 + 0.5 * defender.traits.count('Cloaking Robe of Elvenkind'))
+                      * (1 + 0.25 * defender.traits.count('Ethereal'))
+                      * (1+ (0.1 * defender.traits.count('Fine Raiment'))))
+                      * (1 + (0.05 * defender.traits.count('Efficacious')))
     const magicDamage = Math.max(0,
       aggressor.things.count('magic damage')
       * (1 + (0.1 * aggressor.traits.count('Focus')))
@@ -358,30 +373,37 @@ class Arena extends Model {
                 * (1 + 0.5 * defender.traits.count('Cloaking Robe of Elvenkind'))
                 * (1 + 0.25 * defender.traits.count('Ethereal'))
                 * (1 + 0.1 * defender.traits.count('Combat Veteran'))
+                * (1 + (0.05 * defender.traits.count('Efficacious')))
     const hitRoll = randomInteger(0,100)
     const hit = hitRoll > evade
     // console.log({evade, hitRoll, hit})
     if (hit) {
       const defense = Math.floor(
         defender.things.count('defense')
-        * (1+ (0.25 * defender.traits.count('Royal Armorer')))
-        * (1+ (0.1 * defender.traits.count('Ethereal')))
+        * (1+ (0.5 * defender.traits.count('Royal Armorer')))
+        * (1+ (0.25 * defender.traits.count('Ethereal')))
+        * (1+ (0.15 * defender.traits.count('Fine Raiment')))
+        * (1 + (0.05 * defender.traits.count('Efficacious')))
       )
       const baseDamage = Math.max(1,aggressor.things.count('strength') - defense)
-                       * (1+(0.25 * aggressor.traits.count('Brutality')))
-                       * (1+(0.1 * aggressor.traits.count('Combat Veteran')))
+                       * (1+(0.5 * aggressor.traits.count('Brutality')))
+                       * (1+(0.25 * aggressor.traits.count('Combat Veteran')))
+                       * (1 + (0.15 * aggressor.traits.count('Barbarian')))
+                       * (1 + (0.05 * aggressor.traits.count('Efficacious')))
 
       const bonus = Math.floor(
         aggressor.things.count('bonus damage')
-        * (1 + (0.25 * aggressor.traits.count('Barbarian')))
-        * (1 + (0.1 * aggressor.traits.count('Brutality')))
-        * (1 + (0.05 * aggressor.traits.count('Combat Veteran')))
+        * (1 + (0.5 * aggressor.traits.count('Barbarian')))
+        * (1 + (0.25 * aggressor.traits.count('Brutality')))
+        * (1 + (0.15 * aggressor.traits.count('Combat Veteran')))
+        * (1 + (0.05 * aggressor.traits.count('Efficacious')))
       )
 
       const critChance = aggressor.things.count('crit chance')
-                       * (1 + (0.25 * aggressor.traits.count('Finesse')))
-                       * (1 + (0.1 * aggressor.traits.count('Combat Veteran')))
-                       * (1 + (0.05 * aggressor.traits.count('Precision')))
+                       * (1 + (0.5 * aggressor.traits.count('Finesse')))
+                       * (1 + (0.25 * aggressor.traits.count('Combat Veteran')))
+                       * (1 + (0.15 * aggressor.traits.count('Precision')))
+                       * (1 + (0.05 * aggressor.traits.count('Efficacious')))
                        
       criticalStrike = randomInteger(0,100) < critChance
 
@@ -438,6 +460,7 @@ class Arena extends Model {
                         * (1 + 0.65 * defender.traits.count('Counterweight'))
                         * (1 + 0.25 * defender.traits.count('Swiftness'))
                         * (1 + 0.1 * defender.traits.count('Combat Veteran'))
+                        * (1 + (0.05 * defender.traits.count('Efficacious')))
           if (randomInteger(0,100) < counter) {
             console.log(`${defender.name} counter-attacked against ${aggressor.name}!`)
             this.strike(defender, aggressor) // , (agg: Person, def: Person) => onKill(def, agg))
@@ -468,9 +491,17 @@ class Arena extends Model {
           })
           hit()
           const chainChance = aggressor.things.count("chain chance")
-                            * (1 + (0.05 * aggressor.traits.count("Whirlwind")))
+                            * (1 + (0.5 * aggressor.traits.count("Whirlwind")))
+                            * (1 + (0.25 * aggressor.traits.count("Barbarian")))
+                            * (1 + (0.15 * aggressor.traits.count("Finesse")))
+                            * (1 + (0.05 * aggressor.traits.count("Efficacious")))
+          const maxChain = aggressor.things.count('max chain')
+                            * (1 + (0.5 * aggressor.traits.count("Combat Veteran")))
+                            * (1 + (0.25 * aggressor.traits.count("Precision")))
+                            * (1 + (0.15 * aggressor.traits.count("Finesse")))
+                            * (1 + (0.05 * aggressor.traits.count("Efficacious")))
           let chain = 0
-          while (!done && chain++ < 4) {
+          while (!done && chain++ < maxChain) {
             let chainRoll = randomInteger(0,100)
             if (chainRoll < chainChance) {
               console.log(`...and swung again (${chain} times)! (${chainRoll} < ${chainChance})`)
@@ -508,7 +539,12 @@ class Arena extends Model {
   tick({ resources }: EvolvingStocks, t: number) {
     this.party.list().forEach(adventurer => {
       const level = adventurer.things.count('level')
-      const levelCost = Math.min(level * 250, Math.pow(10, level))
+      const levelCost = Math.min(
+        // level * 50000 + (1 + 0.05 * level),
+        // level * 15000 + (1 + 0.1 * level),
+        ((1000 + (level * 1000)) * (1 + 0.05 * level)),
+        10 + Math.pow(10, level)
+      )
       if (adventurer.things.count('xp') > levelCost) {
         adventurer.things.remove(levelCost, 'xp')
         console.log(`${adventurer.name} level up!`)
@@ -595,7 +631,9 @@ class Arena extends Model {
         this.per('victory')
       })
 
-      this.attack(this.enemies, this.party, () => resources.add(1, 'death'), () => resources.add(1, 'tpk'))
+      this.attack(this.enemies, this.party, () => resources.add(1, 'death'), () => {
+        resources.add(1, 'tpk')
+      })
     }
   }
 }
