@@ -15,13 +15,14 @@ export type ModelAPI = {
 }
 
 // ticks per sec
-const ticksPerSecond = (n: number) => n > 0 ? Math.floor(1000 / n) : 1
-const speeds = {slow: 10, fast: 25, faster: 50, fastest: 80};
+// const ticksPerSecond = (n: number) => n > 0 ? Math.floor(1000 / n) : 1
+// const speeds = {slow: 10, fast: 25, faster: 50, fastest: 80};
 export function useModel(initialModel: IModel | IAssembly): ModelAPI { //model: IModel = new Model('Hello World')): ModelAPI {
   const [model, setModel] = useState(initialModel) //new Model('Hello World'))
 
   const [lastChanges, setLastChanges] = useState({} as LastDelta)
-  const [delay, setDelay] = useState(ticksPerSecond(speeds.slow));
+  const isTest = process.env.NODE_ENV === 'test'
+  const [delay, setDelay] = useState(isTest ? 5000 : 2) //ticksPerSecond(speeds.slow));
 
   const [shouldStep, step] = useState(false);
   const [shouldSend, doSend] = useState(false);

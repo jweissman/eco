@@ -19,7 +19,7 @@ type Event = { id: number, name: string, description: string, at: number, kind: 
 export class Factory extends Model {
   events = new Collection<Event>()
   emit(event: EventKind, title?: string, message?: string) {
-    if (title) { console.log(title) } //"EVENT", event)
+    // if (title) { console.log(title) } //"EVENT", event)
     this.events.create({ name: title, description: message, kind: event, at: this.ticks })
   }
   private bills = new List<Bill>()

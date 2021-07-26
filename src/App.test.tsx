@@ -15,7 +15,7 @@ const build: () => Model = () => {
   captain.things.add(1000, 'Galactic Credits')
   captain.traits.add(3, 'Leadership') // { name: 'Leadership', rank: 3 })
   captain.traits.add(1, 'Empathy')
-  console.log(captain.traits.list())
+  // console.log(captain.traits.list())
   // captain.traits.add({ name: 'Empathy', rank: 1 })
 
   atlantis.resources.create('Thrust')

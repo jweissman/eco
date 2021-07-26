@@ -43,7 +43,7 @@ export function View({
           {animals.map(presentItem(lastChanges.animals))}
         </ul>
       </Tile>)}
-      {communities.length > 0 && <div title='Individuals'>{folks}</div>}
+      {communities.length > 0 && <div title='Individuals' style={{display: 'flex'}}>{folks}</div>}
     {machines.length > 0 && <Tile title='Machines'>
       <ul>
         {machines.map(({ name }) => <li key={name}>{name}</li>)}
