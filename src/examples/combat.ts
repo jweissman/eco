@@ -12,7 +12,7 @@ class PlayerHandbook {
     const commonAttrs = [
       'max hp', 'xp per victory', 'hp per day', 'gold per day', 'xp per li', 
     ]
-    for (let i=0; i<13; i++) {
+    for (let i=0; i<21; i++) {
       const levelAttr = sample(commonAttrs)
       console.log(`${levelAttr} improves`)
       pc.things.add(1, levelAttr)
@@ -24,7 +24,7 @@ class PlayerHandbook {
       'hp per li', 'hp per step', 
       'xp per encounter'
     ]
-    for (let i=0; i<8; i++) {
+    for (let i=0; i<13; i++) {
       const levelAttr = sample(uncommonAttrs)
       console.log(`${levelAttr} improves`)
       pc.things.add(1, levelAttr)
@@ -36,7 +36,7 @@ class PlayerHandbook {
       'xp per step', 'gold per li',
       'gold per encounter'
     ]
-    for (let i=0; i<2; i++) {
+    for (let i=0; i<8; i++) {
       const levelAttr = sample(rareAttrs)
       console.log(`${levelAttr} improves`)
       pc.things.add(1, levelAttr)
@@ -49,14 +49,14 @@ class PlayerHandbook {
         'damage to all', 'hp per encounter',
         'magic defense', 'holy defense', 'max chain',
       ]
-      for (let i=0; i<1; i++) {
+      for (let i=0; i<5; i++) {
         const levelAttr = sample(legendaryAttrs)
         console.log(`${levelAttr} improves`)
         pc.things.add(1, levelAttr)
       }
     }
 
-    if (pc.things.count('level') % 3 === 1) {
+    if (pc.things.count('level') % 2 === 1) {
       const perks = [
         'Finesse', // +25% to crit chance per rank
         'Precision', // bonus % to crit dmg
@@ -75,7 +75,7 @@ class PlayerHandbook {
       pc.traits.add(1, perk)
     }
 
-    if (pc.things.count('level') % 5 === 1) {
+    if (pc.things.count('level') % 3 === 1) {
       const rarePerks = [
         'Perfectionist', // bonus pers for xp/hp/gold (+25% per rank)
         'Whirlwind', // bonus % to chain chance + damage to all
@@ -495,11 +495,11 @@ class Arena extends Model {
                             * (1 + (0.25 * aggressor.traits.count("Barbarian")))
                             * (1 + (0.15 * aggressor.traits.count("Finesse")))
                             * (1 + (0.05 * aggressor.traits.count("Efficacious")))
-          const maxChain = aggressor.things.count('max chain')
-                            * (1 + (0.5 * aggressor.traits.count("Combat Veteran")))
-                            * (1 + (0.25 * aggressor.traits.count("Precision")))
-                            * (1 + (0.15 * aggressor.traits.count("Finesse")))
-                            * (1 + (0.05 * aggressor.traits.count("Efficacious")))
+          const maxChain = (1 + aggressor.things.count('max chain'))
+                             * (1 + (0.5 * aggressor.traits.count("Combat Veteran")))
+                             * (1 + (0.25 * aggressor.traits.count("Precision")))
+                             * (1 + (0.15 * aggressor.traits.count("Finesse")))
+                             * (1 + (0.05 * aggressor.traits.count("Efficacious")))
           let chain = 0
           while (!done && chain++ < maxChain) {
             let chainRoll = randomInteger(0,100)
@@ -542,7 +542,7 @@ class Arena extends Model {
       const levelCost = Math.min(
         // level * 50000 + (1 + 0.05 * level),
         // level * 15000 + (1 + 0.1 * level),
-        ((1000 + (level * 1000)) * (1 + 0.05 * level)),
+        Math.floor((1000 + (level * 1000)) * (1 + 0.05 * level)),
         10 + Math.pow(10, level)
       )
       if (adventurer.things.count('xp') > levelCost) {
