@@ -9,7 +9,7 @@ const give = (recipient: Person, supplier: Person, n: number, item: string) => {
 }
 
 const world = new Model('Avernus')
-const { resources, animals, people, machines } = world
+const { resources, animals, people } = world
 const folks = people.create('Townspeople')
 const { recipes, jobs } = folks
 

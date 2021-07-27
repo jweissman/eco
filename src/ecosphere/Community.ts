@@ -2,7 +2,6 @@ import { List, Map } from '../collections';
 import { Recipe, Moiety, Person, ManageStocks, createPerson, createMoiety } from "./types";
 import { Population } from "./Population";
 import { Collection } from "./Collection";
-import { Stocks } from './Stocks';
 import { boundMethod } from 'autobind-decorator';
 
 export class Community extends Population<Moiety, Person> {

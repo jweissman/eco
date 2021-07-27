@@ -1,5 +1,5 @@
 import { Avernus } from "./Avernus"
-import arena from "./combat"
+import arena from "./Arena"
 import { Society } from "./Society"
 import { SpaceStation } from "./SpaceStation"
 // import town from "./Town"

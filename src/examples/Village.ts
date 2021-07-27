@@ -7,7 +7,7 @@ import { Assembly } from "../ecosphere/Assembly"
 const town = new Model('Town')
 town.people.create('Mayor')
 
-const townAnimals = ['Sheep', 'Cow', 'Dog', 'Cat']
+// const townAnimals = ['Sheep', 'Cow', 'Dog', 'Cat']
 town.animals.create('Sheep')
 town.animals.create('Cow')
 town.animals.create('Dog')
@@ -21,7 +21,7 @@ town.evolve(({ animals }) => {
 })
 
 const countryside = new Model('Country')
-const countryAnimals = ['Fox', 'Bear', 'Wolf']
+// const countryAnimals = ['Fox', 'Bear', 'Wolf']
 countryside.people.create('Old Buddy')
 countryside.animals.create('Fox')
 countryside.animals.create('Bear')
