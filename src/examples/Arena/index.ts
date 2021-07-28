@@ -1,10 +1,12 @@
 import { boundMethod } from "autobind-decorator"
-import { Sequence } from "../../collections"
+import { List, Sequence } from "../../collections"
+import { Collection } from "../../ecosphere/Collection"
 import { Community } from "../../ecosphere/Community"
 import Model from "../../ecosphere/Model"
 import { EvolvingStocks, ManageStocks, Person } from "../../ecosphere/types"
 import { randomInteger } from "../../ecosphere/utils/randomInteger"
 import { sample } from "../../ecosphere/utils/sample"
+import { where } from "../../ecosphere/utils/where"
 import { MonsterManual } from "./MonsterManual"
 import { PlayerHandbook } from "./PlayerHandbook"
 
@@ -13,7 +15,31 @@ class DungeonMasterGuide {
   static durations = { round: 74, day: 6800 }
 }
 
+// type SimpleEvent = { at: number }
+type EventCommon = { id: number, at: number }
+type EnemyInjured = EventCommon & { kind: 'enemy-injured', enemyName: string, amount: number }
+type TurnStarted = EventCommon & { kind: 'turn-started' }
+type Event = EnemyInjured | TurnStarted
 class Arena extends Model {
+  events = new List<Event>()
+  // emit(event: Event, title?: string, message?: string) {
+    // if (title) { console.log(title) } //"EVENT", event)
+  eventIds = new Sequence()
+  enemyInjured(name: string, amount: number) {
+    this.events.add({
+      id: this.eventIds.next,
+      kind: 'enemy-injured',
+      enemyName: name,
+      amount,
+      at: this.ticks
+    })
+      // : `${name} took ${amount} damage`, description: message, kind: event.kind, at: this.ticks })
+  }
+
+  turnStarted() {
+    this.events.add({ id: this.eventIds.next, kind: 'turn-started', at: this.ticks })
+  }
+
   constructor() {
     super('The Arena')
     const globals = [ 'day', 'step', 'li', 'gil', 'kill', 'victory', 'death', 'tpk' ]
@@ -26,10 +52,23 @@ class Arena extends Model {
     Object.keys(PlayerHandbook.characterClasses).forEach(characterClass => {
       this.actions.create({ name: `Hire ${characterClass}`, act: () => this.spawnHero(characterClass) })
     })
+    this.actions.create({ name: `Hire Party`, act: () => {
+      for (let i=0; i<3; i++) {
+        this.spawnHero(sample(Object.keys(PlayerHandbook.characterClasses))) 
+      }
+      // this.spawnHero(sample(Object.keys(PlayerHandbook.characterClasses))) 
+      // this.spawnHero(sample(Object.keys(PlayerHandbook.characterClasses))) 
+    }})
     this.people.create('Enemies')
     // enemies.obscured = true // only show names? really want hp -- more granular/whitelist?
     this.spawnEnemyParty()
     this.evolve(this.tick)
+  }
+
+  metrics = {
+    'challenge rating': () => this.challengeRating,
+    'damage per tick': () => this.damagePerTick,
+    turns: () => this.recent('turn-started').length,
   }
 
   heroIds = new Sequence()
@@ -40,24 +79,48 @@ class Arena extends Model {
     PlayerHandbook.generate(hero, characterClass)
   }
 
+  get challengeRating() {
+    if (this.party.count === 0) return -1;
+    const totalLevels = this.party.list().map(adv => adv.things.count('level')).reduce((a, b) => a + b)
+    const cr = 1 
+      + (this.resources.count('step')/1250)
+      + (this.resources.count('day')/14)
+      + (this.party.count) 
+      + (totalLevels / this.party.count);
+    return Math.floor(cr);
+  }
+
+  private recent(kind: string): Event[] { return this.recentEvents.filter(where('kind', kind)) }
+
+  metricGrain = 150 //DungeonMasterGuide.durations.round
+  get damagePerTick() {
+    const enemyInjuries: EnemyInjured[] = this.recent('enemy-injured') as EnemyInjured[]
+    // const turns = 1 + this.recent('turn-started').length //this.recentEvents.filter(where('kind', 'turn-started')).length
+    const totalInjuryAmount = enemyInjuries.map((injury: EnemyInjured) => injury.amount).reduce((a, b) => a + b, 0)
+    return (Math.floor(
+      totalInjuryAmount / this.metricGrain //Math.floor(totalInjuryAmount / this.metricGrain)
+    ))
+  }
+
+  get recentEvents() {
+    return this.events.items.filter(e => e.at > this.ticks-this.metricGrain)
+  }
+
+  manual = new MonsterManual()
+
   @boundMethod
   spawnEnemyParty() {
-    const manual = new MonsterManual()
-    const totalLevels = this.party.list().map(adv => adv.things.count('level')).reduce((a, b) => a + b)
-    const cr = 1 + Math.floor(this.resources.count('step')/250)
-                 + Math.floor(this.resources.count('day')/7)
-                 + Math.floor(this.party.count/3)
-                 + Math.floor(totalLevels/this.party.count)
+    if (this.party.count === 0) return;
 
     for (let i = 0; i < randomInteger(1,2+this.party.count); i++) {
       const enemy = this.enemies.create('new enemy')
-      manual.generate(enemy, cr)
+      this.manual.generate(enemy, this.challengeRating)
     }
 
-    if (cr > 30 && randomInteger(0,12) > 11) {
-      const enemy = this.enemies.create('new big enemy')
-      manual.generateBoss(enemy, cr) //this.resources.count('li') + this.party.count)
-    }
+    // if (randomInteger(0,12) > 11) {
+    //   const enemy = this.enemies.create('new big enemy')
+    //   this.manual.generateBoss(enemy, this.challengeRating)
+    // }
   }
 
   get party() { return this.people.lookup('Adventurers') }
@@ -66,7 +129,12 @@ class Arena extends Model {
   private injure(defender: Person, amount: number, aggressor: Person, reflected: boolean = false) {
     const damage = Math.floor( Math.min(defender.things.count('hp'), amount) )
     if (damage <= 0) return;
+
     defender.things.remove(damage, 'hp')
+    if (this.enemies.list().includes(defender)) {
+      this.enemyInjured(defender.name, damage)
+    }
+
     console.log(`${aggressor.name} hit ${defender.name} for ${damage}!`)
     const absorb = Math.min(this.effective(aggressor, 'absorb'), damage)
     if (absorb > 0) {
@@ -114,15 +182,15 @@ class Arena extends Model {
     const magicDamage = Math.max(0, this.effective(aggressor, 'magic damage') - magicDefense)
     let physicalDamage = 0;
     let criticalStrike = false;
-    const evade = this.effective(defender, 'evasion')
+    const evade = 1 + this.effective(defender, 'evasion')
     const hitRoll = randomInteger(0,100)
-    const hit = hitRoll > evade
+    const hit = hitRoll > Math.min(95, evade * 2)
     if (hit) {
       const defense = this.effective(defender, 'defense')
       const baseDamage = Math.max(1,this.effective(aggressor, 'strength') - defense)
       const bonus = this.effective(aggressor, 'bonus damage')
-      const critChance = this.effective(aggressor, 'crit chance')
-      criticalStrike = randomInteger(0,100) < critChance
+      const critChance = 1 + this.effective(aggressor, 'crit chance')
+      criticalStrike = randomInteger(0,100) < Math.max(50, critChance * 2)
       if (criticalStrike) {
         console.log(`${aggressor.name} landed a critical strike on ${defender.name}!`)
       }
@@ -204,13 +272,21 @@ class Arena extends Model {
   private round() {
     this.per('round')
     this.party.list().forEach(adventurer => {
-       const regen = this.effective(adventurer, 'regen')
-       this.heal(adventurer, regen)
+      const regen = this.effective(adventurer, 'regen')
+      this.heal(adventurer, regen)
       if (adventurer.things.count('heal')) {
         this.party.list().forEach(healee => {
             const health = this.effective(adventurer, 'heal')
             this.heal(healee, randomInteger(1,health))
         })
+      }
+
+      if (adventurer.traits.count('Potion of Life') > 0 &&
+          adventurer.things.count('hp') < 0.5 * adventurer.things.count('max hp')) {
+        console.log(`${adventurer.name} drank a potion of life!`)
+        adventurer.traits.remove(1, 'Potion of Life')
+        const health = 20 + randomInteger(0, 10) + this.effective(adventurer, 'heal')
+        this.heal(adventurer, health)
       }
     })
 
@@ -241,7 +317,7 @@ class Arena extends Model {
       this.per('day')
     }
 
-    if (this.enemies.count === 0) {
+    if (this.enemies.count === 0 && this.party.count > 0) {
       if (t % 5 === 0) {
         this.resources.add(1, 'step')
         this.per('step')
@@ -272,6 +348,7 @@ class Arena extends Model {
 
        
     } else {
+      this.turnStarted()
       this.per('turn')
       this.attack(this.party, this.enemies)
       this.attack(this.enemies, this.party)
