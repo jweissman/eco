@@ -12,11 +12,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Install node
+      - name: Setup
         uses: actions/setup-node@v2
         with:
           node-version: 15.x
-      - name: Test
+      - name: Dependencies
+        run: yarn install
+      - name: Verification
         run: yarn test
-      - name: Deploy
+      - name: Deployment
         run: yarn deploy
