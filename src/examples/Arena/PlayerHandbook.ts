@@ -8,13 +8,13 @@ export class PlayerHandbook {
   static characterClasses: { [name: string]: { attributes: { [attr: string]: number; }; traits: string[]; }; } = {
     Fighter: {
       attributes: {
-        hp: 24,
-        strength: 2,
+        hp: 12,
+        strength: 1,
         defense: 1,
         speed: 0,
         'bonus damage': 0,
         'chain chance': 0,
-        'gold per kill': 0,
+        'max chain': 0,
       },
       traits: ['Fitness', 'Combat Veteran']
     },
@@ -30,40 +30,51 @@ export class PlayerHandbook {
     // ],
     common: [
       'max hp',
-      'xp per kill',
+      // 'hp per victory',
+      // 'hp per day',
+      // 'hp per step',
+      // 'xp per kill',
+      // 'xp per li',
+      // 'xp per victory',
+      // 'xp per day', //'gold per li'
+      // 'gold per victory',
+      // 'xp per step',
       // 'gold per day'
-      'hp per victory',
       // 'gold per day',
       // 'hp per day', // 'gold per day'
       // 'max hp', 'xp per victory', 'hp per day', 'gold per day', 'xp per li', 
     ],
     uncommon: [
       // 'xp per victory',
-      'hp per day',
-      'xp per day', //'gold per li'
+      // 'gold per victory',
     ],
     rare: [
-      'evasion',
-      'crit damage',
-      'xp per li',
-      'max chain', //'hp per step'
+      // 'evasion',
+      // 'crit damage',
+      // 'xp per step',
+      // 'max chain', //'hp per step'
     ],
     epic: [
       // 'xp per day', 'gold per step',
-      'counter',
-      'crit chance',
-      'xp per victory',
+      // 'xp per day', //'gold per li'
+      // 'counter',
+      // 'crit chance',
     ],
     legendary: [
-      'defense',
-      'strength',
+      // 'xp per kill',
+      // 'xp per li',
+      // 'xp per victory',
+      // 'counter',
+      // 'evasion',
+      // 'defense',
+      // 'strength',
       // 'magic damage',
       // 'holy damage',
       // 'bonus damage',
       // 'reflect',
       // 'heal',
-      'damage to all',
-      'chain chance',
+      // 'damage to all',
+      // 'chain chance',
     ],
   };
 
@@ -142,18 +153,16 @@ export class PlayerHandbook {
     const baseStartingHp = 42;
     hero.traits.add(1, characterClass)
     hero.things.add(baseStartingHp, 'hp')
-    hero.things.add(randomInteger(1,4), 'strength')
-    hero.things.add(randomInteger(1,4), 'speed')
-    hero.things.add(randomInteger(1,4), 'evasion')
-    hero.things.add(randomInteger(1,4), 'counter')
+    // hero.things.add(1, 'strength')
+    // hero.things.add(1, 'speed')
+    // hero.things.add(randomInteger(1,4), 'evasion')
+    // hero.things.add(randomInteger(1,4), 'counter')
     const template = this.characterClasses[characterClass];
     Object.keys(template.attributes).forEach(attr => {
       const amount = template.attributes[attr]
       hero.things.add(amount, attr)
     });
-    (template.traits).forEach(trait => {
-      hero.traits.add(1, trait)
-    })
+    (template.traits).forEach(trait => hero.traits.add(1, trait))
     hero.things.add(2000, 'xp per li')
     // hero.things.add(5, 'xp per kill')
     // hero.things.add(1, 'gold per day')
@@ -169,35 +178,39 @@ export class PlayerHandbook {
   static levelUp(pc: Person) {
     const attributeBoosts: { [key: string]: number; } = {
       // basic: 13,
-      common: 5, // randomInteger(3, 5),
-      uncommon: 3, //randomInteger(2, 3),
-      rare: 2, //randomInteger(1, 2),
-      epic: 1, //randomInteger(0, 1),
-      legendary: randomInteger(0, 1),
+      common: 8, // randomInteger(3, 5),
+      uncommon: 5, //randomInteger(2, 3),
+      rare: 3, //randomInteger(1, 2),
+      epic: 2, //randomInteger(0, 1),
+      legendary: 1 //randomInteger(0, 1),
     };
 
     Object.keys(this.attributes).forEach(rarity => {
       for (let i = 0; i < attributeBoosts[rarity]; i++) {
         const levelAttr = sample(this.attributes[rarity]);
+        if (levelAttr) {
         const amount = 1; //randomInteger(1,2)
-        pc.things.add(amount, levelAttr);
-        console.log(`${levelAttr} improves by ${amount}`);
+          pc.things.add(amount, levelAttr);
+          console.log(`${levelAttr} improves by ${amount}`);
+        }
       }
     });
 
     const perkLevels: { [key: string]: number; } = {
-      common: 3,
-      uncommon: 5,
-      rare: 8,
-      epic: 13,
-      legendary: 21,
+      common: 2,
+      uncommon: 3,
+      rare: 5,
+      epic: 8,
+      legendary: 13,
     };
 
     Object.keys(this.perks).forEach(rarity => {
       if (pc.things.count('level') % perkLevels[rarity] === 0) {
         const perk = sample(this.perks[rarity]);
-        console.log(`Gain a rank in ${perk} (${rarity})`);
-        pc.traits.add(1, perk);
+        if (perk) {
+          console.log(`Gain a rank in ${perk} (${rarity})`);
+          pc.traits.add(1, perk);
+        }
       }
     });
 

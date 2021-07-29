@@ -11,6 +11,7 @@ type ApplicationProps = {
 function App({ model: initialModel }: ApplicationProps) {
 
   return <div className="App">
+    {/* @ts-ignore */}
     <ModelSelector models={models} initialModel={initialModel} />
   </div>;
 }

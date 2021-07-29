@@ -1,6 +1,5 @@
 import { boundMethod } from "autobind-decorator"
 import { List, Sequence } from "../../collections"
-import { Collection } from "../../ecosphere/Collection"
 import { Community } from "../../ecosphere/Community"
 import Model from "../../ecosphere/Model"
 import { EvolvingStocks, ManageStocks, Person } from "../../ecosphere/types"
@@ -67,8 +66,8 @@ class Arena extends Model {
 
   metrics = {
     'challenge rating': () => this.challengeRating,
-    'damage per tick': () => this.damagePerTick,
-    turns: () => this.recent('turn-started').length,
+    // 'damage per tick': () => this.damagePerTick,
+    // turns: () => this.recent('turn-started').length,
   }
 
   heroIds = new Sequence()
@@ -325,17 +324,22 @@ class Arena extends Model {
           resources.add(1, 'li')
           this.per('li')
           // store..
-          // if (resources.count('gil') > 1000) {
-          //   // give items to leader
-          //   let leader = this.party.list()[0]
-          //   const items = [
-          //     'Healing Salve', 'Shell Matrix', // functionally -- resurrect charges (w/ limitations)
-          //     'Cloaking Robe of Elvenkind', // large % bonus to evade
-          //     'Counterweight' // large % bonus to counter chance
-          //   ]
-          //   leader.traits.add(1, sample(items))
-          //   resources.remove(1000, 'gil')
-          // }
+          const items = [
+            'Potion of Life', // heals ~25 at 50% hp
+            'Healing Salve',
+          ]
+          const rareItems = [
+            'Shell Matrix', // functionally -- resurrect charges (w/ limitations)
+            'Cloaking Robe of Elvenkind', // large % bonus to evade
+            'Counterweight' // large % bonus to counter chance
+          ]
+          const stock = randomInteger(0,20) > 19 ? rareItems : items
+          while (this.resources.count('gil') > 1000) {
+            // give items to leader
+            let recipient = sample(this.party.list()) //[0]
+            recipient.traits.add(1, sample(stock))
+            this.resources.remove(1000, 'gil')
+          }
         }
 
         const encounterChance = 60 + this.resources.count('li') + this.party.count
