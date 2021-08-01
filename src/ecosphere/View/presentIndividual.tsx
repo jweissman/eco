@@ -2,15 +2,29 @@ import { ManageStocks } from "../types";
 
 
 export function presentIndividual(work: { [key: number]: string; }) {
-  return ({ id, name, things, traits }: {
+  return ({ id, name, things, traits, meters }: {
     id: number;
     name: string;
     things: ManageStocks;
     traits: ManageStocks;
+    meters: { [key: string]: Function }
   }) => {
     const itemNames = things.list().map(thing => thing.name);
     return <li key={id} title={name} className='Item'>
       <div className='Title' data-testid='Name'>{name}</div>
+      {Object.entries(meters).map(([meterName, measure]) => {
+        const { value, max } = measure()
+        return <div className='Meter' data-testid={meterName}>
+          <label htmlFor={meterName} style={{paddingRight: 10}}>{meterName}:</label>
+          <meter id={meterName}
+                 style={{ width: 130, height: 14 }}
+                 min="0" max={max}
+                 low={max * 0.33} high={max * 0.66} optimum={max * 0.8}
+                 value={value}>
+              at {value}/{max}
+          </meter>
+        </div>
+      })}
       {work[id] && work[id] !== '?' && <span data-testid='Status'>{work[id]}</span>}
       {itemNames.length > 0 && <div className='Subitems' data-testid='Inventory'>
         <ul>
@@ -32,6 +46,7 @@ export function presentIndividual(work: { [key: number]: string; }) {
         </ul>
       </div>}
 
+      
     </li>;
   };
 }

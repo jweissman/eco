@@ -17,7 +17,7 @@ export type ModelViewProps = {
   metrics: { [name: string]: number }; //[ { name: string, value: number} ];
 }
 
-export function View({
+export function ModelView({
   modelName,
   items,
   // individuals,

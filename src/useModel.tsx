@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { IAssembly } from './ecosphere/Assembly';
+import { IAssembly } from './ecosphere/Model/Assembly';
 import { IModel } from "./ecosphere/Model/IModel";
 import { LastDelta } from './ModelPresenter';
 import { isModel } from './ModelSelector';

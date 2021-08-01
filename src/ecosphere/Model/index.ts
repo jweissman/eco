@@ -1,6 +1,6 @@
 import { Model } from './Model';
 import { IModel } from './IModel';
-import { View } from '../View/View';
-export { Model, View as ModelView }
+import { ModelView } from '../View/ModelView';
+export { Model, ModelView as ModelView }
 export type { IModel }
 export default Model

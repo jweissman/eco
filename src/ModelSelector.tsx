@@ -1,6 +1,6 @@
 import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
-import { IAssembly } from './ecosphere/Assembly';
+import { IAssembly } from './ecosphere/Model/Assembly';
 import Model from './ecosphere/Model';
 import { IModel } from "./ecosphere/Model/IModel";
 import { ModelPresenter } from './ModelPresenter';

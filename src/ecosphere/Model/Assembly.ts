@@ -1,5 +1,5 @@
-import { List } from "../collections";
-import Model from "./Model";
+import { List } from "../../collections";
+import Model from ".";
 
 export interface IAssembly {
   name: string

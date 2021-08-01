@@ -11,7 +11,7 @@ import { PlayerHandbook } from "./PlayerHandbook"
 
 // try to keep magic numbers here?
 class DungeonMasterGuide {
-  static durations = { round: 74, day: 6800 }
+  static durations = { round: 104, day: 7000 }
 }
 
 // type SimpleEvent = { at: number }
@@ -281,10 +281,10 @@ class Arena extends Model {
       }
 
       if (adventurer.traits.count('Potion of Life') > 0 &&
-          adventurer.things.count('hp') < 0.5 * adventurer.things.count('max hp')) {
+          adventurer.things.count('hp') < 0.35 * adventurer.things.count('max hp')) {
         console.log(`${adventurer.name} drank a potion of life!`)
         adventurer.traits.remove(1, 'Potion of Life')
-        const health = 20 + randomInteger(0, 10) + this.effective(adventurer, 'heal')
+        const health = 30 + randomInteger(1, 12) + this.effective(adventurer, 'heal')
         this.heal(adventurer, health)
       }
     })
@@ -298,7 +298,7 @@ class Arena extends Model {
   tick({ resources }: EvolvingStocks, t: number) {
     this.party.list().forEach(adventurer => {
       const level = adventurer.things.count('level')
-      const levelCost = Math.floor(Math.pow(2, 5+level))
+      const levelCost = PlayerHandbook.levelCost(level) 
       if (adventurer.things.count('xp') > levelCost) {
         adventurer.things.remove(levelCost, 'xp')
         adventurer.things.add(1, 'level')

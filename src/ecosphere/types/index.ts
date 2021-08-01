@@ -130,6 +130,9 @@ export type Person = Individual<Moiety> & {
 
   currency: number
   traits: ManageStocks // IList<Trait>
+
+  // things to draw meters for..
+  meters: { [meterName: string]: Function }
   // memory: List<Event>
   // philosophy?: Ideology
   // destiny: 'doomed' | 'commonplace' | 'exceptional' | 'free'
@@ -156,9 +159,10 @@ export const createPerson = (name: string, moiety: Moiety): Person => {
     // reputation: 'unknown',
     currency: 0,
     things: inventory.manageAll(),
-    traits: traits.manageAll()
+    traits: traits.manageAll(),
     // stats: state.manageAll()
     // things: new M
+    meters: {},
   }
 
 }

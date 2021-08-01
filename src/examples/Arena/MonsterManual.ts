@@ -5,20 +5,24 @@ import { sample } from "../../ecosphere/utils/sample";
 
 export class MonsterManual {
   basicCreatures = {
-    // 'Null Index': { hp: 1, evasion: 95 },
-    'Dancing Light': { hp: 24, evasion: 1 },
-    'Crystalline Fog': { hp: 26, evasion: 1, reflect: 10 },
-    'Floating Light': { hp: 28, evasion: 1, speed: 1 },
-
-    'Mobile Wisp': { hp: 40, strength: 1, speed: 1, evasion: 1 },
-
+    Fragment: { hp: 1, evasion: 95 },
+    Light: { hp: 24, evasion: 1 },
+    Fog: { hp: 26, evasion: 1, reflect: 10 },
+    Aura: { hp: 28, evasion: 1, speed: 1 },
+    Shadow: { hp: 38, evasion: 1, speed: 2 },
+    Wisp: { hp: 40, strength: 1, speed: 1, evasion: 1 },
+    Filament: { hp: 43, evasion: 1, speed: 1, counter: 1 },
+    Voice: { hp: 53, evasion: 1, speed: 1, counter: 1, absorb: 1, defense: 1 },
+    Nothing: { hp: 63, regen: 1, speed: 1, defense: 1, reflect: 1 },
   };
 
   challengingCreatures = {
-    Gremlin: { hp: 32, speed: 1, counter: 1, evasion: 1 },
-    Goblin: { hp: 40 },
-    Kobold: { hp: 50, strength: 1, speed: 2 },
-    Orc: { hp: 64, strength: 2, speed: 1, counter: 1 },
+    // 'Gray Mote': { hp: 8, 'magic damage': 3 },
+    Fiendling: { hp: 12, 'holy damage': 1 }, //, speed: 1, counter: 1, evasion: 1 },
+    Gremlin: { hp: 22, speed: 1, counter: 1 }, // evasion: 1 },
+    Goblin: { hp: 30 },  //, 'magic damage': 1 },
+    Kobold: { hp: 40, strength: 1 }, // speed: 2 },
+    Orc: { hp: 48, strength: 1, speed: 1 }, //, counter: 1 },
   }
 
   uncommonCreatures = {
@@ -47,6 +51,7 @@ export class MonsterManual {
     Dracolith: { hp: 247, strength: 7, 'magic damage': 7, speed: 7, defense: 7, evasion: 7, counter: 7 },
     Archangel: { hp: 299, absorb: 9, strength: 9, speed: 9, defense: 9, evasion: 9, 'magic defense': 9, 'holy defense': 9, 'holy damage': 99 },
 
+    'Brutal Light': { hp: 123, speed: 2, strength: 6, 'bonus damage': 5, evasion: 4 },
     'Floating Sigil': { hp: 234, speed: 10, defense: 10, counter: 10 },
     'Astral Filament': { hp: 1234, strength: 15, absorb: 10, evasion: 5, counter: 1, regen: 1 },
     'Essence Sphere': { hp: 12345, 'magic damage': 12, 'holy damage': 12, 'bonus damage': 12 },
@@ -82,34 +87,40 @@ export class MonsterManual {
   basicSubtypes = {
     Hostile: { strength: 1 }, Intimidating: { strength: 2 },
     Nimble: { speed: 1 }, Quick: { speed: 2 },
-    Timid: { evasion: 1 }, Spry: { evasion: 2 },
+    Timid: { evasion: 1 }, Spry: { evasion: 2 }, Dancing: { evasion: 3 },
     Vigilant: { regen: 1 }, Relentless: { regen: 2 },
     Armored: { defense: 1 }, Hardened: { defense: 2 },
     Benevolent: { heal: 1 }, Protective: { heal: 2 },
     Snarling: { counter: 1 },
 
     Emboldened: { 'bonus damage': 1 },
+    Floating: { evasion: 1, speed: 1 },
+    Crystalline: { reflect: 1 },
+    Glinting: { reflect: 2 },
+    Mobile: { speed: 1 },
+    Coldsnap: { speed: 1, regen: 1 },
+    Blinding: { reflect: 1, absorb: 1 },
+    Noxious: { defense: 1, counter: 1, absorb: 1 },
   };
 
   rareSubtypes: { [type: string]: { [attr: string]: number; }; } = {
-    Elusive: { evasion: 3 },
     Voracious: { hp: 5, strength: 1, speed: 1 },
     Vicious: { hp: 10, strength: 1, defense: 1 },
     Vexatious: { hp: 15, counter: 1, evasion: 1 },
-
     Arrogant: { hp: -5, evasion: 1, counter: 1, speed: 1 },
+    Querulous: { hp: -10, strength: 1, speed: 1, regen: 1, absorb: 1, defense: 1 },
 
-    Adventurous: { hp: 10, 'bonus damage': 2 },
-    Questing: { hp: 20, 'bonus damage': 3 },
+    Adventurous: { hp: 5, 'bonus damage': 2 },
+    Questing: { hp: 10, 'bonus damage': 3 },
 
-    Silvered: { reflect: 1 }, Mirrored: { reflect: 2 },
+    Silvered: { reflect: 2 }, Mirrored: { reflect: 3 },
     Aggressive: { strength: 3 }, Dominating: { strength: 4 },
     Swift: { speed: 3 }, Accelerated: { speed: 4 },
-    Reluctant: { evasion: 5 }, Hidden: { evasion: 10 }, Invisible: { evasion: 15 },
-    Resurrecting: { regen: 3 }, Regenerating: { regen: 4 },
+    Elusive: { evasion: 4 }, Reluctant: { evasion: 5 }, Hidden: { evasion: 6 }, Invisible: { evasion: 8 }, Imperceptible: { evasion: 15 },
+    Regrowing: { regen: 3 }, Hydra: { regen: 4 },
     Fortified: { defense: 3 },
-    Angelic: { heal: 3 },
-    Prismatic: { reflect: 3 },
+    Angelic: { heal: 3, 'holy damage': 2 },
+    Prismatic: { reflect: 3, absorb: 2, evasion: 1 },
     // Hardened: { defense: 3, strength: 1, evasion: 1 },
     Pugnacious: { 'bonus damage': 1, evasion: 1, counter: 1 },
 
@@ -169,8 +180,11 @@ export class MonsterManual {
 
   generateBasicMonster(creature: Person) {
     let base = sample(Object.keys(this.basicCreatures))
-    let type = 'Common'
-    creature.name = `${base} (${this.monsterIds.next})`;
+    let type = randomInteger(0, 20) > 16 ? sample(Object.keys(this.basicSubtypes)) : 'Common';
+    // let type = 'Common'
+    // creature.name = `${type} ${base} (${this.monsterIds.next})`;
+    const name = type === 'Common' ? base : [type, base].join(' ');
+    creature.name = name
     // creature.things.add(5 + Math.floor(0.05 * cr * cr), 'hp')
     const crFactor = 1
     Object.entries(this.bestiary[base]).forEach(([thing, amount]) => creature.things.add(
@@ -180,7 +194,7 @@ export class MonsterManual {
   }
 
   generate(creature: Person, cr: number = 1) {
-    if (cr <= 8) { this.generateBasicMonster(creature); return }
+    if (cr <= 6) { this.generateBasicMonster(creature); return }
     // console.log("generate monster with cr " + cr);
     // const simpleCreatures = ['Snake', 'Blob', 'Bat', 'Wisp']
     let base = sample(Object.keys(this.challengingCreatures)) //cr <= 10 ? sample(Object.keys(this.basicCreatures)) : sample(Object.keys(this.challengingCreatures));

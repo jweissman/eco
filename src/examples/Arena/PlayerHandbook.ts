@@ -3,6 +3,10 @@ import { randomInteger } from "../../ecosphere/utils/randomInteger";
 import { sample } from "../../ecosphere/utils/sample";
 
 export class PlayerHandbook {
+  static levelCost(level: number) {
+    // throw new Error("Method not implemented.");
+    return Math.floor(Math.pow(2, 5+level))
+  }
   // okay, i guess give them the class as a perk... then each level up we can check + bump one of the class
   // nice to have: sick multi-classing
   static characterClasses: { [name: string]: { attributes: { [attr: string]: number; }; traits: string[]; }; } = {
@@ -30,6 +34,7 @@ export class PlayerHandbook {
     // ],
     common: [
       'max hp',
+
       // 'hp per victory',
       // 'hp per day',
       // 'hp per step',
@@ -47,20 +52,24 @@ export class PlayerHandbook {
     uncommon: [
       // 'xp per victory',
       // 'gold per victory',
+      'hp per victory'
     ],
     rare: [
+      'hp per day',
       // 'evasion',
       // 'crit damage',
       // 'xp per step',
       // 'max chain', //'hp per step'
     ],
     epic: [
+      'hp per step',
       // 'xp per day', 'gold per step',
       // 'xp per day', //'gold per li'
       // 'counter',
       // 'crit chance',
     ],
     legendary: [
+      'hp per kill',
       // 'xp per kill',
       // 'xp per li',
       // 'xp per victory',
@@ -150,11 +159,11 @@ export class PlayerHandbook {
   };
 
   static generate(hero: Person, characterClass: string) {
-    const baseStartingHp = 42;
+    const baseStartingHp = 10;
     hero.traits.add(1, characterClass)
     hero.things.add(baseStartingHp, 'hp')
-    // hero.things.add(1, 'strength')
-    // hero.things.add(1, 'speed')
+    hero.things.add(1, 'strength')
+    hero.things.add(1, 'speed')
     // hero.things.add(randomInteger(1,4), 'evasion')
     // hero.things.add(randomInteger(1,4), 'counter')
     const template = this.characterClasses[characterClass];
@@ -163,15 +172,22 @@ export class PlayerHandbook {
       hero.things.add(amount, attr)
     });
     (template.traits).forEach(trait => hero.traits.add(1, trait))
-    hero.things.add(2000, 'xp per li')
-    // hero.things.add(5, 'xp per kill')
+    // hero.things.add(2000, 'xp per li')
+    hero.things.add(15, 'xp per victory')
     // hero.things.add(1, 'gold per day')
-    hero.things.add(Math.floor(baseStartingHp * 0.75), 'hp per victory')
+    // hero.things.add(Math.floor(baseStartingHp * 0.75), 'hp per victory')
     hero.things.add(Math.floor(baseStartingHp * 1.2), 'max hp')
-    hero.traits.add(3, 'Potion of Life')
+    hero.traits.add(4, 'Potion of Life')
     hero.things.add(1, 'level')
-    for (let i=0; i<10; i++) {
+    for (let i=0; i<4; i++) {
       this.levelUp(hero)
+    }
+
+    hero.meters = {
+      'health': () => { return { value: hero.things.count('hp'), max: hero.things.count('max hp')}},
+      // 'next level': () =>  {
+      //   return { value: hero.things.count('xp'), max: this.levelCost(hero.things.count('level')) }
+      // }
     }
   }
 
@@ -197,10 +213,10 @@ export class PlayerHandbook {
     });
 
     const perkLevels: { [key: string]: number; } = {
-      common: 2,
-      uncommon: 3,
-      rare: 5,
-      epic: 8,
+      common: 5,
+      uncommon: 7,
+      rare: 9,
+      epic: 11,
       legendary: 13,
     };
 
@@ -215,17 +231,19 @@ export class PlayerHandbook {
     });
 
     // const classBonuses = PlayerHandbook.characterClasses
-    // okay, for each triat
     if (pc.things.count('level') % 3 === 0) {
+      // const classes=[]
       pc.traits.list().forEach((trait) => {
         // console.log(trait)
         if (Object.keys(this.characterClasses).includes(trait.name)) {
         //   // it's a pc class
           Object.entries(this.characterClasses[trait.name].attributes).forEach(([attr, value]) => {
+            if (value >= 0 && randomInteger(0,12) > 8) {
             // if (value === 0) { if (randomInteger(0,12) < 2) return }
-            const amount = value > 0 ? randomInteger(1, Math.max(1,value)) : 1
-            console.log(`${attr} improves by ${amount} (${trait.name})`);
-            pc.things.add(amount, attr)
+              const amount = value > 0 ? randomInteger(1, Math.max(1,value)) : 1
+              console.log(`${attr} improves by ${amount} (${trait.name})`);
+              pc.things.add(amount, attr)
+            }
           })
         }
       })
