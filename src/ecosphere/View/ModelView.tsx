@@ -15,6 +15,7 @@ export type ModelViewProps = {
   machines: Machine[];
   lastChanges: LastDelta;
   metrics: { [name: string]: number }; //[ { name: string, value: number} ];
+  notes: { [name: string]: string }; //[ { name: string, value: number} ];
 }
 
 export function ModelView({
@@ -26,6 +27,7 @@ export function ModelView({
   animals,
   lastChanges,
   metrics,
+  notes,
   // work
 }: ModelViewProps) {
   const folks = (communities as Community[]).map(presentCommunity)
@@ -54,6 +56,14 @@ export function ModelView({
         {Object.entries(metrics).map(([name, value]) => <li title={name} key={name}>
           {name}
           <span data-testid='Count'>{value}</span>
+        </li>)}
+      </ul>
+    </Tile>}
+    {Object.keys(notes).length > 0 && <Tile title='Notes'>
+      <ul>
+        {Object.entries(notes).map(([name, value]) => <li title={name} key={name}>
+          {name}
+          <span data-testid='Description'>{value}</span>
         </li>)}
       </ul>
     </Tile>}

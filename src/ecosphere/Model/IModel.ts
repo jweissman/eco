@@ -22,6 +22,7 @@ export interface IModel extends ISimulation {
   // people: Registry<Moiety, Person>
   // people: Registry<Moiety, Population<Moiety, Person>>;
   metrics: { [key: string]: () => number };
+  notes: { [key: string]: () => string };
   // recipes: IList<Recipe>;
   // tasks: IList<Task>;
   // jobs: IMap<Person, Task>;

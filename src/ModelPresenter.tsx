@@ -13,7 +13,7 @@ type ModelPresenterProps = {
 }
 
 const view = (model: IModel, lastChanges: LastDelta) => {
-  const { actions, resources, people, machines, animals, metrics } = model;
+  const { actions, resources, people, machines, animals, metrics, notes } = model;
 
   const props = {
     modelName: model.name,
@@ -26,6 +26,10 @@ const view = (model: IModel, lastChanges: LastDelta) => {
     actions: actions.list(),
     metrics: Object.fromEntries(
       Object.entries(metrics).map(
+        ([key, value]) => [key, (value as any as Function)()])
+      ),
+    notes: Object.fromEntries(
+      Object.entries(notes).map(
         ([key, value]) => [key, (value as any as Function)()])
       ),
     lastChanges,
