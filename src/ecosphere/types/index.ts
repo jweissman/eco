@@ -1,4 +1,5 @@
 import { Sequence } from "../../collections"
+import { Collection } from "../Collection"
 import { Stocks } from "../Stocks"
 import { sample } from "../utils/sample"
 import { BasicEntity } from "./BasicEntity"
@@ -112,6 +113,7 @@ export const createSoul = (): Soul => {
 // type Incident = Entity<Incident>
 
 // export type Trait = { id: number, name: string, rank: 0 | 1 | 2 | 3 | 4 | 5 }
+export type Memory = { id: number, name: string, description: string }
 
 export type Person = Individual<Moiety> & {
   body: Body
@@ -133,7 +135,7 @@ export type Person = Individual<Moiety> & {
 
   // things to draw meters for..
   meters: { [meterName: string]: Function }
-  // memory: List<Event>
+  memory: Collection<Memory>
   // philosophy?: Ideology
   // destiny: 'doomed' | 'commonplace' | 'exceptional' | 'free'
 }
@@ -163,6 +165,7 @@ export const createPerson = (name: string, moiety: Moiety): Person => {
     // stats: state.manageAll()
     // things: new M
     meters: {},
+    memory: new Collection<Memory>(),
   }
 
 }

@@ -1,5 +1,6 @@
+import { boundMethod } from "autobind-decorator";
 import Model from "../ecosphere/Model";
-import { createMoiety, createPerson, Person } from "../ecosphere/types";
+import { createMoiety, createPerson, Memory, Person } from "../ecosphere/types";
 import { sample } from "../ecosphere/utils/sample";
 
 const generatePerson = () => {
@@ -23,16 +24,21 @@ class Citizen extends Model {
 
     this.resources.create('Happiness')
     this.resources.create('Money')
-    this.resources.create('Money')
+    // this.resources.create('Money')
 
     this.actions.create({ name: 'New', act: () => {
       this.subject = generatePerson() 
     }})
+
+    this.evolve(this.evolution)
   }
+
+  @boundMethod
+  evolution() {}
 
   metrics = { age: () => this.subject.age, }
   notes = {
-    'current date': () => this.date,
+    'current date': () => this.date.description,
     'name': () => this.subject.name,
     'agility': () => this.subject.body.agility,
     'beauty': () => this.subject.soul.beauty,
@@ -49,7 +55,11 @@ class Citizen extends Model {
     'power': () => this.subject.kind.power,
     'sophistication': () => this.subject.kind.sophistication,
     'wealth': () => this.subject.kind.wealth,
-    // TODO 'bio': () => summarize(this.subject.memories)
+    'bio': () => this.subject.memory.list().map(this.describeMemory).join('... '),
+  }
+
+  describeMemory(memory: Memory) {
+    return `I remember ${memory.description}`
   }
 
   // @boundMethod
@@ -68,7 +78,10 @@ class Citizen extends Model {
 
     let dayOfWeek = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'][day % 7];
 
-    return `${dayOfWeek} ${String(hour).padStart(2,'0')}:${String(minute).padStart(2,'0')}:${String(second).padStart(2,'0')}`
+    return {
+      dayOfWeek,
+      description: `${dayOfWeek} ${String(hour).padStart(2,'0')}:${String(minute).padStart(2,'0')}:${String(second).padStart(2,'0')}`
+    }
   }
 }
 
