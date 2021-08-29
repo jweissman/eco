@@ -2,11 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import arena from './examples/Arena';
+import models from './examples';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App model={arena} />
+    <App model={models[0]} />
   </React.StrictMode>,
   document.getElementById('root')
 );

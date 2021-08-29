@@ -207,7 +207,7 @@ export class PlayerHandbook {
         if (levelAttr) {
         const amount = 1; //randomInteger(1,2)
           pc.things.add(amount, levelAttr);
-          console.log(`${levelAttr} improves by ${amount}`);
+          // console.log(`${levelAttr} improves by ${amount}`);
         }
       }
     });

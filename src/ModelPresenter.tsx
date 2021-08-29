@@ -13,7 +13,7 @@ type ModelPresenterProps = {
 }
 
 const view = (model: IModel, lastChanges: LastDelta) => {
-  const { actions, resources, people, machines, animals, metrics, notes } = model;
+  const { actions, resources, people, machines, animals, metrics, notes, tiles, tileColors } = model;
 
   const props = {
     modelName: model.name,
@@ -33,6 +33,7 @@ const view = (model: IModel, lastChanges: LastDelta) => {
         ([key, value]) => [key, (value as any as Function)()])
       ),
     lastChanges,
+    board: { tiles: tiles || [], tileColors: tileColors || {} }
   }
 
   return props

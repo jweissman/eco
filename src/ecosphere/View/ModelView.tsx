@@ -16,7 +16,24 @@ export type ModelViewProps = {
   lastChanges: LastDelta;
   metrics: { [name: string]: number }; //[ { name: string, value: number} ];
   notes: { [name: string]: string }; //[ { name: string, value: number} ];
+  board: IBoard
 }
+
+interface IBoard { tiles: string[][], tileColors: { [tile: string]: string } }
+
+const Board = ({ tiles, tileColors }: IBoard) => <>
+  <table style={{ fontFamily: "monospace" }}>
+    <tbody>
+      {tiles.map((row: string[], y: number) =>
+        <tr key={`row-${y}`}>
+          {row.map((cell: string, x: number) =>
+            <td style={{ color: tileColors[cell] }} key={`cell-${x}-${y}}`}>{cell}</td>
+          )}
+        </tr>
+      )}
+    </tbody>
+  </table>
+</>
 
 export function ModelView({
   modelName,
@@ -28,12 +45,14 @@ export function ModelView({
   lastChanges,
   metrics,
   notes,
+  board,
   // work
 }: ModelViewProps) {
   const folks = (communities as Community[]).map(presentCommunity)
   // console.log({ community: communities[0].list() })
   return <div className='Model'>
     <h4 aria-label='Model Title' style={{display: 'none'}}>{modelName}</h4>
+    {board.tiles.length > 0 && <Board tiles={board.tiles} tileColors={board.tileColors} />}
     {items.length > 0 && (<Tile title='Items'>
       <ul aria-label='Resources'>
         {items.map(presentItem(lastChanges.resources))}

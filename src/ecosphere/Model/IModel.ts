@@ -6,6 +6,7 @@ import { ISimulation } from "./ISimulation";
 import { Collection } from "../Collection";
 import { Community } from "../Community";
 import { Population } from "../Population";
+import { Tiles } from "../Board";
 
 export interface IModel extends ISimulation {
   currentPolicy?: Policy;
@@ -23,6 +24,8 @@ export interface IModel extends ISimulation {
   // people: Registry<Moiety, Population<Moiety, Person>>;
   metrics: { [key: string]: () => number };
   notes: { [key: string]: () => string };
+  tiles: Tiles //string[][]
+  tileColors?: { [tile: string]: string } //string[][]
   // recipes: IList<Recipe>;
   // tasks: IList<Task>;
   // jobs: IMap<Person, Task>;

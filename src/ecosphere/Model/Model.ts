@@ -6,10 +6,12 @@ import { IModel } from "./IModel"
 import { Collection } from "../Collection"
 import { Community } from "../Community"
 import { Population } from "../Population"
+import { Tiles } from "../Board"
 
 type Fauna = Population<Species, Animal>
 export class Model extends Simulation implements IModel  {
   tracking = [ 'animals', 'resources' ]
+  get tiles(): Tiles { return [] }
 
   public people = new Registry<Moiety, Person, Community>('people', Community)
   public resources = new Stocks<Substance>('resources')
