@@ -22,7 +22,12 @@ export type ModelViewProps = {
 interface IBoard { tiles: string[][], tileColors: { [tile: string]: string } }
 
 const Board = ({ tiles, tileColors }: IBoard) => <>
-  <table style={{ fontFamily: "monospace" }}>
+  <table style={{
+    fontFamily: 'monospace',
+    //fontFamily: "Source Code Pro", "Fira Code", "Inconsolata", Menlo, Monaco, "Courier New", monospace',
+    // fontWeight: 'bold',
+    // fontSize: '12pt'
+  }}>
     <tbody>
       {tiles.map((row: string[], y: number) =>
         <tr key={`row-${y}`}>

@@ -13,7 +13,10 @@ export class Board {
     for (let x = 0; x <= this.width; x++) {
       for (let y = 0; y <= this.height; y++) {
         viewTiles[y] = viewTiles[y] || []
-        let overlay = first(overlays, o => o && o.at(x,y) !== undefined)
+        let overlay = overlays.length > 0 && first(overlays, o => {
+          let v = o.at(x,y); return v !== '' && v !== undefined
+          // return o.at(x,y) !== undefined
+        })
         viewTiles[y][x] = (overlay && overlay.at(x,y))
                        || this.at(x,y)
                        || '_'
@@ -31,6 +34,12 @@ export class Board {
     let y = y0;
     this.tiles[y] = this.tiles[y] || [];
     this.tiles[y][x] = character;
+  }
+
+  erase(x: number, y: number) {
+    this.tiles[y] = this.tiles[y] || [];
+    this.tiles[y][x] = ''
+    // throw new Error("Method not implemented.")
   }
   
   drawBox = (char: string, x0: number, y0: number, width: number, height: number, filled?: boolean) => {

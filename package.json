@@ -1,7 +1,7 @@
 {
   "name": "eco",
   "version": "0.1.0",
-  "homepage": "https://jweissman.github.io/eco",
+  "homepage": "./",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.4",
@@ -25,7 +25,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "yarn run build",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d build",
+    "serve": "yarn run build && serve build"
   },
   "eslintConfig": {
     "extends": [
