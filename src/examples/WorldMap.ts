@@ -3,7 +3,7 @@ import { Board } from "../ecosphere/Board";
 import { Model } from "../ecosphere/Model";
 import { EvolvingStocks } from "../ecosphere/types";
 import { randomInteger } from "../ecosphere/utils/randomInteger";
-import { construct, replicate } from "../ecosphere/utils/replicate";
+import { construct } from "../ecosphere/utils/replicate";
 import { sample } from "../ecosphere/utils/sample";
 import { times } from "../ecosphere/utils/times";
 
@@ -68,24 +68,12 @@ class Heightmap {
     this.apply((value, _neighbors, average) => {
       if (value >= average) { return [ value ]}
       return [
-        // value,
-        // value,
-        // value + 1,
         value + 1,
-        // value + 2,
         value + 3,
-        // value + 4,
-        // value + 5,
-        // average,
         average + 2,
         average + 4,
         average + 6,
-        // value + 1, //value + 3,
-        // value + 3,
-        // average, average + 1, // average + 2,
-        // average + 1, average + 2,
-        // value, value + 1, value + 3
-      ] //, value + 2, value + 3] //, value + 5 ]
+      ]
     })
   }
   
@@ -93,7 +81,6 @@ class Heightmap {
     this.apply((value, _neighbors, average) => {
       if (value <= average) { return [ value ]}
       return [ value, value - 1 ]
-      // sort of an overall elevation slider..
     })
   }
 
@@ -101,6 +88,17 @@ class Heightmap {
     let pos = sample(positions) //this.mountainSpots)
     let val = sample([8,9])
     if (pos) { this.map.write(String(val), ...pos) }
+  }
+
+  evolve = (hades: boolean, mountains: [number, number][]) => {
+    this.smooth()
+    if (hades) { 
+      this.erode()
+      this.flow()
+      times(15, () => this.extrude(mountains))
+    } else {
+      this.denoise()
+    }
   }
 }
 
@@ -184,33 +182,10 @@ class WorldMap extends Model {
       this.mountainSpots = spots
     }
 
-    // this.elevation.map.drawBox('0', 0, 0, this.width, this.height, false)
-    // this.elevation.map.drawBox('0', 1, 1, this.width-2, this.height-2, false)
+    this.elevation.map.drawBox('0', 0, 0, this.width, this.height, false)
+    this.elevation.map.drawBox('0', 1, 1, this.width-2, this.height-2, false)
     let hadean = t < this.mapgenTicks / 2;
-
-    // this.elevation.noise()
-    if (hadean) { 
-      this.elevation.erode()
-      this.elevation.flow()
-      times(15, () => {
-        this.elevation.extrude(this.mountainSpots)
-      })
-    } else {
-      this.elevation.smooth()
-      this.elevation.denoise()
-    }
-
-    
-    // if (t % 10 === 0) {
-    // if (hadean) {
-    //   times(8, () => {
-    //     let pos = sample(this.mountainSpots)
-    //     let val = sample([8,9])
-    //     if (pos) { this.elevation.map.write(String(val), ...pos) }
-    //   })
-    // }
-    // }
-
+    this.elevation.evolve(hadean, this.mountainSpots)
     if (t % this.mapgenTicks === 0) {
       // this.buildTerrain()
     }
