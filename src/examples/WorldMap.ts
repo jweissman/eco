@@ -5,103 +5,7 @@ import { EvolvingStocks } from "../ecosphere/types";
 import { randomInteger } from "../ecosphere/utils/randomInteger";
 import { construct } from "../ecosphere/utils/replicate";
 import { sample } from "../ecosphere/utils/sample";
-import { times } from "../ecosphere/utils/times";
-
-// todo abstract aeon/era flow?
-// class Aeon { }
-
-const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min),max)
-
-class Heightmap {
-  map: Board = new Board(this.width, this.height)
-
-  constructor(public width: number, public height: number) {}
-
-  apply(fn: (val: number, neighbors: number[], average: number) => number[], rate: number = 1000) {
-    this.map.step((val: string, neighbors: string[]) => {
-      if (randomInteger(0,1000) < rate) { //return val; }
-        let value = parseInt(val)
-        let neighborValues = neighbors.map(neighbor => parseInt(neighbor))
-        let neighborAverage = Math.floor(
-          neighborValues.reduce((a,b) => a + b, 0) / (neighbors.length)
-        )
-        let values = fn(value, neighborValues, neighborAverage)
-        let newVal = clamp(sample(values), 0,9)
-        return String(newVal)
-      } else { return val }
-    })
-  }
-
-  smooth = () => {
-    this.apply((value, ns, average) => {
-      if (value === 9 || value === 5) { return [value] }
-
-      // assuming return [value, average] ...
-      // if (value < average) { return [value] } // desert
-      // if (average <= 6 && value >= 5) { return [average-1] } // riverlands
-      // if (average <= 6 && value >= 5) { return [average+1] } // highlands
-      // if (average <= 6 && value >= 5) { return [value-2] } // shallow lakes
-      // if (average <= 7 && value >= 5) { return [value+2] } // crater lakes / volanic ash
-
-      if (value < average) { return [value+1] }
-      if (value > average) { return [value-1] }
-      return [value]
-      // if (value === 5) return [value]
-      // if (value === 9 && Math.max(..._neighbors) < 9) return [value]
-      // if (value === 5 && Math.max(...ns) >= 5) { return [value] }
-      // if (value > average) { return [value-1] }
-      // if (value < average) { return [value+1] }
-      // else { return [value] }
-    }, 8)
-  }
-
-  noise = () => this.apply(value => [ value + 1, value - 1 ], 2)
-
-  denoise = () => this.apply((value, ns, average) => {
-    // if (value === 9 || value === 5) return [value]
-    // if (value >= 4 && Math.max(...ns) <= 6) { return [average] }
-    if (value >= 4 && ns.filter(n => n > 4).length <= 4) { return [value, average] }
-    return [value]
-  }, 256)
-
-  flow = () => {
-    this.apply((value, _neighbors, average) => {
-      if (value >= average) { return [ value ]}
-      return [
-        value + 1,
-        value + 3,
-        average + 2,
-        average + 4,
-        average + 6,
-      ]
-    })
-  }
-  
-  erode = () => {
-    this.apply((value, _neighbors, average) => {
-      if (value <= average) { return [ value ]}
-      return [ value, value - 1 ]
-    })
-  }
-
-  extrude = (positions: [number, number][]) => {
-    let pos = sample(positions) //this.mountainSpots)
-    let val = sample([8,9])
-    if (pos) { this.map.write(String(val), ...pos) }
-  }
-
-  evolve = (hades: boolean, mountains: [number, number][]) => {
-    this.smooth()
-    if (hades) { 
-      this.erode()
-      this.flow()
-      times(15, () => this.extrude(mountains))
-    } else {
-      this.denoise()
-    }
-  }
-}
-
+import { Heightmap } from "../ecosphere/Heightmap";
 
 class WorldMap extends Model {
   notes = {
@@ -118,10 +22,10 @@ class WorldMap extends Model {
   // todo highlight/indicate..
   // pushpins = { mountains: { 'Everwhite (Peak of Tears)': [10, 10] } }
 
-  width = 120
-  height = 35
+  width = 100 //20
+  height = 50 //35
 
-  private mapgenTicks = 400
+  private mapgenTicks = 180
   private elevation: Heightmap = new Heightmap(this.width, this.height)
   private terrain: Board = new Board(this.width, this.height)
   // private vegetation: Board = new Board(this.width, this.height)
@@ -131,7 +35,9 @@ class WorldMap extends Model {
 
   get tiles() { return this.elevation.map.view({ overlays: [
     // this.vegetation,
-    this.terrain,
+    // this.terrain,
+    // this.elevation.binaryImage(),
+    // this.elevation.transform(),
   ] }) }
 
   tileColors = {
@@ -148,6 +54,9 @@ class WorldMap extends Model {
 
     // elevation map
     '0': 'black',
+    // '1': 'white',
+
+    // heightmap
     '1': 'black',
     '2': 'navy',
     '3': 'midnightblue',
@@ -163,9 +72,9 @@ class WorldMap extends Model {
 
   constructor() {
     super("Overworld")
-    this.elevation.map.drawBox('0', 0, 0, this.width, this.height, true)
     this.evolve(this.evolution)
-    // times(50, () => this.step())
+    this.actions.create({ name: 'Geoform', act: () => this.ticks = 0})
+    // this.reboot()
   }
 
   @boundMethod
@@ -175,18 +84,73 @@ class WorldMap extends Model {
     return [x, y]
   }
 
+  @boundMethod
+  randomPositionAlongLine(a: [number,number], b: [number,number]): [number, number] {
+    // console.log("Random position along line from", { a, b })
+    let [ax,ay] = a;
+    let [bx,by] = b;
+    let [dx,dy] = [ Math.abs(ax-bx), Math.abs(ay-by) ]
+    if (dx === 0) {
+      // it's vertical so... any points on this column
+      let y = randomInteger(0, this.height)
+      let x = ax //randomInteger(0, this.width)
+      return [x, y]
+    } else if (dy === 0) {
+      let x = randomInteger(0, this.width)
+      let y = ay //randomInteger(0, this.width)
+      return [x, y]
+    } else {
+      let slope = dy / dx; // rise over run
+      // so eg ay = slope * ax + b
+      //       -b = (slope * ax) - ay
+      //       b = -((slope * ax) - ay)
+      let y0 = (-((slope * ax) - ay))
+      // let x0 = Math.floor(y0 / slope)
+
+    // console.log({ slope, y0, x0 })
+      // .     ay - b = slope * ax
+      // .     (ay - b)/slope = ax
+      // let x0 = ((ay - y0)/slope)
+      // let y0 = -((slope * ax) - ay)
+      // if (Math.random() < 0.5) {
+      let x = Math.floor(randomInteger(0, this.width))
+      let y = Math.floor((slope * x) + y0)
+
+
+      return [x + randomInteger(-1,1),y + randomInteger(-1,1)]
+      // if y = mx + y0
+      // then y - y0 = mx, (y - y0)/m = x ..
+      // setting y to 0 is x = y0/m 
+      // todo
+      // } else {
+      // let y = Math.floor(randomInteger(0, this.height))
+      // let x = Math.floor(((1/slope) * y) + x0)
+      // return [x,y]
+      // }
+    }
+
+    // let x = randomInteger(0, this.width)
+    // let y = randomInteger(0, this.height)
+    // return [x, y]
+  }
+
   genHeightmap(t: number) {
     if (this.mountainSpots.length === 0) {
-      let targetSpotCount = Math.floor(25 * this.areaPercent)
-      let spots = construct(() => this.randomPosition(), targetSpotCount, false)
+      let targetSpotCount = Math.floor(10 * this.areaPercent)
+      // let mountainLineEndpoints: [[number,number], [number,number]] = [ this.randomPosition(), this.randomPosition() ]
+      let [a,b] = [ this.randomPosition(), this.randomPosition() ]
+      // console.log("Line", [ a, b ])
+      let spots = construct(() => this.randomPositionAlongLine(a,b), targetSpotCount, false)
       this.mountainSpots = spots
     }
 
-    this.elevation.map.drawBox('0', 0, 0, this.width, this.height, false)
-    this.elevation.map.drawBox('0', 1, 1, this.width-2, this.height-2, false)
+    // this.elevation.map.drawBox('0', 0, 0, this.width, this.height, false)
+    // this.elevation.map.drawBox('0', 1, 1, this.width-2, this.height-2, false)
+    // this.elevation.map.drawBox('0', 2, 2, this.width-4, this.height-4, false) // ..
     let hadean = t < this.mapgenTicks / 2;
-    this.elevation.evolve(hadean, this.mountainSpots)
+    this.elevation.geoform(hadean, this.mountainSpots)
     if (t % this.mapgenTicks === 0) {
+      this.elevation.regions()
       // this.buildTerrain()
     }
   }

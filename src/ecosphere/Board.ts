@@ -60,13 +60,15 @@ export class Board {
   // get width() { return this.tiles && this.tiles[0] && this.tiles[0].length }
   // get height() { return this.tiles.length }
 
-  at(x: number, y: number) {
-    if (x >= 0 && x <= this.width && y >= 0 && y <= this.height) {
-      if (this.tiles[y]) {
-        return this.tiles[y][x]
+  at(x: number, y: number) { //}, defaultValue: string = '') {
+    // if (x >= 0 && x <= this.width && y >= 0 && y <= this.height) {
+      const x0 = x % this.width
+      const y0 = y % this.height
+      if (this.tiles[y0]) {
+        return this.tiles[y0][x0]
       }
-    } 
-    // return ''
+    // } 
+    // return defaultValue
   }
 
 
@@ -78,34 +80,29 @@ export class Board {
     }
   }
 
-  step(eachCell: (val: string, neighbors: string[]) => string) {
-    const ignored = ['*']
+  step(eachCell: (val: string, neighbors: string[], position: [number, number]) => string, defaultValue: string = ''): Tiles {
+    // const ignored = ['*']
     // console.log("Board.step -- start")
     let newTiles: Tiles = []
     this.tiles = this.tiles || []
+    const at = (x: number, y: number) => this.at(x,y) || defaultValue
     for (let x = 0; x <= this.width; x++) {
       for (let y = 0; y <= this.height; y++) {
-        let currentValue = this.at(x,y) // || '' //tiles[y][x]
+        let currentValue = at(x,y)
         if (currentValue !== undefined) {
-          if (ignored.includes(currentValue)) { continue } // === '*') { continue }
+          // if (ignored.includes(currentValue)) { continue }
           let neighbors: string[] = [
-            this.at(x-1,y-1), this.at(x,y-1), this.at(x+1,y-1),
-            this.at(x-1,y),   this.at(x,y),   this.at(x+1,y),
-            this.at(x-1,y+1), this.at(x,y+1), this.at(x+1,y+1),
-          ].filter(Boolean) as string[] //.filter(v => v !== '' && v !== ' ' && v !== '*')
-          if (neighbors.length > 0) {
-            // console.log("Current value: (" + currentValue + ")")
-            // console.log("Neighbors: " + neighbors.join(" | "))
-            const newCell = eachCell(currentValue, neighbors)
-            // console.log("New Cell value: (" + newCell + ")")
-            newTiles[y] = newTiles[y] || []
-            newTiles[y][x] = newCell //eachCell(currentValue, neighbors)
-          }
+            at(x-1,y-1), at(x,y-1), at(x+1,y-1),
+            at(x-1,y)  , at(x,y),   at(x+1,y),
+            at(x-1,y+1), at(x,y+1), at(x+1,y+1),
+          ]
+          const newCell = eachCell(currentValue, neighbors, [x,y])
+          newTiles[y] = newTiles[y] || []
+          newTiles[y][x] = newCell
         }
       }
     }
-    // console.log("Board.step -- complete")
     this.tiles = newTiles
-    // throw new Error("Method not implemented.");
+    return newTiles
   }
 }
