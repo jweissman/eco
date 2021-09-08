@@ -6,6 +6,7 @@ import { Tile } from "./Tile";
 import { presentCommunity } from "./presentCommunity";
 import { Population } from "../Population";
 import { Community } from "../Community";
+import { useState } from "react";
 
 export type ModelViewProps = {
   modelName: string;
@@ -19,26 +20,40 @@ export type ModelViewProps = {
   board: IBoard
 }
 
-interface IBoard { tiles: string[][], tileColors: { [tile: string]: string } }
+interface IBoard { tiles: string[][], tileColors: { [tile: string]: string }, tileInspect: (x: number, y: number) => string}
 
-const Board = ({ tiles, tileColors }: IBoard) => <>
-  <table style={{
-    fontFamily: 'monospace',
-    //fontFamily: "Source Code Pro", "Fira Code", "Inconsolata", Menlo, Monaco, "Courier New", monospace',
-    // fontWeight: 'bold',
-    // fontSize: '12pt'
-  }}>
-    <tbody>
-      {tiles.map((row: string[], y: number) =>
-        <tr key={`row-${y}`}>
-          {row.map((cell: string, x: number) =>
-            <td style={{ color: tileColors[cell] }} key={`cell-${x}-${y}}`}>{cell}</td>
-          )}
-        </tr>
-      )}
-    </tbody>
-  </table>
-</>
+const BoardTable = ({ tiles, tileColors, tileInspect }: IBoard) => {
+  // const [isInspecting, setIsInspecting] = useState(false);
+  const [inspecting, setInspecting] = useState([-1,-1]);
+  const message = inspecting[0] > 0 && inspecting[1] > 0
+    ? tileInspect(inspecting[0], inspecting[1])
+    : <>--</>
+
+  return <div style={{ flexDirection: "column"}}>
+    <div>{message}</div>
+    <table style={{
+      // fontFamily: 'monospace',
+      fontFamily: '"Source Code Pro", "Fira Code", "Inconsolata", Menlo, Monaco, "Courier New", monospace',
+      // fontWeight: 'bold',
+      fontSize: '8pt',
+      cursor: 'pointer'
+    }}>
+      <tbody>
+        {tiles.map((row: string[], y: number) =>
+          <tr key={`row-${y}`}>
+            {row.map((cell: string, x: number) =>
+              <td style={{ color: tileColors[cell], backgroundColor: inspecting[0] === x && inspecting[1] === y ? 'gray': 'black'}}
+                  key={`cell-${x}-${y}}`}
+                  onMouseEnter={() => setInspecting([x,y])}
+                  onMouseLeave={() => setInspecting([-1,-1])}
+              >{cell}</td>
+            )}
+          </tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+}
 
 export function ModelView({
   modelName,
@@ -57,7 +72,7 @@ export function ModelView({
   // console.log({ community: communities[0].list() })
   return <div className='Model'>
     <h4 aria-label='Model Title' style={{display: 'none'}}>{modelName}</h4>
-    {board.tiles.length > 0 && <Board tiles={board.tiles} tileColors={board.tileColors} />}
+    {board.tiles.length > 0 && <BoardTable {...board} />}
     {items.length > 0 && (<Tile title='Items'>
       <ul aria-label='Resources'>
         {items.map(presentItem(lastChanges.resources))}

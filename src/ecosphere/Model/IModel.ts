@@ -24,8 +24,15 @@ export interface IModel extends ISimulation {
   // people: Registry<Moiety, Population<Moiety, Person>>;
   metrics: { [key: string]: () => number };
   notes: { [key: string]: () => string };
+
   tiles: Tiles //string[][]
   tileColors?: { [tile: string]: string } //string[][]
+
+  // todo inspect tile to see feature names.. (name of island/continent/body of water/mountain peak)
+  tileInspect?(x: number, y: number): string;
+
+  // tileRegions?: { [regionName: string]: [number,number][] }
+
   // recipes: IList<Recipe>;
   // tasks: IList<Task>;
   // jobs: IMap<Person, Task>;

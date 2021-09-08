@@ -85,12 +85,14 @@ export class Heightmap {
 
   constructor(public width: number, public height: number) { }
 
+  at(x: number, y: number): number { return parseInt(this.map.at(x,y) || '0', 10) }
+
   apply(fn: (val: number, neighbors: number[], average: number, position: [number, number]) => number[], rate: number = 1000) {
     this.map.step((val: string, neighbors: string[], position: [number, number]) => {
       if (randomInteger(0, 1000) <= rate) { //return val; }
         let value = parseInt(val || '0', 10);
         // let trueNeighbors = neighbors.slice(4,1)
-        let neighborValues = neighbors.map(neighbor => parseInt(neighbor || '0', 10));
+        let neighborValues = neighbors.map(neighbor => parseInt(neighbor || '2', 10));
         let neighborSum = neighborValues.reduce((a, b) => a + b, 0)
         // if (neighborSum > 0) {
         // console.log({ neighborSum })
@@ -141,63 +143,44 @@ export class Heightmap {
 
   flow = () => {
     this.apply((value, ns, average) => {
+      if (value >= average) { return [value] }
       let immediate = [ns[1], ns[3], ns[5], ns[7]]
       let max = Math.max(...immediate)
       // let min = Math.min(...immediate)
-      if (value < average) { return [
-        // max+1,
-        max, max, max,
-        max-1,
-        max-2,
-        // min,
-        // min+1,
-        // average,
-        // average+1,
-        value,
-        // ...replicate([value], 3),
-        // value-1,
-        // max-1,
-        // min+1,
-        // min,
-        // average + 1,
-        // average + 1
-        // average + 2
-        // average, value, value + 1,
-        // Math.floor((min + max) /2),
- 
-      ] }
+
+      let above = ns.filter(n => n >= this.groundLevel).length;
+      if (above >= 6 && value < this.groundLevel) { return [this.groundLevel, this.groundLevel + 1] }
+      if (above === 0) { return [value] }
+
       return [
-        value,
+        // max*2,
+        max + 1,
         // value,
-        // value,
-        // value,
-        // Math.floor((min + max) /2),
+        max,
+        max - 1,
+        // average,
+        // this.groundLevel + 1,
+        // this.groundLevel + 2,
       ]
     });
   };
 
   erode = () => {
     this.apply((value, ns, average) => {
-      if (value <= average) { return [value] } //, value-1]; }
-      // let immediate = [ns[1], ns[3], ns[5], ns[7]]
-      // let min = Math.min(...immediate)
-      // let max = Math.max(...immediate)
-      // if (value === average) { return [min, value-1]; }
+      if (value < average) { return [value] }
       return [
-        // ...replicate([value], 20),
         value,
+        // value-1,
+        // Math.round((value + average) / 2),
+        average,
+        // Math.round((value + Math.min(...ns)) / 2),
+        
+        // value-1,
         // Math.min(...ns),
-        // Math.min(...immediate),
-        // ...immediate,
-        // max-1,
-        value-1,
         // value-2,
-        // average,
         // average+1,
-        Math.floor((value + average) / 2),
-        // Math.floor((value + average + sample(immediate)) / 3),
       ]
-    });
+    })
   };
 
   // recede = () => {
@@ -215,26 +198,24 @@ export class Heightmap {
   // };
 
   extrude = (positions: [number, number][]) => {
-    let pos = sample(positions);
+    // let pos = sample(positions);
+    positions.forEach(pos => {
     let h = parseInt(this.map.at(...pos) || '0', 10)
-    // let val = clamp(h+2,0,9);
-    let val = clamp(h+randomInteger(2,9),0,9);
+    let val = clamp(h+randomInteger(1,9),0,9);
     if (pos) { this.map.write(String(val), ...pos); }
+    })
   };
 
   intrude = (positions: [number, number][], depth: number = 1) => {
-    // let pos = sample(positions);
     positions.forEach(pos => {
-      // let val = sample([0,2,3]);
       let h = parseInt(this.map.at(...pos) || '9', 10)
-      let val = clamp(h-randomInteger(2,9),0,9);
+      let val = clamp(h-randomInteger(1,9),0,9);
       if (pos) { this.map.write(String(val), ...pos); }
     })
   };
 
   bombard = (intensity: number = 1) => {
-    // times(10, () => {
-    let radius = randomInteger(1,1+randomInteger(0,intensity));
+    let radius = randomInteger(1,4+randomInteger(0,intensity));
     let impactSite: [number, number] = [ randomInteger(1, this.width-1), randomInteger(1, this.height-1) ]
     const distanceToImpact = (pos: [number, number]) => distance(pos, impactSite)
     let craterPositions: [number, number][] = []
@@ -242,25 +223,28 @@ export class Heightmap {
     for (let x=0; x < this.width; x++) {
       for(let y = 0; y < this.height; y++) {
         let d = Math.round(distanceToImpact([x,y]))
-        if (d < radius) {
-          craterPositions.push([x,y])
-        } else if (d === radius) {
+        if (Math.abs(d - radius) < 1) {
           craterEdge.push([x,y])
+        } else if (d < radius) {
+          craterPositions.push([x,y])
         }
       }
     }
     this.intrude(craterPositions);
     this.extrude(craterEdge);
-    // })
   }
 
   orogeny = (mountains: [number, number][]) => {
-      // times(4, () => this.extrude(mountains))
     // this.flow()
-    times(2, () => {
-      times(8, () => this.extrude(mountains))
-      times(4, this.flow)
-    })
+
+    const d100 = randomInteger(0,100)
+    if (d100 < 12) this.extrude(mountains)
+    // times(3, () => this.extrude(mountains))
+    times(2, this.flow)
+    // times(2, () => {
+    //   times(8, () => this.extrude(mountains))
+    //   times(4, this.flow)
+    // })
   }
 
   geoform = (hades: boolean, mountains: [number, number][]) => {
@@ -269,11 +253,14 @@ export class Heightmap {
       this.orogeny(mountains)
       this.erode()
       // if (d100 < 60) this.erode()
-      if (d100 < 36) { this.bombard(13); }
+      if (d100 < 31) { this.bombard(23); }
     } else {
-      this.flow()
-      this.smooth()
-      if (d100 < 24) times(3, () => this.bombard(5) )
+      // this.flow()
+      // if (d100 < 12) {
+        this.smooth()
+      // }
+      if (d100 < 15) times(2, () => this.bombard(8) )
+
     }
   };
 
@@ -295,7 +282,7 @@ export class Heightmap {
          + (replicate(["'"], n).join(''))
   }
 
-  regions() {
+  regions(): { [region: string]: [number, number][] } {
     let regionMap: { [region: string]: [number, number][] } = {}
     this.map.each((x, y, val) => {
       if (parseInt(val, 10) >= this.groundLevel) {

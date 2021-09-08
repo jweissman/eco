@@ -1,5 +1,5 @@
 import { IMap } from "./types";
-export class Map<K, V> implements IMap<K, V> {
+export class KeyMap<K, V> implements IMap<K, V> {
   _data: { [id: number]: V; } = {};
   constructor(
     private idFor: (k: K) => number,
