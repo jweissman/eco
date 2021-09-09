@@ -8,20 +8,21 @@ import { sample } from "../ecosphere/utils/sample";
 import { Heightmap } from "../ecosphere/Heightmap";
 import { MarkovGenerator } from "../ecosphere/utils/markov";
 
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import cityNames from '!!raw-loader!./data/city-names.txt';
+
 class Cartographer {
-  continentNamer = new MarkovGenerator(2, 16)
+  regionNamer = new MarkovGenerator(3, 18)
+  realRegionNames: string[] = []
   constructor(private world: WorldMap) {
-    let names = "Africa Asia America Australia Antartica"
-              + "China India Indonesia Brazil Nigeria Bangladesh Argentina"
-              + "Russia Japan Mexico Ethiopia Phillipines Egypt Vietnam Spain"
-              + "Congo Germany Turkey Iran Thailand Tanzania France Italy Canada"
-              + "Morocco Peru Taiwan Romania Mali Chile Guatemala Zambia Ecuador"
-    names.split(' ').forEach(name => this.continentNamer.feed(name))
+    let cities = cityNames.split("\n")
+    this.realRegionNames = cities
+    this.realRegionNames.forEach(name => name.length > 0 && this.regionNamer.feed(name))
   }
 
   // cache heightmap regions..
-  regions: { [region: string]: [number, number][] } = {}
-  placeNames: { [region: string]: string } = {}
+  regions: { [rawRegionName: string]: [number, number][] } = {}
+  regionalNames: { [rawRegionName: string]: string } = {}
 
 
   // in li square..
@@ -31,6 +32,20 @@ class Cartographer {
   //  10000: 'Continent',
   //  100000: 'Supercontinent',
   //}
+
+  inventRegionName(): string {
+    const makeName = () => this.regionNamer
+                   .generate()
+                  //  .split(/(?=[A-Z])/)[0]
+    let theName = makeName()
+    let attempts = 0
+    while (
+      (this.realRegionNames.includes(theName) || Object.keys(this.regionalNames).includes(theName))
+      && attempts++ < 100) {
+      theName = makeName()
+    }
+    return theName
+  }
 
   identifyRegion(x: number, y: number): string {
     if (this.world.aeon === 'Hadean' || this.world.aeon === 'Archean') {
@@ -46,10 +61,12 @@ class Cartographer {
     ) || null
 
     if (regionName) {
-      if (this.placeNames[regionName] === undefined) {
-        this.placeNames[regionName] = this.continentNamer.generate().split(' ')[0]
+      if (this.regionalNames[regionName] === undefined) {
+        this.regionalNames[regionName] = this.inventRegionName() //continentNamer.generate()
+          // .split(' ')[0]
+          // .split(/(?=[A-Z])/)[0]
       }
-      return this.placeNames[regionName]
+      return this.regionalNames[regionName]
     }
 
     return 'Unknown Region'
@@ -63,7 +80,7 @@ class WorldMap extends Model {
   get aeon(): Aeon {
     let eon: Aeon = 'Hadean';
     if (this.ticks >= this.mapgenTicks / 2) { eon = 'Archean' }
-    if (this.ticks >= this.mapgenTicks) { eon = 'Proterozoic' }
+    if (this.ticks > this.mapgenTicks) { eon = 'Proterozoic' }
     return eon;
   }
   // aeons = ['Hadean', 'Archean', 'Proterozoic', 'Pharezoic']
