@@ -5,6 +5,7 @@ import zep from "./zep"
 import Citizen from "./Citizen"
 import Building from "./Building"
 import worldMapMaker from "./WorldMap"
+import { Language } from "./Language"
 
 const models = [
   worldMapMaker,
@@ -13,6 +14,7 @@ const models = [
   zep,
   Avernus,
   Citizen,
+  new Language("Aelven"),
   // Society,
 ]
 

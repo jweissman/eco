@@ -6,50 +6,22 @@ import { randomInteger } from "../ecosphere/utils/randomInteger";
 import { construct } from "../ecosphere/utils/replicate";
 import { sample } from "../ecosphere/utils/sample";
 import { Heightmap } from "../ecosphere/Heightmap";
-import { MarkovGenerator } from "../ecosphere/utils/markov";
+// import { MarkovGenerator } from "../ecosphere/utils/MarkovGenerator";
 
 // eslint-disable-next-line import/no-webpack-loader-syntax
 import cityNames from '!!raw-loader!./data/city-names.txt';
-
+import { MarkovSequence } from "../collections/Sequence";
 class Cartographer {
-  regionNamer = new MarkovGenerator(3, 18)
-  realRegionNames: string[] = []
-  constructor(private world: WorldMap) {
-    let cities = cityNames.split("\n")
-    this.realRegionNames = cities
-    this.realRegionNames.forEach(name => name.length > 0 && this.regionNamer.feed(name))
-  }
+  private namegiver = new MarkovSequence(cityNames.split("\n"))
+  constructor(private world: WorldMap) {}
 
   // cache heightmap regions..
   regions: { [rawRegionName: string]: [number, number][] } = {}
-  regionalNames: { [rawRegionName: string]: string } = {}
-
-
-  // in li square..
-  //regionSizes = {
-  //  1: 'Point',
-  //  10: 'Island',
-  //  10000: 'Continent',
-  //  100000: 'Supercontinent',
-  //}
-
-  inventRegionName(): string {
-    const makeName = () => this.regionNamer
-                   .generate()
-                  //  .split(/(?=[A-Z])/)[0]
-    let theName = makeName()
-    let attempts = 0
-    while (
-      (this.realRegionNames.includes(theName) || Object.keys(this.regionalNames).includes(theName))
-      && attempts++ < 100) {
-      theName = makeName()
-    }
-    return theName
-  }
+  private regionalNames: { [rawRegionName: string]: string } = {}
 
   identifyRegion(x: number, y: number): string {
     if (this.world.aeon === 'Hadean' || this.world.aeon === 'Archean') {
-      return '(Region identification requires a calmer era...)'
+      return '(Region identification requires calmer aeon...)'
     }
 
     if (Object.keys(this.regions).length === 0) {
@@ -62,9 +34,7 @@ class Cartographer {
 
     if (regionName) {
       if (this.regionalNames[regionName] === undefined) {
-        this.regionalNames[regionName] = this.inventRegionName() //continentNamer.generate()
-          // .split(' ')[0]
-          // .split(/(?=[A-Z])/)[0]
+        this.regionalNames[regionName] = this.namegiver.next
       }
       return this.regionalNames[regionName]
     }
@@ -164,27 +134,19 @@ class WorldMap extends Model {
     return [x, y]
   }
 
-  // randomPositionAlongCircumference(center: [number,number], radius: number): [number, number] {
-    // x^2 + y^2 == radius
-    // y^2 = radius - x^2
-    // y = sqrt(radius - x^2)
-  //   return [0,0]
-  // }
-
   @boundMethod
-  randomPositionAlongLine(a: [number,number], b: [number,number]): [number, number] {
-    // console.log("Random position along line from", { a, b })
+  randomPositionAlongLine(a: [number,number], b: [number,number], jitter: number = 3): [number, number] {
     let [ax,ay] = a;
     let [bx,by] = b;
     let [dx,dy] = [ Math.abs(ax-bx), Math.abs(ay-by) ]
     if (dx === 0) {
       // it's vertical so... any points on this column
       let y = randomInteger(0, this.height)
-      let x = ax //randomInteger(0, this.width)
+      let x = ax
       return [x, y]
     } else if (dy === 0) {
       let x = randomInteger(0, this.width)
-      let y = ay //randomInteger(0, this.width)
+      let y = ay
       return [x, y]
     } else {
       let slope = dy / dx; // rise over run
@@ -192,56 +154,26 @@ class WorldMap extends Model {
       //       -b = (slope * ax) - ay
       //       b = -((slope * ax) - ay)
       let y0 = (-((slope * ax) - ay))
-      // let x0 = Math.floor(y0 / slope)
-
-    // console.log({ slope, y0, x0 })
-      // .     ay - b = slope * ax
-      // .     (ay - b)/slope = ax
-      // let x0 = ((ay - y0)/slope)
-      // let y0 = -((slope * ax) - ay)
-      // if (Math.random() < 0.5) {
       let x = Math.floor(randomInteger(0, this.width))
       let y = Math.floor((slope * x) + y0)
-
-
-      return [x + randomInteger(-1,1),y + randomInteger(-1,1)]
-      // if y = mx + y0
-      // then y - y0 = mx, (y - y0)/m = x ..
-      // setting y to 0 is x = y0/m 
-      // todo
-      // } else {
-      // let y = Math.floor(randomInteger(0, this.height))
-      // let x = Math.floor(((1/slope) * y) + x0)
-      // return [x,y]
-      // }
+      let j = jitter || 1;
+      return [x + randomInteger(-j,j),y + randomInteger(-j,j)]
     }
-
-    // let x = randomInteger(0, this.width)
-    // let y = randomInteger(0, this.height)
-    // return [x, y]
   }
 
   genHeightmap(t: number) {
     if (this.mountainSpots.length === 0) {
       let targetSpotCount = Math.floor(10 * this.areaPercent)
-      // let mountainLineEndpoints: [[number,number], [number,number]] = [ this.randomPosition(), this.randomPosition() ]
       let [a,b] = [ this.randomPosition(), this.randomPosition() ]
-      // console.log("Line", [ a, b ])
       let spots = construct(() => this.randomPositionAlongLine(a,b), targetSpotCount, false)
       this.mountainSpots = spots
     }
 
-    // this.elevation.map.drawBox('0', 2, 2, this.width-4, this.height-4, false) // ..
-    // let hadean = t < this.mapgenTicks / 2;
     this.elevation.geoform(this.aeon === 'Hadean', this.mountainSpots)
+
     if (t > 0 && t % this.mapgenTicks === 0) {
       console.log("[worldgen] hadean + archean aeons complete")
-      // compute regions...
-      // this.elevation.regions()
-      // this.buildTerrain()
     }
-    this.elevation.map.drawBox('0', 0, 0, this.width, this.height, false)
-    this.elevation.map.drawBox('0', 1, 1, this.width-2, this.height-2, false)
   }
 
   buildTerrain() {

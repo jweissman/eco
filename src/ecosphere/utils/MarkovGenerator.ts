@@ -1,22 +1,16 @@
-// Array.prototype.choice = function() {
-//   var i = floor(random(this.length));
-//   return this[i];
-// }
-
 import { sample } from "./sample";
 
 // A MarkovGenerate object
 export class MarkovGenerator {
+  // n - Order (or length) of each ngram
+  // max - What is the maximum amount we will generate?
   constructor(private n: number, private max: number) {}
-  // Order (or length) of each ngram
-  // this.n = n;
-  // // What is the maximum amount we will generate?
-  // this.max = max;
+
   // An object as dictionary
   // each ngram is the key, a list of possible next elements are the values
-  ngrams: { [key: string]: string[] } = {};
+  private ngrams: { [key: string]: string[] } = {};
   // A separate array of possible beginnings to generated text
-  beginnings: string[] = [];
+  private beginnings: string[] = [];
 
   // A function to feed in text to the markov chain
   feed(text: string) {
