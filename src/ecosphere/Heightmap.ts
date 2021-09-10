@@ -18,7 +18,7 @@ export class Heightmap {
     this.map.step((val: string, neighbors: string[], position: [number, number]) => {
       if (randomInteger(0, 1000) <= rate) {
         let value = parseInt(val || '0', 10);
-        let neighborValues = neighbors.map(neighbor => parseInt(neighbor || '4', 10));
+        let neighborValues = neighbors.map(neighbor => parseInt(neighbor || '0', 10));
         let neighborSum = neighborValues.reduce((a, b) => a + b, 0)
         let localAverage = Math.floor(
           (neighborSum + value) / (neighbors.length + 1)
@@ -52,15 +52,21 @@ export class Heightmap {
       let above = ns.filter(n => n >= this.groundLevel).length;
       if (above >= 6 && value < this.groundLevel) { return [this.groundLevel, this.groundLevel + 1] }
       if (above === 0) { return [value] }
-      return [ max + 1, max, max - 1, ]
+      return [
+        max + 1,
+        max,
+        max - 1,
+        value - 1,
+        // ...ns.filter(n => n >= this.groundLevel)
+      ]
     });
   };
 
-  erode = () => {
+  erode = (rate = 1000) => {
     this.apply((value, ns, average) => {
       if (value < average) { return [value] }
       return [ value, average, Math.min(...ns) ]
-    })
+    }, rate)
   };
 
   extrude = (positions: [number, number][]) => {
@@ -110,87 +116,56 @@ export class Heightmap {
     if (hades) {
       this.orogeny(mountains)
       this.erode()
-      if (d100 < 31) { this.bombard(23); }
+      if (d100 < 32) { this.bombard(36); }
     } else {
+      if (d100 < 13) times(2, () => this.bombard(7) )
       this.flow()
+      this.erode(4)
       this.smooth()
-      if (d100 < 15) times(2, () => this.bombard(8) )
     }
   };
 
-  binaryImage(threshold: number = this.groundLevel): Board {
-    let binary = new Board(this.width, this.height)
-    this.map.each((x, y, val) => {
-      let value = '0';
-      if (parseInt(val, 10) >= threshold) { value = '1'; } 
-      binary.write(value, x, y)
-    })
-    return binary
-  }
+  componentNames = new NameSequence()
 
-  regionNames = new NameSequence()
-
-  regions(): { [region: string]: [number, number][] } {
-    let regionMap: { [region: string]: [number, number][] } = {}
+  components(consider: (value: number) => boolean): { [component: string]: [number, number][] } {
+    let componentMap: { [component: string]: [number, number][] } = {}
     this.map.each((x, y, val) => {
-      if (parseInt(val, 10) >= this.groundLevel) {
+      if (!!consider(parseInt(val, 10))) {
         // do we belong to an existing region? (adjacency)
-        let existingRegionNames = Object.keys(regionMap).filter((regionName) => {
+        let existingComponentNames = Object.keys(componentMap).filter(component => {
           // are any of the points in r adjacent to this one?
-          let adjacent = any(regionMap[regionName], ([x1,y1]) => {
-            return distance([x,y], [x1,y1]) <= 2
+          let adjacent = any(componentMap[component], ([x1,y1]) => {
+            return distance([x,y], [x1,y1]) <= 1
           })
           return adjacent
         })
-        if (existingRegionNames.length > 0) {
-          let firstAdjacentRegionName = existingRegionNames[0]
-          if (existingRegionNames.length === 1) {
-            regionMap[firstAdjacentRegionName].push([x,y])
-          } else {
+        if (existingComponentNames.length > 0) {
+          let firstAdjacentComponentName = existingComponentNames[0]
+          componentMap[firstAdjacentComponentName].push([x,y])
+          if (existingComponentNames.length > 1) {
             // merge all regions...
-            existingRegionNames.forEach((regionName) => {
+            existingComponentNames.forEach(component => {
               // delete that region + add to first region
-              if (regionName !== firstAdjacentRegionName) {
-                regionMap[firstAdjacentRegionName] = [
-                  ...regionMap[firstAdjacentRegionName],
-                  ...regionMap[regionName],
+              if (component !== firstAdjacentComponentName) {
+                componentMap[firstAdjacentComponentName] = [
+                  ...componentMap[firstAdjacentComponentName],
+                  ...componentMap[component],
                 ]
-                delete regionMap[regionName]
+                delete componentMap[component]
               }
             })
           }
         } else {
-          // console.log("Found a new region", { x, y })
           // invent a new region
-          let newRegion = this.regionNames.next;
-          regionMap[newRegion] = [[x,y]]
+          let component = this.componentNames.next;
+          componentMap[component] = [[x,y]]
         }
       }
     })
-    console.log("Found regions!!", { regionMap })
-    return regionMap
+    return componentMap
   }
 
-  // looks for a particular pattern in the binary image (fixed orientations...)
-  // transform(structure: Structure = edges, threshold: number = this.groundLevel): Board {
-  //   let image = this.binaryImage(threshold)
-  //   const matches = (values: number[]) => {
-  //     return any(structure, (morpheme: Morpheme) => {
-  //       const matchesAll = all(morpheme, (element, index) => {
-  //         const morphology = element 
-  //         if (morphology === -1) { return true }
-  //         const value = values[index]
-  //         return morphology === value
-  //       })
-  //       return matchesAll
-  //     })
-  //   }
-  //   image.step((_val: string, neighbors: string[]) => {
-  //     let region = neighbors.map(n => parseInt(n, 10))
-  //     return matches(region) ? '1' : '0'
-  //   }, '-1')
-  //   return image
-  // }
-
-  // get components() { return this.binaryImage.regions(); }
+  regions = () => this.components(val => val >= this.groundLevel)
+  waterways = () => this.components(val => val < this.groundLevel)
+  // todo ranges = () => this.components(val => val >= 8)
 }

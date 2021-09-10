@@ -10,7 +10,7 @@ export class Sequence implements ISequence<number> {
 
 // give a infinite list of distinct string names from
 // the alphabet with trailing single-quotes ('prime')
-// if run out (giving A, B, C,..., Y, Z then: A', B', C', ... A'', B'', C'' ....)
+// giving A, B, C,..., Y, Z then A', B', C', ... A'', B'', C'' ....
 export class NameSequence implements ISequence<String> {
   // next: string;
   private nameRoots = [
@@ -28,10 +28,11 @@ export class NameSequence implements ISequence<String> {
 }
 
 export class MarkovSequence implements ISequence<string> {
-  generator = new MarkovGenerator(4, 28)
+  generator: MarkovGenerator
   baseItems: string[] = []
   generatedItems: string[] = []
-  constructor(private items: string[]) {
+  constructor(private items: string[], order = 2, max = 10) {
+    this.generator = new MarkovGenerator(order, max)
     this.items.forEach(this.feed)
   }
 
@@ -43,7 +44,7 @@ export class MarkovSequence implements ISequence<string> {
 
   generate(): string { return this.generator.generate(); }
 
-  get next(): string { //return this.generator.generate() }
+  get next(): string {
     let theName = this.generate()
     let attempts = 0
 

@@ -10,36 +10,83 @@ import { Heightmap } from "../ecosphere/Heightmap";
 
 // eslint-disable-next-line import/no-webpack-loader-syntax
 import cityNames from '!!raw-loader!./data/city-names.txt';
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import seaNames from '!!raw-loader!./data/sea-names.txt';
+
 import { MarkovSequence } from "../collections/Sequence";
 class Cartographer {
-  private namegiver = new MarkovSequence(cityNames.split("\n"))
+  private regionNamegiver = new MarkovSequence(cityNames.split("\n"))
+  private waterwayNamegiver = new MarkovSequence(seaNames.split("\n"))
+
+  // really just need the heightmap i guess??
   constructor(private world: WorldMap) {}
 
-  // cache heightmap regions..
-  regions: { [rawRegionName: string]: [number, number][] } = {}
-  private regionalNames: { [rawRegionName: string]: string } = {}
+  // cache heightmap regions + names..
+  _regions: { [rawRegionName: string]: [number, number][] } = {}
+  private regionNames: { [rawRegionName: string]: string } = {}
 
-  identifyRegion(x: number, y: number): string {
+  get regions() {
+    if (Object.keys(this._regions).length === 0) {
+      this._regions = this.world.elevation.regions()
+    }
+    return this._regions
+  }
+
+  identifyRegion(x: number, y: number): string | undefined {
     if (this.world.aeon === 'Hadean' || this.world.aeon === 'Archean') {
-      return '(Region identification requires calmer aeon...)'
+      return '(Region ID requires calmer aeon...)'
     }
 
-    if (Object.keys(this.regions).length === 0) {
-      this.regions = this.world.elevation.regions()
-    }
-
-    const regionName = Object.keys(this.regions).find(regionName =>
-      this.regions[regionName].find(([x0,y0]) => x===x0 && y===y0)
+    const regionName = Object.keys(this.regions).find(region =>
+      this.regions[region].find(([x0,y0]) => x===x0 && y===y0)
     ) || null
 
     if (regionName) {
-      if (this.regionalNames[regionName] === undefined) {
-        this.regionalNames[regionName] = this.namegiver.next
+      if (this.regionNames[regionName] === undefined) {
+        this.regionNames[regionName] = this.regionNamegiver.next
       }
-      return this.regionalNames[regionName]
+      return this.regionNames[regionName]
     }
 
-    return 'Unknown Region'
+    // return '[Unknown Region]'
+  }
+
+  // cache waterways + names...
+  _waterways: { [rawWaterbodyName: string]: [number, number][] } = {}
+  private waterwayNames: { [rawWaterbodyName: string]: string } = {}
+
+  get waterways() {
+    if (Object.keys(this._waterways).length === 0) {
+      this._waterways = this.world.elevation.waterways()
+      console.log("Found waterways!", this._waterways)
+    }
+    return this._waterways
+  }
+
+  identifyWaterway(x: number, y: number): string | undefined {
+    if (this.world.aeon === 'Hadean' || this.world.aeon === 'Archean') {
+      return '(Region ID requires calmer aeon...)'
+    }
+
+    const waterwayName = Object.keys(this.waterways).find(waterway =>
+      this.waterways[waterway].find(([x0,y0]) => x===x0 && y===y0)
+    ) || null
+
+    if (waterwayName) {
+      if (this.waterwayNames[waterwayName] === undefined) {
+        this.waterwayNames[waterwayName] = this.waterwayNamegiver.next
+      }
+      return this.waterwayNames[waterwayName] + ' Sea'
+    }
+
+    // return '[Unknown Region]'
+  }
+
+  identifyRegionOrWaterway(x: number, y: number): string | undefined {
+    if (this.world.aeon === 'Hadean' || this.world.aeon === 'Archean') {
+      return '(Region ID requires calmer aeon...)'
+    }    
+    return this.identifyRegion(x,y) || this.identifyWaterway(x,y) || '(error: unknown region or waterway!)'
   }
 }
 
@@ -81,7 +128,7 @@ class WorldMap extends Model {
     const elevation = this.elevation.at(x,y) || 0
     const li = Math.round(3600 * ( elevation - 4 ) / 5280)
     const elevationMessage = li === 0 ? 'At sea level' : `${Math.abs(li)} li ${li >= 0 ? 'above' : 'below'} sea level`
-    const regionName = this.cartographer.identifyRegion(x,y) //'Unknown Region';
+    const regionName = this.cartographer.identifyRegionOrWaterway(x,y)
     return `${regionName} (${elevationMessage})`
   }
 
@@ -122,7 +169,8 @@ class WorldMap extends Model {
     this.evolve(this.evolution)
     this.actions.create({ name: 'Geoform', act: () => {
       this.ticks = 0
-      this.cartographer.regions = {}
+      this.cartographer._regions = {}
+      this.cartographer._waterways = {}
     }});
     // this.reboot()
   }
@@ -174,6 +222,9 @@ class WorldMap extends Model {
     if (t > 0 && t % this.mapgenTicks === 0) {
       console.log("[worldgen] hadean + archean aeons complete")
     }
+
+    this.elevation.map.drawBox('0', 0, 0, this.width, this.height)
+    this.elevation.map.drawBox('0', 1, 1, this.width-2, this.height-2)
   }
 
   buildTerrain() {

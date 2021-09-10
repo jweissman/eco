@@ -42,10 +42,16 @@ const BoardTable = ({ tiles, tileColors, tileInspect }: IBoard) => {
         {tiles.map((row: string[], y: number) =>
           <tr key={`row-${y}`}>
             {row.map((cell: string, x: number) =>
-              <td style={{ color: tileColors[cell], backgroundColor: inspecting[0] === x && inspecting[1] === y ? 'gray': 'black'}}
-                  key={`cell-${x}-${y}}`}
-                  onMouseEnter={() => setInspecting([x,y])}
-                  onMouseLeave={() => setInspecting([-1,-1])}
+              <td
+                style={{
+                  // highlight cell errors
+                  // color: tileInspect(x,y).match(/error/) ? 'red' : tileColors[cell],
+                  color: tileColors[cell],
+                  backgroundColor: inspecting[0] === x && inspecting[1] === y ? 'gray': 'black'
+                }}
+                key={`cell-${x}-${y}}`}
+                onMouseEnter={() => setInspecting([x,y])}
+                onMouseLeave={() => setInspecting([-1,-1])}
               >{cell}</td>
             )}
           </tr>
