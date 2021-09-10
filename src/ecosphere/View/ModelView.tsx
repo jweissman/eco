@@ -1,3 +1,5 @@
+import { useState } from "react";
+import ReactTooltip from 'react-tooltip';
 import { Machine, Moiety, Person } from "../types";
 import { LastDelta } from "../../ModelPresenter";
 import { presentItem } from "../Model/presentItem";
@@ -6,7 +8,7 @@ import { Tile } from "./Tile";
 import { presentCommunity } from "./presentCommunity";
 import { Population } from "../Population";
 import { Community } from "../Community";
-import { useState } from "react";
+
 
 export type ModelViewProps = {
   modelName: string;
@@ -26,32 +28,40 @@ const BoardTable = ({ tiles, tileColors, tileInspect }: IBoard) => {
   // const [isInspecting, setIsInspecting] = useState(false);
   const [inspecting, setInspecting] = useState([-1,-1]);
   const message = inspecting[0] > 0 && inspecting[1] > 0
-    ? tileInspect(inspecting[0], inspecting[1])
+    ? tileInspect(inspecting[0], inspecting[1]) //.split('\n').map(r => <div>{r}</div>)}
     : <>--</>
 
-  return <div style={{ flexDirection: "column"}}>
-    <div>{message}</div>
+  return <div style={{ flexDirection: "column", overflow: "scroll" }}>
+    {/* <div/> */}
+    {/* <div>{message}</div> */}
+    <ReactTooltip />
     <table style={{
       // fontFamily: 'monospace',
       fontFamily: '"Source Code Pro", "Fira Code", "Inconsolata", Menlo, Monaco, "Courier New", monospace',
       // fontWeight: 'bold',
-      fontSize: '8pt',
-      cursor: 'pointer'
+      // fontSize: '8pt',
+      cursor: 'pointer',
+      width: '100%'
     }}>
       <tbody>
         {tiles.map((row: string[], y: number) =>
+
           <tr key={`row-${y}`}>
             {row.map((cell: string, x: number) =>
               <td
                 style={{
                   // highlight cell errors
                   // color: tileInspect(x,y).match(/error/) ? 'red' : tileColors[cell],
+                  // maxWidth: '4px',
+                  // maxHeight: '2px',
                   color: tileColors[cell],
                   backgroundColor: inspecting[0] === x && inspecting[1] === y ? 'gray': 'black'
                 }}
                 key={`cell-${x}-${y}}`}
                 onMouseEnter={() => setInspecting([x,y])}
                 onMouseLeave={() => setInspecting([-1,-1])}
+                data-tip={inspecting[0] === x && inspecting[1] === y ? message : ''}
+                // data-html
               >{cell}</td>
             )}
           </tr>

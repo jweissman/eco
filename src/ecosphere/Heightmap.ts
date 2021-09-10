@@ -112,6 +112,7 @@ export class Heightmap {
   }
 
   geoform = (hades: boolean, mountains: [number, number][]) => {
+      this.smooth()
     const d100 = randomInteger(0,100)
     if (hades) {
       this.orogeny(mountains)
@@ -121,7 +122,6 @@ export class Heightmap {
       if (d100 < 14) times(2, () => this.bombard(7) )
       this.flow()
       this.erode(4)
-      this.smooth()
     }
   };
 

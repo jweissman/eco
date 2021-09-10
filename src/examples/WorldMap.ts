@@ -105,10 +105,10 @@ class WorldMap extends Model {
   // todo highlight/indicate..
   // pushpins = { mountains: { 'Everwhite (Peak of Tears)': [10, 10] } }
 
-  width = 200 //20
-  height = 54 //35
+  width = 100 //20
+  height = 60 //35
 
-  private mapgenTicks = 200
+  private mapgenTicks = 140
   elevation: Heightmap = new Heightmap(this.width, this.height)
   private terrain: Board = new Board(this.width, this.height)
   // private vegetation: Board = new Board(this.width, this.height)
@@ -129,7 +129,7 @@ class WorldMap extends Model {
     const li = Math.round(3600 * ( elevation - 4 ) / 5280)
     const elevationMessage = li === 0 ? 'At sea level' : `${Math.abs(li)} li ${li >= 0 ? 'above' : 'below'} sea level`
     const regionName = this.cartographer.identifyRegionOrWaterway(x,y)
-    return `${regionName} (${elevationMessage})`
+    return `${regionName} / Elevation: ${elevationMessage}`
   }
 
   protected cartographer = new Cartographer(this)
