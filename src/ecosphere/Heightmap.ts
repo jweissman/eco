@@ -107,7 +107,7 @@ export class Heightmap {
 
   orogeny = (mountains: [number, number][]) => {
     const d100 = randomInteger(0,100)
-    if (d100 < 12) this.extrude(mountains)
+    if (d100 < 16) this.extrude(mountains)
     times(3, this.flow)
   }
 
@@ -118,7 +118,7 @@ export class Heightmap {
       this.erode()
       if (d100 < 32) { this.bombard(36); }
     } else {
-      if (d100 < 13) times(2, () => this.bombard(7) )
+      if (d100 < 14) times(2, () => this.bombard(7) )
       this.flow()
       this.erode(4)
       this.smooth()

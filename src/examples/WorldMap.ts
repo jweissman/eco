@@ -105,10 +105,10 @@ class WorldMap extends Model {
   // todo highlight/indicate..
   // pushpins = { mountains: { 'Everwhite (Peak of Tears)': [10, 10] } }
 
-  width = 100 //20
-  height = 50 //35
+  width = 200 //20
+  height = 54 //35
 
-  private mapgenTicks = 100
+  private mapgenTicks = 200
   elevation: Heightmap = new Heightmap(this.width, this.height)
   private terrain: Board = new Board(this.width, this.height)
   // private vegetation: Board = new Board(this.width, this.height)

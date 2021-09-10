@@ -45,19 +45,19 @@ export class MarkovSequence implements ISequence<string> {
   generate(): string { return this.generator.generate(); }
 
   get next(): string {
-    let theName = this.generate()
+    let result = this.generate()
     let attempts = 0
 
     while (
       (
-        this.baseItems.includes(theName)
-        || this.generatedItems.includes(theName)
+        this.baseItems.includes(result)
+        || this.generatedItems.includes(result)
       )
       && attempts++ < 100
     ) {
-      theName = this.generate()
+      result = this.generate()
     }
-    this.generatedItems.push(theName)
-    return theName
+    this.generatedItems.push(result)
+    return result
   }
 }
