@@ -50,5 +50,10 @@
     "assert-never": "^1.2.1",
     "gh-pages": "^3.2.3",
     "raw-loader": "^4.0.2"
+  },
+  "jest": {
+    "moduleNameMapper": {
+     ".*\\.txt$": "<rootDir>/test/supportText.js"
+     }
   }
 }
