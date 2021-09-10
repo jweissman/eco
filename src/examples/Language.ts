@@ -69,7 +69,7 @@ const conjugate = (
   return conjugations
 }
 
-type Verb = 'read' | 'write'
+// type Verb = 'read' | 'write'
 export class Language extends Model {
   verbs = {
     read: verb(),
