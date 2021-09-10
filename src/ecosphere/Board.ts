@@ -80,6 +80,17 @@ export class Board {
     }
   }
 
+  neighbors(x: number, y: number): string[] {
+    const at = (x: number, y: number) => this.at(x,y) || '' // || defaultValue
+    let neighbors: string[] = [
+      at(x-1,y-1), at(x,y-1), at(x+1,y-1),
+      // at(x-1,y)  , at(x,y),   at(x+1,y),
+      at(x-1,y)  ,   at(x+1,y),
+      at(x-1,y+1), at(x,y+1), at(x+1,y+1),
+    ]
+    return neighbors
+  }
+
   step(eachCell: (val: string, neighbors: string[], position: [number, number]) => string, defaultValue: string = ''): Tiles {
     // const ignored = ['*']
     // console.log("Board.step -- start")
@@ -91,11 +102,12 @@ export class Board {
         let currentValue = at(x,y)
         if (currentValue !== undefined) {
           // if (ignored.includes(currentValue)) { continue }
-          let neighbors: string[] = [
-            at(x-1,y-1), at(x,y-1), at(x+1,y-1),
-            at(x-1,y)  , at(x,y),   at(x+1,y),
-            at(x-1,y+1), at(x,y+1), at(x+1,y+1),
-          ]
+          let neighbors: string[] = this.neighbors(x,y)
+          // [
+          //   at(x-1,y-1), at(x,y-1), at(x+1,y-1),
+          //   at(x-1,y)  , at(x,y),   at(x+1,y),
+          //   at(x-1,y+1), at(x,y+1), at(x+1,y+1),
+          // ]
           const newCell = eachCell(currentValue, neighbors, [x,y])
           newTiles[y] = newTiles[y] || []
           newTiles[y][x] = newCell

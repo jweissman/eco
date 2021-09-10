@@ -50,13 +50,18 @@ export class Heightmap {
       let immediate = [ns[1], ns[3], ns[5], ns[7]]
       let max = Math.max(...immediate)
       let above = ns.filter(n => n >= this.groundLevel).length;
-      if (above >= 6 && value < this.groundLevel) { return [this.groundLevel, this.groundLevel + 1] }
-      if (above === 0) { return [value] }
+      if (above >= 7 && value < this.groundLevel) { return [this.groundLevel, this.groundLevel + 1] }
+      if (above === 0) { return [value, value+1] }
       return [
-        max + 1,
+        // max + 2,
+        // max + 1,
         max,
         max - 1,
-        value - 1,
+        max - 2,
+        // max - 5,
+        // value + 1,
+        // Math.max(...ns)-1,
+        // value - 1,
         // ...ns.filter(n => n >= this.groundLevel)
       ]
     });
@@ -65,14 +70,24 @@ export class Heightmap {
   erode = (rate = 1000) => {
     this.apply((value, ns, average) => {
       if (value < average) { return [value] }
-      return [ value, average, Math.min(...ns) ]
+      return [
+        value,
+        value - 1,
+        // average - 1,
+        // Math.floor((value + average) / 2)
+        // Math.max(...ns)-1
+        // value-1,
+        // Math.ceil(value/2),
+        // // value, average, Math.min(...ns),
+        // Math.round((value+average)/2)
+      ]
     }, rate)
   };
 
   extrude = (positions: [number, number][]) => {
     positions.forEach(pos => {
       let h = parseInt(this.map.at(...pos) || '0', 10)
-      let val = clamp(h+randomInteger(1,9),0,9);
+      let val = clamp(h+randomInteger(-1,6),0,9);
       if (pos) { this.map.write(String(val), ...pos); }
     })
   };
@@ -80,7 +95,7 @@ export class Heightmap {
   intrude = (positions: [number, number][], depth: number = 1) => {
     positions.forEach(pos => {
       let h = parseInt(this.map.at(...pos) || '9', 10)
-      let val = clamp(h-randomInteger(1,9),0,9);
+      let val = clamp(h-randomInteger(-1,6),0,9);
       if (pos) { this.map.write(String(val), ...pos); }
     })
   };
@@ -108,20 +123,20 @@ export class Heightmap {
   orogeny = (mountains: [number, number][]) => {
     const d100 = randomInteger(0,100)
     if (d100 < 16) this.extrude(mountains)
-    times(3, this.flow)
+    times(4, this.flow)
   }
 
   geoform = (hades: boolean, mountains: [number, number][]) => {
-      this.smooth()
     const d100 = randomInteger(0,100)
     if (hades) {
       this.orogeny(mountains)
       this.erode()
       if (d100 < 32) { this.bombard(36); }
     } else {
-      if (d100 < 14) times(2, () => this.bombard(7) )
+      // if (d100 < 24) this.smooth()
+      if (d100 < 16) times(2, () => this.bombard(7) )
       this.flow()
-      this.erode(4)
+      // this.erode(4)
     }
   };
 
@@ -130,6 +145,7 @@ export class Heightmap {
   components(consider: (value: number) => boolean): { [component: string]: [number, number][] } {
     let componentMap: { [component: string]: [number, number][] } = {}
     this.map.each((x, y, val) => {
+      // apply
       if (!!consider(parseInt(val, 10))) {
         // do we belong to an existing region? (adjacency)
         let existingComponentNames = Object.keys(componentMap).filter(component => {
@@ -167,5 +183,7 @@ export class Heightmap {
 
   regions = () => this.components(val => val >= this.groundLevel)
   waterways = () => this.components(val => val < this.groundLevel)
-  // todo ranges = () => this.components(val => val >= 8)
+  ranges = () => this.components(val => val >= 8)
+  // okay so literal inverse of this would be trenches?? poetically 'deeps'?
+  // ranges = () => this.components(val => val <= 2)
 }

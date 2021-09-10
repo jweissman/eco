@@ -62,6 +62,6 @@ export class MarkovGenerator {
       }
     }
     // Here's what we got!
-    return output;
+    return output.trim();
   }
 }

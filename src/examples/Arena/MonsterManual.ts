@@ -3,6 +3,20 @@ import { Person } from "../../ecosphere/types";
 import { randomInteger } from "../../ecosphere/utils/randomInteger";
 import { sample } from "../../ecosphere/utils/sample";
 
+// okay just some thoughts but: 
+// - would be good to differentiate 'sapient' creatures with societies (Persons proper from Creatures..)
+// - would be good to make _use_ of the generated stats for the body + mind somehow
+// - would need to model species for different creatures...!
+// - and humanoid 'races' for the sapient peoples (orcs, kobolds..)
+// - would be neat to generate parties of enemy fighters too / heroes
+// - also: start relating generated people together (eg eliminate members of a cult or conspiracy)
+// - more generally questing and loot and bonuses for specific encounters
+// - more interesting rare creature generation
+// - more interesting attack/defense strats (stun/immobilize/stagger; max hp damage; stat damage; poison/venom)
+// - summoning
+// - more interesting magic creatures in general
+// - render combat! (just as board but:) rules for area of effect, movement, etc
+
 export class MonsterManual {
   basicCreatures = {
     Fragment: { hp: 1, evasion: 95 },
@@ -59,6 +73,7 @@ export class MonsterManual {
 
   dragons = {
     // ...and dragons :)
+    // todo proper subtypes here -- also dragon _age_ would be good to model
     'Green Dragon': { hp: 900, strength: 5, speed: 8, defense: 4, 'magic damage': 16, evasion: 24 },
     'Red Dragon': { hp: 1100, strength: 7, speed: 9, defense: 14, 'magic damage': 26, evasion: 34 },
     'Blue Dragon': { hp: 2100, strength: 9, speed: 11, defense: 24, 'magic damage': 36, evasion: 44 },

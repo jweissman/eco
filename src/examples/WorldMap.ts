@@ -9,22 +9,114 @@ import { Heightmap } from "../ecosphere/Heightmap";
 // import { MarkovGenerator } from "../ecosphere/utils/MarkovGenerator";
 
 // eslint-disable-next-line import/no-webpack-loader-syntax
-import cityNames from '!!raw-loader!./data/city-names.txt';
+import cityNames from '!!raw-loader!./data/cities.txt';
 // eslint-disable-next-line import/no-webpack-loader-syntax
-import seaNames from '!!raw-loader!./data/sea-names.txt';
+import seaNames from '!!raw-loader!./data/seas.txt';
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import rangeNames from '!!raw-loader!./data/ranges.txt';
 
 import { MarkovSequence } from "../collections/Sequence";
+
+const markov = (lines: string) => new MarkovSequence(lines.split("\n"))
+
+// handle naming things
+class Linguist {
+  static names = {
+    regions: markov(cityNames),
+    waterways: markov(seaNames),
+    ranges: markov(rangeNames),
+  }
+ 
+  static describeWaterwaySize(area: number) {
+    if (area > 200) { return 'Ocean' }
+    if (area > 100) { return 'Sea' }
+    if (area > 50) { return 'Lake' }
+    if (area > 25) { return 'Pool' }
+    return 'Pond'
+  }
+
+  static describeRegionSize(area: number) {
+    if (area > 250) { return 'Supercontinent' }
+    if (area > 100) { return 'Continent' }
+    if (area > 20) { return 'Island' }
+    if (area > 5) { return 'Isle' }
+    return 'Point'
+  }
+
+  static describeRangeSize(area: number) {
+    if (area > 5) { return 'Range' }
+    if (area > 2) { return 'Mountains' }
+    return 'Peak'
+  }
+
+  // cache names...
+  private waterwayNames: { [rawWaterbodyName: string]: string } = {}
+  private regionNames: { [rawRegionName: string]: string } = {}
+  private rangeNames: { [rawRangeName: string]: string } = {}
+
+  nameWaterway(rawWaterbodyName: string, area: number) {
+    if (this.waterwayNames[rawWaterbodyName] === undefined) {
+      this.waterwayNames[rawWaterbodyName] = Linguist.names.waterways.next
+    }
+    return [
+      this.waterwayNames[rawWaterbodyName],
+      Linguist.describeWaterwaySize(area)
+    ].join(' ')
+  }
+
+  nameRegion(rawRegionName: string, area: number) {
+    if (this.regionNames[rawRegionName] === undefined) {
+      this.regionNames[rawRegionName] = Linguist.names.regions.next
+    }
+    return [
+      this.regionNames[rawRegionName],
+      Linguist.describeRegionSize(area)
+    ].join(' ')
+  }
+
+
+  nameRange(rawRangeName: string, area: number): string | undefined {
+    // throw new Error("Method not implemented.");
+    if (this.rangeNames[rawRangeName] === undefined) {
+      this.rangeNames[rawRangeName] = Linguist.names.regions.next
+    }
+    return [
+      this.rangeNames[rawRangeName],
+      Linguist.describeRangeSize(area)
+    ].join(' ')
+  }
+  // nameRegion()
+}
 class Cartographer {
-  private regionNamegiver = new MarkovSequence(cityNames.split("\n"))
-  private waterwayNamegiver = new MarkovSequence(seaNames.split("\n"))
+  private linguist = new Linguist()
+  // names = {
+  //   regions: markov(cityNames), //new MarkovSequence(cityNames.split("\n")),
+  //   waterways: markov(seaNames), // new MarkovSequence(seaNames.split("\n")),
+  //   ranges: markov(rangeNames), //new MarkovSequence(rangeNames.split("\n")),
+  // }
+  // private regionNamegiver = new MarkovSequence(cityNames.split("\n"))
+  // private waterwayNamegiver = new MarkovSequence(seaNames.split("\n"))
+
+  private _waterways: { [rawWaterbodyName: string]: [number, number][] } = {}
+  // private waterwayNames: { [rawWaterbodyName: string]: string } = {}
+  private _regions: { [rawRegionName: string]: [number, number][] } = {}
+  // private regionNames: { [rawRegionName: string]: string } = {}
+  private _ranges: { [rawRangeName: string]: [number, number][] } = {}
+
+  // private waterwayNames: { [rawWaterbodyName: string]: string } = {}
+  // private regionNames: { [rawRegionName: string]: string } = {}
+  // private rangeNames: { [rawRangeName: string]: string } = {}
 
   // really just need the heightmap i guess??
   constructor(private world: WorldMap) {}
 
-  // cache heightmap regions + names..
-  _regions: { [rawRegionName: string]: [number, number][] } = {}
-  private regionNames: { [rawRegionName: string]: string } = {}
+  reset() {
+    this._regions = {}
+    this._waterways = {}
+    this._ranges = {}
+  }
 
+  // cache heightmap regions + names..
   get regions() {
     if (Object.keys(this._regions).length === 0) {
       this._regions = this.world.elevation.regions()
@@ -33,61 +125,81 @@ class Cartographer {
   }
 
   identifyRegion(x: number, y: number): string | undefined {
-    if (this.world.aeon === 'Hadean' || this.world.aeon === 'Archean') {
-      return '(Region ID requires calmer aeon...)'
-    }
-
-    const regionName = Object.keys(this.regions).find(region =>
+    const rawRegionName = Object.keys(this.regions).find(region =>
       this.regions[region].find(([x0,y0]) => x===x0 && y===y0)
     ) || null
 
-    if (regionName) {
-      if (this.regionNames[regionName] === undefined) {
-        this.regionNames[regionName] = this.regionNamegiver.next
-      }
-      return this.regionNames[regionName]
+    if (rawRegionName) {
+      let area = this.regions[rawRegionName].length
+      return this.linguist.nameRegion(rawRegionName, area)
     }
-
-    // return '[Unknown Region]'
   }
-
-  // cache waterways + names...
-  _waterways: { [rawWaterbodyName: string]: [number, number][] } = {}
-  private waterwayNames: { [rawWaterbodyName: string]: string } = {}
 
   get waterways() {
     if (Object.keys(this._waterways).length === 0) {
       this._waterways = this.world.elevation.waterways()
-      console.log("Found waterways!", this._waterways)
     }
     return this._waterways
   }
 
   identifyWaterway(x: number, y: number): string | undefined {
-    if (this.world.aeon === 'Hadean' || this.world.aeon === 'Archean') {
-      return '(Region ID requires calmer aeon...)'
-    }
-
-    const waterwayName = Object.keys(this.waterways).find(waterway =>
+    const rawWaterbodyName = Object.keys(this.waterways).find(waterway =>
       this.waterways[waterway].find(([x0,y0]) => x===x0 && y===y0)
     ) || null
 
-    if (waterwayName) {
-      if (this.waterwayNames[waterwayName] === undefined) {
-        this.waterwayNames[waterwayName] = this.waterwayNamegiver.next
-      }
-      return this.waterwayNames[waterwayName] + ' Sea'
+    if (rawWaterbodyName) {
+      let area = this.waterways[rawWaterbodyName].length
+      return this.linguist.nameWaterway(rawWaterbodyName, area)
+       
+      // return Linguist.name
+      //if (this.waterwayNames[waterwayName] === undefined) {
+      //  this.waterwayNames[waterwayName] = Linguist.names.waterways.next
+      //}
+      //return this.waterwayNames[waterwayName] + ' Sea' // lake etc...
     }
-
-    // return '[Unknown Region]'
   }
 
   identifyRegionOrWaterway(x: number, y: number): string | undefined {
     if (this.world.aeon === 'Hadean' || this.world.aeon === 'Archean') {
-      return '(Region ID requires calmer aeon...)'
+      return '(Cartography requires calmer aeon...)'
     }    
     return this.identifyRegion(x,y) || this.identifyWaterway(x,y) || '(error: unknown region or waterway!)'
   }
+
+  get ranges() {
+    if (Object.keys(this._ranges).length === 0) {
+      this._ranges = this.world.elevation.ranges()
+    }
+    return this._ranges
+  }
+
+  identifyRange(x: number, y: number): string | undefined {
+  // identifyWaterway(x: number, y: number): string | undefined {
+    const rangeName = Object.keys(this.ranges).find(range =>
+      this.ranges[range].find(([x0,y0]) => x===x0 && y===y0)
+    ) || null
+
+    if (rangeName) {
+      const area = this.ranges[rangeName].length
+      return this.linguist.nameRange(rangeName, area)
+      // if (this.rangeNames[rangeName] === undefined) {
+      //   this.rangeNames[rangeName] = Linguist.names.ranges.next
+      // }
+      // return this.rangeNames[rangeName] + ' Mountains' // + Range, mountains etc...
+    }
+  }
+
+  // identifyFeature -- mountain range / valley ...
+  identifyFeatures(x: number, y: number): string | undefined {
+    if (this.world.aeon === 'Hadean' || this.world.aeon === 'Archean') {
+      return '(Cartography requires calmer aeon...)'
+    }    
+    return this.identifyRange(x,y) || '(no features)'
+  }
+
+
+  // identifyMountain, identifyRiver
+  // identify -- include all single point features (mountains, rivers, ...'arrows'?)
 }
 
 type Aeon = 'Hadean' | 'Archean' | 'Proterozoic'
@@ -128,8 +240,13 @@ class WorldMap extends Model {
     const elevation = this.elevation.at(x,y) || 0
     const li = Math.round(3600 * ( elevation - 4 ) / 5280)
     const elevationMessage = li === 0 ? 'At sea level' : `${Math.abs(li)} li ${li >= 0 ? 'above' : 'below'} sea level`
-    const regionName = this.cartographer.identifyRegionOrWaterway(x,y)
-    return `${regionName} / Elevation: ${elevationMessage}`
+    if (this.aeon === 'Hadean' || this.aeon === 'Archean') {
+      return elevationMessage
+    }
+
+    const region = this.cartographer.identifyRegionOrWaterway(x,y)
+    const features = this.cartographer.identifyFeatures(x,y)
+    return `${features} / ${region} / ${elevationMessage}`
   }
 
   protected cartographer = new Cartographer(this)
@@ -169,8 +286,9 @@ class WorldMap extends Model {
     this.evolve(this.evolution)
     this.actions.create({ name: 'Geoform', act: () => {
       this.ticks = 0
-      this.cartographer._regions = {}
-      this.cartographer._waterways = {}
+      this.cartographer.reset()
+      // this.cartographer._regions = {}
+      // this.cartographer._waterways = {}
     }});
     // this.reboot()
   }
@@ -219,9 +337,9 @@ class WorldMap extends Model {
 
     this.elevation.geoform(this.aeon === 'Hadean', this.mountainSpots)
 
-    if (t > 0 && t % this.mapgenTicks === 0) {
-      console.log("[worldgen] hadean + archean aeons complete")
-    }
+    // if (t > 0 && t % this.mapgenTicks === 0) {
+    //   console.log("[worldgen] hadean + archean aeons complete")
+    // }
 
     this.elevation.map.drawBox('0', 0, 0, this.width, this.height)
     this.elevation.map.drawBox('0', 1, 1, this.width-2, this.height-2)
