@@ -38,7 +38,7 @@ export class MarkovGenerator {
   }
 
   // Generate a text from the information ngrams
-  generate() {
+  generate(): string {
 
     // Get a random  beginning
     let current = sample(this.beginnings) //.choice();

@@ -9,45 +9,63 @@ import { Heightmap } from "../ecosphere/Heightmap";
 // import { MarkovGenerator } from "../ecosphere/utils/MarkovGenerator";
 
 // eslint-disable-next-line import/no-webpack-loader-syntax
-import cityNames from '!!raw-loader!./data/cities.txt';
+// import cityNames from '!!raw-loader!./data/cities.txt';
 // eslint-disable-next-line import/no-webpack-loader-syntax
-import seaNames from '!!raw-loader!./data/seas.txt';
+// import seaNames from '!!raw-loader!./data/seas.txt';
 // eslint-disable-next-line import/no-webpack-loader-syntax
-import rangeNames from '!!raw-loader!./data/ranges.txt';
+// import rangeNames from '!!raw-loader!./data/ranges.txt';
 
-import { MarkovSequence } from "../collections/Sequence";
+import { StringGeneratorSequence } from "../collections/Sequence";
+import { Aelvic, Concept, Dictionary, theConcepts } from "./Language";
+import { ISequence } from "../collections/types";
 
-const markov = (lines: string) => new MarkovSequence(lines.split("\n"))
+// const markov = (lines: string) => new MarkovSequence(lines.split("\n"))
 
-// handle naming things
+class DictionarySequence
+     extends StringGeneratorSequence
+  implements ISequence<string> {
+    private notions: Concept[]
+  constructor(private dictionary: Dictionary, ...notions: Concept[]) {
+    super()
+    this.notions = notions
+  }
+
+  generate(): string {
+    console.log(`Generate ${this.notions.join('/')} using ${this.dictionary.languageName} dictionary...`)
+    const idea: Concept = sample(theConcepts);
+    const namer = this.dictionary.name(sample(this.notions))
+    const [significance, name] = namer(idea)
+    return `${name} (${significance})`
+  }
+}
 class Linguist {
   static names = {
-    regions: markov(cityNames),
-    waterways: markov(seaNames),
-    ranges: markov(rangeNames),
+    regions: new DictionarySequence(Aelvic, 'land', 'place', 'isle', 'haven', 'realm'),
+    waterways: new DictionarySequence(Aelvic, 'sea', 'lake'),
+    ranges: new DictionarySequence(Aelvic, 'mountain', 'peak', 'hill')
   }
  
-  static describeWaterwaySize(area: number) {
-    if (area > 200) { return 'Ocean' }
-    if (area > 100) { return 'Sea' }
-    if (area > 50) { return 'Lake' }
-    if (area > 25) { return 'Pool' }
-    return 'Pond'
-  }
+  // static describeWaterwaySize(area: number) {
+  //   if (area > 200) { return 'Ocean' }
+  //   if (area > 100) { return 'Sea' }
+  //   if (area > 50) { return 'Lake' }
+  //   if (area > 25) { return 'Pool' }
+  //   return 'Pond'
+  // }
 
-  static describeRegionSize(area: number) {
-    if (area > 250) { return 'Supercontinent' }
-    if (area > 100) { return 'Continent' }
-    if (area > 20) { return 'Island' }
-    if (area > 5) { return 'Isle' }
-    return 'Point'
-  }
+  // static describeRegionSize(area: number) {
+  //   if (area > 400) { return 'Supercontinent' }
+  //   if (area > 200) { return 'Continent' }
+  //   if (area > 100) { return 'Island' }
+  //   if (area > 50) { return 'Isle' }
+  //   return 'Point'
+  // }
 
-  static describeRangeSize(area: number) {
-    if (area > 5) { return 'Range' }
-    if (area > 2) { return 'Mountains' }
-    return 'Peak'
-  }
+  // static describeRangeSize(area: number) {
+  //   if (area > 8) { return 'Range' }
+  //   if (area > 3) { return 'Mountains' }
+  //   return 'Peak'
+  // }
 
   // cache names...
   private waterwayNames: { [rawWaterbodyName: string]: string } = {}
@@ -60,7 +78,7 @@ class Linguist {
     }
     return [
       this.waterwayNames[rawWaterbodyName],
-      Linguist.describeWaterwaySize(area)
+      // Linguist.describeWaterwaySize(area)
     ].join(' ')
   }
 
@@ -70,19 +88,18 @@ class Linguist {
     }
     return [
       this.regionNames[rawRegionName],
-      Linguist.describeRegionSize(area)
+      // Linguist.describeRegionSize(area)
     ].join(' ')
   }
-
 
   nameRange(rawRangeName: string, area: number): string | undefined {
     // throw new Error("Method not implemented.");
     if (this.rangeNames[rawRangeName] === undefined) {
-      this.rangeNames[rawRangeName] = Linguist.names.regions.next
+      this.rangeNames[rawRangeName] = Linguist.names.ranges.next
     }
     return [
       this.rangeNames[rawRangeName],
-      Linguist.describeRangeSize(area)
+      // Linguist.describeRangeSize(area)
     ].join(' ')
   }
   // nameRegion()
@@ -220,7 +237,7 @@ class WorldMap extends Model {
   width = 100 //20
   height = 60 //35
 
-  private mapgenTicks = 140
+  private mapgenTicks = 40
   elevation: Heightmap = new Heightmap(this.width, this.height)
   private terrain: Board = new Board(this.width, this.height)
   // private vegetation: Board = new Board(this.width, this.height)
@@ -341,8 +358,8 @@ class WorldMap extends Model {
     //   console.log("[worldgen] hadean + archean aeons complete")
     // }
 
-    this.elevation.map.drawBox('0', 0, 0, this.width, this.height)
-    this.elevation.map.drawBox('0', 1, 1, this.width-2, this.height-2)
+    // this.elevation.map.drawBox('0', 0, 0, this.width, this.height)
+    // this.elevation.map.drawBox('0', 1, 1, this.width-2, this.height-2)
   }
 
   buildTerrain() {
@@ -380,10 +397,7 @@ class WorldMap extends Model {
   //         this.vegetation.write("'", x, y)
   //       }
   //     }
-
-
   //   })
-
   // }
 
   get area() { return this.width * this.height }

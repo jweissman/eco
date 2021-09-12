@@ -51,31 +51,33 @@ export class Heightmap {
       let max = Math.max(...immediate)
       let above = ns.filter(n => n >= this.groundLevel).length;
       if (above >= 7 && value < this.groundLevel) { return [this.groundLevel, this.groundLevel + 1] }
-      if (above === 0) { return [value, value+1] }
+      if (above === 0) { return [value, value+1, value+2] }
       return [
         // max + 2,
         // max + 1,
+        // max,
+        // value,
         max,
         max - 1,
-        max - 2,
+        // max - 2,
         // max - 5,
         // value + 1,
-        // Math.max(...ns)-1,
+        Math.min(...ns)+1,
         // value - 1,
         // ...ns.filter(n => n >= this.groundLevel)
       ]
     });
   };
 
-  erode = (rate = 1000) => {
+  erode = (rate = 512) => {
     this.apply((value, ns, average) => {
       if (value < average) { return [value] }
       return [
         value,
-        value - 1,
+        // value - 1,
         // average - 1,
-        // Math.floor((value + average) / 2)
-        // Math.max(...ns)-1
+        // Math.floor((value + average) / 2),
+        Math.min(...ns)
         // value-1,
         // Math.ceil(value/2),
         // // value, average, Math.min(...ns),
@@ -133,6 +135,7 @@ export class Heightmap {
       this.erode()
       if (d100 < 32) { this.bombard(36); }
     } else {
+      this.smooth()
       // if (d100 < 24) this.smooth()
       if (d100 < 16) times(2, () => this.bombard(7) )
       this.flow()

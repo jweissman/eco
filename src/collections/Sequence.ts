@@ -27,23 +27,10 @@ export class NameSequence implements ISequence<String> {
   }
 }
 
-export class MarkovSequence implements ISequence<string> {
-  generator: MarkovGenerator
+export abstract class StringGeneratorSequence implements ISequence<string> {
   baseItems: string[] = []
   generatedItems: string[] = []
-  constructor(private items: string[], order = 2, max = 10) {
-    this.generator = new MarkovGenerator(order, max)
-    this.items.forEach(this.feed)
-  }
-
-  @boundMethod
-  feed(it: string) {
-    this.baseItems.push(it);
-    this.generator.feed(it);
-  }
-
-  generate(): string { return this.generator.generate(); }
-
+  abstract generate(): string 
   get next(): string {
     let result = this.generate()
     let attempts = 0
@@ -60,4 +47,23 @@ export class MarkovSequence implements ISequence<string> {
     this.generatedItems.push(result)
     return result
   }
+}
+
+export class MarkovSequence
+     extends StringGeneratorSequence
+  implements ISequence<string> {
+  generator: MarkovGenerator
+  constructor(private items: string[], order = 2, max = 10) {
+    super()
+    this.generator = new MarkovGenerator(order, max)
+    this.items.forEach(this.feed)
+  }
+
+  @boundMethod
+  feed(it: string) {
+    this.baseItems.push(it);
+    this.generator.feed(it);
+  }
+
+  generate(): string { return this.generator.generate(); }
 }
