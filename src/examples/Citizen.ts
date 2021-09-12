@@ -1,14 +1,30 @@
 import { boundMethod } from "autobind-decorator";
+import { Concept, theConcepts } from "../ecosphere/Dictionary";
 import Model from "../ecosphere/Model";
 import { createMoiety, createPerson, Memory, Person } from "../ecosphere/types";
-import { sample } from "../ecosphere/utils/sample";
+import { capitalize } from "../ecosphere/utils/capitalize";
+import { randomInteger } from "../ecosphere/utils/randomInteger";
+import { choose, sample } from "../ecosphere/utils/sample";
+import { Aelvic } from "./Languages/Sindarin";
 
 const generatePerson = () => {
   const moiety = createMoiety('A Social Group')
   const gender = sample(['male', 'female'])
-  const firstName = sample(gender === 'male' ? [ 'Sam', 'Eric', 'Ted', 'Jones' ] : ['Sarah', 'Edna', 'Terri', 'Rosa'])
-  const lastName = sample(['Smith', 'Lever', 'Token', 'Switch', 'Agent', 'Op'])
-  const person = createPerson(firstName + ' ' + lastName, moiety)
+  let suffix: Concept = gender === 'male' ? '-man' : '-woman'
+  let concepts = choose(randomInteger(1,2), theConcepts)
+  let nameElements = [
+    ...concepts,
+    suffix,
+  ]
+  let name = Aelvic.translate(...nameElements) //choose //(2, theConcepts))
+  // const firstName = sample(gender === 'male' ? [ 'Sam', 'Eric', 'Ted', 'Jones' ] : ['Sarah', 'Edna', 'Terri', 'Rosa'])
+  // const lastName = sample(['Smith', 'Lever', 'Token', 'Switch', 'Agent', 'Op'])
+  const significance = (concepts.map(n => capitalize(n)).reverse().join('-')); //.replaceAll('-', ''));
+
+  const person = createPerson(
+    name + ' (' +  significance + ')',
+    moiety
+    )
   return person
 }
 class Citizen extends Model {
