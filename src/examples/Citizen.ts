@@ -10,11 +10,11 @@ import { Aelvic } from "./Languages/Sindarin";
 const generatePerson = () => {
   const moiety = createMoiety('A Social Group')
   const gender = sample(['male', 'female'])
-  let suffix: Concept = gender === 'male' ? '-man' : '-woman'
-  let concepts = choose(randomInteger(1,2), theConcepts)
-  let nameElements = [
+  let suffices: Concept[] = gender === 'male' ? ['-person', '-man'] : ['-woman', '-maid']
+  let concepts: Concept[] = choose(randomInteger(1,2), theConcepts)
+  let nameElements: Concept[] = [
     ...concepts,
-    suffix,
+    ...(randomInteger(0, 12) > 9 ? [sample(suffices)] : []),
   ]
   let name = Aelvic.translate(...nameElements) //choose //(2, theConcepts))
   // const firstName = sample(gender === 'male' ? [ 'Sam', 'Eric', 'Ted', 'Jones' ] : ['Sarah', 'Edna', 'Terri', 'Rosa'])
@@ -38,8 +38,8 @@ class Citizen extends Model {
     // this.people.create('Peers')
     // this.people.create('Family')
 
-    this.resources.create('Happiness')
-    this.resources.create('Money')
+    // this.resources.create('Happiness')
+    // this.resources.create('Money')
     // this.resources.create('Money')
 
     this.actions.create({ name: 'New', act: () => {
@@ -52,26 +52,30 @@ class Citizen extends Model {
   @boundMethod
   evolution() {}
 
-  metrics = { age: () => this.subject.age, }
+  // metrics = { age: () => this.subject.age, }
   notes = {
     'current date': () => this.date.description,
     'name': () => this.subject.name,
     'agility': () => this.subject.body.agility,
     'beauty': () => this.subject.soul.beauty,
+    'charm': () => this.subject.soul.charm,
     'cunning': () => this.subject.body.cunning,
     'depth': () => this.subject.mind.depth,
     'education': () => this.subject.mind.education,
     'empathy': () => this.subject.soul.empathy,
+    'guile': () => this.subject.body.guile,
     'insight': () => this.subject.mind.insight,
     'integrity': () => this.subject.soul.integrity,
-    'spirit': () => this.subject.body.spirit,
-    'strength': () => this.subject.body.strength,
-    'wit': () => this.subject.soul.wit,
     'knowledge': () => this.subject.kind.knowledge,
     'power': () => this.subject.kind.power,
     'sophistication': () => this.subject.kind.sophistication,
+    'spirit': () => this.subject.body.spirit,
+    'strength': () => this.subject.body.strength,
+    'tech': () => this.subject.kind.tech,
+    'valor': () => this.subject.mind.valor,
     'wealth': () => this.subject.kind.wealth,
-    'bio': () => this.subject.memory.list().map(this.describeMemory).join('... '),
+    'wit': () => this.subject.soul.wit,
+    // 'bio': () => this.subject.memory.list().map(this.describeMemory).join('... '),
   }
 
   describeMemory(memory: Memory) {

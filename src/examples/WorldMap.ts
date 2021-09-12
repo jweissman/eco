@@ -21,11 +21,12 @@ import { Aelvic } from "./Languages/Sindarin";
 // const markov = (lines: string) => new MarkovSequence(lines.split("\n"))
 class Linguist {
   static names = {
-    regions: new DictionarySequence(Aelvic, 'land', 'place', 'isle', 'haven', 'realm'),
-    waterways: new DictionarySequence(Aelvic, 'sea', 'lake'),
-    ranges: new DictionarySequence(Aelvic, 'mountain', 'peak', 'hill'),
-    valleys: new DictionarySequence(Aelvic, 'valley'),
-    bays: new DictionarySequence(Aelvic, 'bay')
+    places: new DictionarySequence(Aelvic, true, 'realm', 'haven', 'place'),
+    regions: new DictionarySequence(Aelvic, false, 'land', 'isle', 'realm'),
+    waterways: new DictionarySequence(Aelvic, false, 'sea', 'lake'),
+    ranges: new DictionarySequence(Aelvic, false, 'mountain', 'peak', 'hill'),
+    valleys: new DictionarySequence(Aelvic, false, 'valley'),
+    bays: new DictionarySequence(Aelvic, false, 'bay')
   }
  
   // static describeWaterwaySize(area: number) {
@@ -66,7 +67,7 @@ class Linguist {
 
   nameRegion(rawRegionName: string, _area: number) {
     if (this.regionNames[rawRegionName] === undefined) {
-      this.regionNames[rawRegionName] = Linguist.names.regions.next
+      this.regionNames[rawRegionName] = sample([ Linguist.names.regions, Linguist.names.places ]).next
     }
     return this.regionNames[rawRegionName]
   }

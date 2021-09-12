@@ -1,6 +1,7 @@
 import { Sequence } from "../../collections"
 import { Collection } from "../Collection"
 import { Stocks } from "../Stocks"
+import { randomInteger } from "../utils/randomInteger"
 import { sample } from "../utils/sample"
 import { BasicEntity } from "./BasicEntity"
 
@@ -23,12 +24,32 @@ export type Creature<T> = Individual<T> & {
   health: 'dying' | 'unwell' | 'flourishing' | 'triumphant'
 }
 
-export type Animal = Creature<Species> & {
-  spirit: 'languorous' | 'vigorous' | 'impetuous' | 'ferocious'
-  strength: 'weak' | 'robust' | 'mighty' | 'indomitable'
-  cunning:  'dim' | 'attentive' | 'creative' | 'ingenious'
-  agility:  'clumsy' | 'nimble' | 'spry' | 'balletic'
+function pick<T>(elements: T[]): T {
+  const d100 = randomInteger(0,100)
+  if (d100 > 92) {
+    return elements[3]
+  } else if (d100 < 10) {
+    return elements[0]
+  }
+
+  return sample([elements[1], elements[2]])
 }
+
+type Spirit = 'languorous' | 'vigorous' | 'impetuous' | 'ferocious'
+type Strength = 'weak' | 'robust' | 'mighty' | 'indomitable'
+type Cunning = 'foolish' | 'sly' | 'crafty' | 'manipulative'
+//'dim' | 'attentive' | 'creative' | 'ingenious'
+type Agility = 'clumsy' | 'nimble' | 'spry' | 'balletic'
+type Guile = 'transparent' | 'convincing' | 'beguiling' | 'insidious'
+
+export type Animal = Creature<Species> & {
+  spirit: Spirit
+  strength: Strength
+  cunning: Cunning
+  guile: Guile
+  agility: Agility
+}
+
 
 const animalIds = new Sequence()
 export const createAnimal = (name: string, species: Species): Animal => {
@@ -37,11 +58,12 @@ export const createAnimal = (name: string, species: Species): Animal => {
     name,
     kind: species,
     age: 0,
-    health: sample(['dying', 'unwell', 'flourishing', 'triumphant']),
-    spirit: sample(['languorous', 'vigorous', 'impetuous', 'ferocious']),
-    cunning: sample(['dim', 'attentive', 'creative', 'ingenious']),
-    agility: sample(['clumsy', 'nimble', 'spry', 'balletic']),
-    strength: sample(['weak', 'robust', 'mighty', 'indomitable']),
+    guile: pick([ 'transparent', 'convincing', 'beguiling', 'insidious' ]),
+    health: pick(['dying', 'unwell', 'flourishing', 'triumphant']),
+    spirit: pick(['languorous', 'vigorous', 'impetuous', 'ferocious']),
+    cunning: pick(['foolish', 'sly', 'crafty', 'manipulative']),
+    agility: pick(['clumsy', 'nimble', 'spry', 'balletic']),
+    strength: pick(['weak', 'robust', 'mighty', 'indomitable']),
   }
 }
 
@@ -50,21 +72,25 @@ type Wealth = 'impoverished' | 'well-off' | 'luxuriant' | 'decadent'
 type Sophistication = 'unpretentious' | 'savvy' | 'urbane' | 'sleek'
 type Power = 'inconsequential' | 'marginal' | 'influential' | 'sovereign'
 type Knowledge = 'clueless' | 'well-informed' | 'wise' | 'prescient'
+type Technology = 'lost' | 'primitive' | 'archaic' | 'advanced'
+
 
 export type Moiety = BasicEntity & {
   wealth: Wealth
   sophistication: Sophistication
   power: Power
   knowledge: Knowledge
+  tech: Technology
 }
 
 const moietyIds = new Sequence()
 export const createMoiety = (name: string): Moiety => {
-  const wealth: Wealth = sample([ 'impoverished', 'well-off', 'luxuriant', 'decadent' ])
-  const sophistication: Sophistication = sample([ 'unpretentious', 'savvy', 'urbane', 'sleek' ])
-  const power: Power = sample([ 'inconsequential', 'marginal', 'influential', 'sovereign' ])
-  const knowledge: Knowledge = sample([ 'clueless', 'well-informed', 'wise', 'prescient' ])
-  return { id: moietyIds.next, name, wealth, sophistication, power, knowledge }
+  const wealth: Wealth = pick([ 'impoverished', 'well-off', 'luxuriant', 'decadent' ])
+  const sophistication: Sophistication = pick([ 'unpretentious', 'savvy', 'urbane', 'sleek' ])
+  const power: Power = pick([ 'inconsequential', 'marginal', 'influential', 'sovereign' ])
+  const knowledge: Knowledge = pick([ 'clueless', 'well-informed', 'wise', 'prescient' ])
+  const tech: Technology = pick([ 'lost', 'primitive', 'archaic', 'advanced' ])
+  return { id: moietyIds.next, name, wealth, sophistication, power, knowledge, tech }
 }
 
 type Body = Animal
@@ -73,38 +99,46 @@ type Insight = 'dense' | 'intuitive' | 'incisive' | 'brilliant'
 type Depth = 'superficial' | 'substantial' | 'profound' | 'inscrutable'
 type Education = 'unlettered' | 'literate' | 'tutored' | 'well-read'
 type Disposition = 'dismal' | 'hopeful' | 'propitious' | 'roseate'
+type Valor = 'timid' | 'bold' | 'courageous' | 'fearless'
+
 type Mind = {
   insight: Insight
   depth: Depth
   education: Education
   disposition: Disposition
+  valor: Valor
 }
 
 export const createMind = (): Mind => {
-  const insight: Insight = sample([ 'dense', 'intuitive', 'incisive', 'brilliant' ])
-  const depth: Depth = sample([ 'superficial', 'substantial', 'profound', 'inscrutable' ])
-  const education: Education = sample([ 'unlettered', 'literate', 'tutored', 'well-read' ])
-  const disposition: Disposition = sample([ 'dismal', 'hopeful', 'propitious', 'roseate' ])
-  return { insight, depth, education, disposition }
+  const insight: Insight = pick([ 'dense', 'intuitive', 'incisive', 'brilliant' ])
+  const depth: Depth = pick([ 'superficial', 'substantial', 'profound', 'inscrutable' ])
+  const education: Education = pick([ 'unlettered', 'literate', 'tutored', 'well-read' ])
+  const disposition: Disposition = pick([ 'dismal', 'hopeful', 'propitious', 'roseate' ])
+  const valor: Valor = pick([ 'timid', 'bold', 'courageous', 'fearless' ])
+  return { insight, depth, education, disposition, valor }
 }
 
 type Wit = 'slow' | 'clever' | 'biting' | 'savage'
 type Empathy = 'sadistic' | 'generous' | 'benevolent' | 'selfless'
 type Integrity = 'uncertain' | 'sound' | 'solid' | 'incorruptible'
 type Beauty = 'ugly' | 'fair' | 'radiant' | 'resplendent'
+type Charm  = 'repulsive' | 'inoffensive' | 'affable' | 'likeable'
+
 type Soul = {
   wit: Wit
   empathy: Empathy
   integrity: Integrity
   beauty: Beauty
+  charm: Charm
 }
 
 export const createSoul = (): Soul => {
-  const wit: Wit = sample([ 'slow', 'clever', 'biting', 'savage' ])
-  const empathy: Empathy = sample([ 'sadistic', 'generous', 'benevolent', 'selfless' ])
-  const integrity: Integrity = sample([ 'uncertain', 'sound', 'solid', 'incorruptible' ])
-  const beauty: Beauty = sample([ 'ugly', 'fair', 'radiant', 'resplendent' ])
-  return { wit, empathy, integrity, beauty }
+  const wit: Wit = pick([ 'slow', 'clever', 'biting', 'savage' ])
+  const empathy: Empathy = pick([ 'sadistic', 'generous', 'benevolent', 'selfless' ])
+  const integrity: Integrity = pick([ 'uncertain', 'sound', 'solid', 'incorruptible' ])
+  const beauty: Beauty = pick([ 'ugly', 'fair', 'radiant', 'resplendent' ])
+  const charm: Charm = pick([ 'repulsive', 'inoffensive', 'affable', 'likeable' ])
+  return { wit, empathy, integrity, beauty, charm }
 }
 
 // type Category = BasicEntity

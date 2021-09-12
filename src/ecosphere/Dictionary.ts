@@ -1,31 +1,38 @@
 import { StringGeneratorSequence } from "../collections/Sequence";
 import { ISequence } from "../collections/types";
 import { titleize, capitalize } from "./utils/capitalize";
-import { sample } from "./utils/sample";
+import { randomInteger } from "./utils/randomInteger";
+import { choose, sample } from "./utils/sample";
 
 const concepts = [
   'earth', 'sky',
   'mountain', 'hill', 'valley', 'peak', 'mound', 'point',
-  'sea', 'river', 'isle', 'lake', 'bay',
+  'isle', 
+  'sea', 'lake', 'bay',
   'forest',
+  'river', 'glen',
   'land', 'place', 'realm', 'region',
   'peoples', 'kingdom',
   'path', 'haven', 'fortress', 'prison',
   // modifiers..
-  'ever-', '-less',
+  'ever-', '-less', 'at-',
   // masculine/feminine suffices
-  '-man', '-woman',
+  '-person', '-man', '-woman', '-maid',
+  // relations
+  'friend', 'foe', 'lord',
 
   // ...aspects...
   'light', 'shadow', 'sun', 'moon', 'stars',
+  'night', 'spark', 'starlight', 'firmament',
   // weather
-  'mist', 'snow', 'rain', 'rainbow',
+  'mist', 'snow', 'rain', 'rainbow', 'dew',
   // metals...
-  'iron', 'silver','gold', 
+  'tin', 'iron', 'silver', 'gold', 
   // shades, hues...
   'white', 'black', 'gray', 'red', 'blue', 'green', 'orange',
   // ...animals,
-  'birds', 'dragons', 'elephants', 'swans', 'eagles', 'nightingales', 'bears',
+  'birds', 'dragons', 'elephants', 'swans', 'eagles', 'nightingales', 'bears', 'horses',
+
   // ...elements,
   'ice', 'fire', 'earth', 'water',
   // ...times of day
@@ -37,24 +44,38 @@ const concepts = [
   // seasons
   'autumn', 'winter', 'spring', 'summer',
   // moods
-  'dread', 'horror', 'awe', 'joy',
+  'dread', 'horror', 'awe', 'joy', 'sorrow',
+  // food
+  'honey',
 
 
   // adjectives...
-  'tall', 'deep', 'lofty', 'lonely', 'great', 'small',
+  'tall', 'deep', 'lofty', 'lonely',
+  'great', 'large', 'small', 'tiny',
+  'narrow', 'wide', 'sharp', 'giant',
+
   'golden', 'holy', 'fortunate', 'dusty', 'beautiful',
-  'fell', 'cloudy', 'secret', 'sweet',
+  'fell', 'cloudy', 'secret', 'sweet', 'bold',
+  'splendid',
 
+  // animal aspects...
   'horns', 'fangs', 'claws',
-  // 'needle',
-  'music', 'silence',
 
-  'thought', 'speech', 'skill',
-  'night', 'spark', 'starlight', 'firmament',
+  // more abstract things...
+  'love',
+  'music', 'silence', 'divine',
 
-  'mantle',
+  'fate', 'thought', 'speech', 'skill',
 
-  'needle',
+
+  // bodily substances
+  'blood', 'tears', 
+
+  // created things...
+  'mantle', 'needle', 'bell', 
+
+  // questing...
+  'treasure',
 ] as const;
 
 export type Concept = typeof concepts[number];
@@ -63,7 +84,11 @@ type Lexeme = string
 export type Vocabulary = {[key in Concept]: Lexeme}
 
 export class Dictionary {
-  constructor(public languageName: string, protected vocabulary: Vocabulary) {}
+  constructor(
+    public languageName: string,
+    protected vocabulary: Vocabulary,
+    protected enhanceTranslation?: (input: string) => string
+  ) {}
 
   translate(...concepts: Concept[]): Lexeme {
     let translation = concepts.reduce((acc, concept) => {
@@ -71,62 +96,27 @@ export class Dictionary {
       acc = acc.trim()
       let space = true
       if (acc.endsWith('-')) { space = false; acc = acc.replaceAll('-', '') }
+      if (acc.endsWith('*')) { space = false; acc = acc.replaceAll('*', '') }
       if (word.startsWith('-')) { space = false; word = word.replaceAll('-', '') }
-      if (word.startsWith(acc[acc.length-1])) { space = false; acc = acc.substring(0, acc.length - 1) }
+      // if (word.startsWith(acc[acc.length-1])) { space = false; acc = acc.substring(0, acc.length - 1) }
+
       let elements = [acc, word]
       if (concept.startsWith('-')) {
         space = false;
         if (word.endsWith('-')) {
           word = word.replaceAll('-', '')
-          elements = [word, acc]
+          // elements = [word, acc]
         }
       }
       return elements.join(space ? ' ' : '')
     }, '')
 
-    if (translation.endsWith('-')) {
-      translation = translation.substring(0, translation.length - 1);
-      // if (translation.endsWith('ith')) { translation += 'ë' }
-      if (translation.endsWith('ss')) { translation += 'ë' }
-      else if (translation.endsWith('r')) { translation += 'gren' }
-      else { translation += 'ren' }
-                  // + 'en';
-    }
-
-    if (translation.endsWith('*')) {
-      translation = translation.substring(0, translation.length - 1);
-      if (translation.endsWith('ir')) { translation += 'essëa' } //essea' }
-      else if (translation.endsWith('r')) { translation += 'iand' }
-      else if (translation.endsWith('n')) { translation += 'ion' }
-      else { translation += 'iath' }
-    }
-    translation = translation.replaceAll('*', '')
-
-    // irregular but try to cleanup some weird constructions...
-    // translation = translation.replaceAll('dng', 'd eng')
-    translation = translation.replaceAll('n uil', 'llin')
-    // for 'taniquetil' ... (otherwise: raud nimtil)
-    translation = translation.replaceAll('mt', 'quet')
-    // translation = translation.replaceAll('ud nn', 'n')
-    translation = translation.replaceAll('nd ni', 'ni')
-    translation = translation.replaceAll('rgr', 'gr')
-    translation = translation.replaceAll('dc', 'g')
-    translation = translation.replaceAll('aire', 'ere')
-    translation = translation.replaceAll('naer', 'nairë')
-    translation = translation.replaceAll('fng', 'f eng')
-
-    translation = translation.replaceAll('uie', 'uvie')
-    // translation = translation.replaceAll('inin', 'ien')
-    // translation = translation.replaceAll('ln', 'len')
-    // translation = translation.replaceAll(ng/, 'Eng')
-    if (translation.startsWith('ng')) { translation = translation.replace('ng', 'eng')}
-    if (translation.startsWith('ui')) { translation = translation.replace('ui', 'oio')}
-    // if (translation.startsWith('ra')) { translation = translation.replace('ra', 'ta')}
-    if (translation.startsWith('ton')) { translation = translation.replace('to', 'ta')}
-    if (translation.endsWith('ll')) { translation = translation.substring(0, translation.length - 1) } //replace('ll', 'l')}
-
+    // okay, need to map these irregulars to a process...
     
-    return titleize(translation)
+    let result = this.enhanceTranslation
+      ? this.enhanceTranslation(translation)
+      : translation
+    return titleize(result) //titleize(translation)
   }
 
   name = (...ideas: Concept[]) => (...descriptors: Concept[]) => {
@@ -134,12 +124,31 @@ export class Dictionary {
     let description = capitalize(descriptors.join('-'))
     let form = `${description} ${notion}`
     if (description.endsWith('s')) { form = `${description}' ${notion}`}
-    let translation = `${this.translate(...ideas, ...descriptors)}`;
+    let translation = `${this.translate(
+      ...ideas,
+      ...descriptors,
+      )}`;
     return [ 
       form,
       translation
     ]
   }
+
+  nameInverse = (...ideas: Concept[]) => (...descriptors: Concept[]) => {
+    let notion = capitalize(ideas.join('-'))
+    let description = capitalize(descriptors.join('-'))
+    let form = `${description} ${notion}`
+    if (description.endsWith('s')) { form = `${description}' ${notion}`}
+    let translation = `${this.translate(
+      ...descriptors,
+      ...ideas,
+      )}`;
+    return [ 
+      form,
+      translation
+    ]
+  }
+
 }
 
 
@@ -147,16 +156,22 @@ export class DictionarySequence
      extends StringGeneratorSequence
   implements ISequence<string> {
     private notions: Concept[]
-  constructor(private dictionary: Dictionary, ...notions: Concept[]) {
+  constructor(
+    private dictionary: Dictionary,
+    private invertOrder: boolean = false,
+    ...notions: Concept[]
+  ) {
     super()
     this.notions = notions
   }
 
   generate(): string {
     console.log(`Generate ${this.notions.join('/')} using ${this.dictionary.languageName} dictionary...`)
-    const ideas: Concept = sample(theConcepts);
-    const inventName = this.dictionary.name(sample(this.notions))
-    const [significance, name] = inventName(ideas)
+    const ideas: Concept[] = choose(randomInteger(1,2), theConcepts);
+    const inventName = this.invertOrder
+      ? this.dictionary.nameInverse(sample(this.notions))
+      : this.dictionary.name(sample(this.notions))
+    const [significance, name] = inventName(...ideas)
     return `${name} (${significance})`
   }
 }
