@@ -81,14 +81,22 @@ export class Board {
   }
 
   neighbors(x: number, y: number): string[] {
-    const at = (x: number, y: number) => this.at(x,y) || '' // || defaultValue
-    let neighbors: string[] = [
-      at(x-1,y-1), at(x,y-1), at(x+1,y-1),
-      // at(x-1,y)  , at(x,y),   at(x+1,y),
-      at(x-1,y)  ,   at(x+1,y),
-      at(x-1,y+1), at(x,y+1), at(x+1,y+1),
+    const at = ([x, y]: [ number, number ]) => this.at(x,y) || '' // || defaultValue
+    // let neighbors: string[] = [
+    //   at(x-1,y-1), at(x,y-1), at(x+1,y-1),
+    //   // at(x-1,y)  , at(x,y),   at(x+1,y),
+    //   at(x-1,y)  ,   at(x+1,y),
+    //   at(x-1,y+1), at(x,y+1), at(x+1,y+1),
+    // ]
+    return Board.neighborPositions(x,y).map(at) //neighbors
+  }
+
+  static neighborPositions(x: number, y: number): [number, number][] {
+    return [
+      [x-1,y-1], [x,y-1], [x+1,y-1],
+      [x-1,y  ], [x+1,y],
+      [x-1,y+1], [x,y+1], [x+1,y+1],
     ]
-    return neighbors
   }
 
   step(eachCell: (val: string, neighbors: string[], position: [number, number]) => string, defaultValue: string = ''): Tiles {

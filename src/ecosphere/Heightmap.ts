@@ -8,7 +8,7 @@ import { sample } from "./utils/sample";
 import { times } from "./utils/times";
 export class Heightmap {
   map: Board = new Board(this.width, this.height);
-  groundLevel = 5
+  seaLevel = 5
 
   constructor(public width: number, public height: number) { }
 
@@ -34,9 +34,9 @@ export class Heightmap {
   smooth = () => {
     this.apply((value, ns, average) => {
       // cleanup coastlines
-      let above = ns.filter(n => n >= this.groundLevel).length;
-      if (above >= 5 && value < this.groundLevel) { return [value + 1] }
-      else if (above < 4 && value >= this.groundLevel) { return [value - 1] }
+      let above = ns.filter(n => n >= this.seaLevel).length;
+      if (above >= 5 && value < this.seaLevel) { return [value + 1] }
+      else if (above < 4 && value >= this.seaLevel) { return [value - 1] }
       if (value < average - 1) { return [ value, value + 1, Math.floor((value + average) / 2) ]}
       if (value > average + 1) { return [ value, value - 1, Math.floor((value + average) / 2) ]}
       return [ value, ]
@@ -49,8 +49,8 @@ export class Heightmap {
       if (value >= average) { return [value] }
       let immediate = [ns[1], ns[3], ns[5], ns[7]]
       let max = Math.max(...immediate)
-      let above = ns.filter(n => n >= this.groundLevel).length;
-      if (above >= 7 && value < this.groundLevel) { return [this.groundLevel, this.groundLevel + 1] }
+      let above = ns.filter(n => n >= this.seaLevel).length;
+      if (above >= 7 && value < this.seaLevel) { return [this.seaLevel, this.seaLevel + 1] }
       if (above === 0) { return [value, value+1, value+2] }
       return [
         // max + 2,
@@ -62,19 +62,20 @@ export class Heightmap {
         // max - 2,
         // max - 5,
         // value + 1,
-        Math.min(...ns)+1,
+        // Math.min(...ns)+1,
         // value - 1,
         // ...ns.filter(n => n >= this.groundLevel)
       ]
     });
   };
 
-  erode = (rate = 512) => {
+  erode = (rate = 1000) => {
     this.apply((value, ns, average) => {
       if (value < average) { return [value] }
       return [
         value,
         // value - 1,
+        // value - 2,
         // average - 1,
         // Math.floor((value + average) / 2),
         Math.min(...ns)
@@ -89,7 +90,7 @@ export class Heightmap {
   extrude = (positions: [number, number][]) => {
     positions.forEach(pos => {
       let h = parseInt(this.map.at(...pos) || '0', 10)
-      let val = clamp(h+randomInteger(-1,6),0,9);
+      let val = clamp(h+randomInteger(-1,7),0,9);
       if (pos) { this.map.write(String(val), ...pos); }
     })
   };
@@ -97,7 +98,7 @@ export class Heightmap {
   intrude = (positions: [number, number][], depth: number = 1) => {
     positions.forEach(pos => {
       let h = parseInt(this.map.at(...pos) || '9', 10)
-      let val = clamp(h-randomInteger(-1,6),0,9);
+      let val = clamp(h-randomInteger(-1,7),0,9);
       if (pos) { this.map.write(String(val), ...pos); }
     })
   };
@@ -145,16 +146,20 @@ export class Heightmap {
 
   componentNames = new NameSequence()
 
-  components(consider: (value: number) => boolean): { [component: string]: [number, number][] } {
+  components(
+    consider: (value: number, ns: number[]) => boolean,
+  ): { [component: string]: [number, number][] } {
     let componentMap: { [component: string]: [number, number][] } = {}
     this.map.each((x, y, val) => {
+      let ns = this.map.neighbors(x,y).map(n => parseInt(n, 10))
+      // ns.splice(5,1)
       // apply
-      if (!!consider(parseInt(val, 10))) {
+      if (!!consider(parseInt(val, 10), ns)) {
         // do we belong to an existing region? (adjacency)
         let existingComponentNames = Object.keys(componentMap).filter(component => {
           // are any of the points in r adjacent to this one?
           let adjacent = any(componentMap[component], ([x1,y1]) => {
-            return distance([x,y], [x1,y1]) <= 1
+            return distance([x,y], [x1,y1]) <= Math.sqrt(2)
           })
           return adjacent
         })
@@ -184,9 +189,28 @@ export class Heightmap {
     return componentMap
   }
 
-  regions = () => this.components(val => val >= this.groundLevel)
-  waterways = () => this.components(val => val < this.groundLevel)
+  regions = () => this.components(val => val >= this.seaLevel)
+  waterways = () => this.components(val => val < this.seaLevel)
   ranges = () => this.components(val => val >= 8)
-  // okay so literal inverse of this would be trenches?? poetically 'deeps'?
-  // ranges = () => this.components(val => val <= 2)
+
+  // okay so literal inverse of this would be valleys?
+  // really -- want to confirm the entire frontier is above ground level..
+  // otherwise a beach or mesa or something ...
+  valleys = () => {
+    let level = this.seaLevel
+    return this.components((val,ns) => (val === level || val === level + 1 || val === level + 2)
+                                    && ((ns.reduce((a,b) => a + b, 0) / ns.length) >= level)
+    )
+  }
+
+  // interesting, bays are similar to valleys -- but inverse, we *don't* want enclosed areas (lakes)
+  bays = () => {
+    let level = 4 //this.seaLevel - 1
+    return this.components(v => v === level || v === level - 1)
+    //(val) => val === level || val === level - 1)) // || val === level - 2))
+                                    // && ((ns.reduce((a,b) => a + b, 0) / ns.length) <= level + 1)
+    // )
+  }
+                                           
+ // could also detect trenches?? poetically 'deeps'?
 }
