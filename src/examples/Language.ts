@@ -17,7 +17,7 @@ class Language extends Model {
     'Silver River': () => this.t('silver', 'river'),
     'Ever-White': () => this.t('ever-', 'snow'),
     'Tall White Point': () => this.t('tall', 'white', 'point'),
-    '"Nightingale" (lit. Spark-Woman)': () => this.t('spark', '-daughter'),
+    '"Nightingale"': () => this.t('spark', '-daughter'),
     'Mist-Needle': () => this.t('mist', 'needle'),
     'Mist-Shadow': () => this.t('mist', 'shadow'),
     'Star-Eagle': () => this.t('eagles', 'stars'),
@@ -43,7 +43,8 @@ class Language extends Model {
     'Silent Land': () => this.t('land', 'silence'),
     'Star Bay': () => this.t('bay', 'stars'),
     'Bell-Star': () => this.t('bell', 'stars'),
-    'Music of the Spheres': () => this.t('stars', 'music'),
+    'Saturday': () => this.t('day', 'stars'),
+    'Star-Music': () => this.t('stars', 'music'),
     'Haven of the Gods': () => this.t('at-', 'divine')
     // ...Object.fromEntries(descriptiveIdeas.map(idea => {
     //   let [name, significance] = this.dictionary.nameMountain(idea);

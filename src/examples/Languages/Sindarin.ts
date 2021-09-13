@@ -21,6 +21,7 @@ export const Sindarin: Vocabulary = {
 
   abundant: 'ovor',
   afternoon: 'avnedhor',
+  apple: 'orf',
   autumn: 'iarvas-', 
   awe: 'anwar',
   battle: 'dagor',
@@ -42,6 +43,7 @@ export const Sindarin: Vocabulary = {
   cloudy: 'fanui',
   daisy: 'eirien',
   dandelion: 'orchen',
+  day: 'or-',
   deep: 'nûr-',
   dew: 'mîdh-',
   divine: 'ballean',
@@ -77,6 +79,7 @@ export const Sindarin: Vocabulary = {
   gray: 'thind-',
   great: 'beleg-',
   green: 'calen-',
+  harbor: 'hûb',
   haven: '-lond*',
   hill: '-amon', // tun
   holy: 'aer',
@@ -96,6 +99,7 @@ export const Sindarin: Vocabulary = {
   land: 'dor-',
   large: 'daer',
   light: 'ea',
+  lily: 'loth',
   lofty: 'raud',
   lonely: 'air*',
   lord: '-gon',
@@ -116,6 +120,7 @@ export const Sindarin: Vocabulary = {
   noon: 'nedhor',
   oak: 'doron*',
   orange: 'culuin',
+  pale: 'nim-',
   path: 'lant',
   peak: 'aegnas', // see point, needle
   peoples: 'li-',
@@ -179,13 +184,11 @@ export const Sindarin: Vocabulary = {
   water: 'nin',
   wax: 'lîg',
   white: 'nique-',
-  pale: 'nim-',
   wide: '-land',
   willow: 'tathar*',
   wind: 'gwae',
-  wine: 'wine',
+  wine: 'miru',
   winter: 'rhîw',
-  harbor: 'hûb',
 }
 
 const replacements = {
@@ -194,10 +197,13 @@ const replacements = {
   'nc': 'g',
   'uie': 'uvie',
   'airt': 'írd',
+  'air': 'er',
   'ln': 'len',
   'ean': 'ónë',
   'fn': 'van',
-  'aire': 'ere',
+  // 'aire': 'ere',
+  'rngil': 'rgil*',
+  'nn': 'n',
 }
 const dashBeginnings: { [begin: string]: string } = { 'ng': 'a' }
 
@@ -209,9 +215,11 @@ const dashEndings: { [end: string]: string } = {
 }
 
 const starEndings: { [end: string]: string } = {
-  'ir': 'essëa',
+  'er': 'essëa',
+  // 'er': 'essëa',
   'r': 'iand',
   'on': 'ion',
+  'il': 'ion',
   'd': 'ë',
 }
 
@@ -233,6 +241,11 @@ const simpleEnhance = (tx: string) => {
         }
       })
     }
+
+    Object.entries(replacements).forEach(([search, replace]) => {
+      word = word.replaceAll(search, replace)
+    })
+
     if (word.endsWith('*')) {
       word = word.replaceAll('*', '')
       Object.keys(starEndings).forEach(ending => {
@@ -241,9 +254,6 @@ const simpleEnhance = (tx: string) => {
         }
       })
     }
-    Object.entries(replacements).forEach(([search, replace]) => {
-      word = word.replaceAll(search, replace)
-    })
 
     // hmmm
     word.replaceAll('*', '')

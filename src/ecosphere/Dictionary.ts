@@ -24,7 +24,7 @@ const concepts = [
   // ...aspects...
   'light', 'shadow', 'shade',
   'sun', 'moon', 'stars',
-  'night', 'spark', 'starlight', 'firmament',
+  'day', 'night', 'spark', 'starlight', 'firmament',
   // weather
   'mist', 'snow', 'wind', 'rain',
   'rainbow', 'dew', 'frost',
@@ -44,13 +44,13 @@ const concepts = [
   // trees
   'willow', 'pine', 'cherry', 'oak', 'spruce', 'birch', 'elm',
   // flowers
-  'rose', 'daisy', 'poppy', 'dandelion',
+  'rose', 'daisy', 'poppy', 'dandelion', 'lily',
   // seasons
   'autumn', 'winter', 'spring', 'summer',
   // moods
   'dread', 'horror', 'awe', 'joy', 'sorrow', 'gloom',
   // food
-  'honey', 'bread', 'elderberry', 'wine', 'fish',
+  'apple', 'honey', 'bread', 'elderberry', 'wine', 'fish',
   // natural substances..
   'wax',
   // 'nut',
