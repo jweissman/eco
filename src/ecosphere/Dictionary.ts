@@ -1,37 +1,41 @@
 import { StringGeneratorSequence } from "../collections/Sequence";
 import { ISequence } from "../collections/types";
 import { titleize, capitalize } from "./utils/capitalize";
-import { randomInteger } from "./utils/randomInteger";
 import { choose, sample } from "./utils/sample";
 
 const concepts = [
   'earth', 'sky',
-  'mountain', 'hill', 'valley', 'peak', 'mound', 'point',
+  'mountain', 'hill', 'valley', 'peak', 'mound', 'point', 'mountain-chain',
   'isle', 
-  'sea', 'lake', 'bay',
+  'sea', 'lake', 'bay', 'pool', 'harbor',
   'forest',
-  'river', 'glen',
+  'river', 'glen', 'stream',
   'land', 'place', 'realm', 'region',
   'peoples', 'kingdom',
-  'path', 'haven', 'fortress', 'prison',
+  'road', 'path',
+  'haven', 'fortress', 'prison', 'citadel', 'stronghold', 'tower',
   // modifiers..
   'ever-', '-less', 'at-',
   // masculine/feminine suffices
-  '-person', '-man', '-woman', '-maid',
+  '-person', '-man', '-son', '-woman', '-maid', '-daughter',
   // relations
-  'friend', 'foe', 'lord',
+  'friend', 'foe', 'lord', 'slave', 'king',
 
   // ...aspects...
-  'light', 'shadow', 'sun', 'moon', 'stars',
+  'light', 'shadow', 'shade',
+  'sun', 'moon', 'stars',
   'night', 'spark', 'starlight', 'firmament',
   // weather
-  'mist', 'snow', 'rain', 'rainbow', 'dew',
+  'mist', 'snow', 'wind', 'rain',
+  'rainbow', 'dew', 'frost',
   // metals...
   'tin', 'iron', 'silver', 'gold', 
+
   // shades, hues...
   'white', 'black', 'gray', 'red', 'blue', 'green', 'orange',
   // ...animals,
-  'birds', 'dragons', 'elephants', 'swans', 'eagles', 'nightingales', 'bears', 'horses',
+  'birds', 'dragons', 'elephants', 'swans', 'eagles',
+  'nightingales', 'bears', 'horses', 'snakes',
 
   // ...elements,
   'ice', 'fire', 'earth', 'water',
@@ -44,38 +48,50 @@ const concepts = [
   // seasons
   'autumn', 'winter', 'spring', 'summer',
   // moods
-  'dread', 'horror', 'awe', 'joy', 'sorrow',
+  'dread', 'horror', 'awe', 'joy', 'sorrow', 'gloom',
   // food
-  'honey',
+  'honey', 'bread', 'elderberry', 'wine', 'fish',
+  // natural substances..
+  'wax',
+  // 'nut',
 
 
   // adjectives...
   'tall', 'deep', 'lofty', 'lonely',
   'great', 'large', 'small', 'tiny',
   'narrow', 'wide', 'sharp', 'giant',
+  'quick', 'pale',
 
   'golden', 'holy', 'fortunate', 'dusty', 'beautiful',
   'fell', 'cloudy', 'secret', 'sweet', 'bold',
-  'splendid',
+  'splendid', 'abundant', 'sparkling',
 
   // animal aspects...
   'horns', 'fangs', 'claws',
 
   // more abstract things...
-  'love',
+  'love', 'dream',
   'music', 'silence', 'divine',
 
   'fate', 'thought', 'speech', 'skill',
+  'tomorrow',
 
+  'spirit',
+  'tyranny', 'freedom',
+
+  'magic',
 
   // bodily substances
   'blood', 'tears', 
 
   // created things...
-  'mantle', 'needle', 'bell', 
+  'jewel', 'ship', 'needle', 'bell', 'candle',
+
+  // clothes
+  'mantle', 'veil', // 'garment'
 
   // questing...
-  'treasure',
+  'journey', 'treasure', 'battle', 'smith',
 ] as const;
 
 export type Concept = typeof concepts[number];
@@ -91,26 +107,30 @@ export class Dictionary {
   ) {}
 
   translate(...concepts: Concept[]): Lexeme {
-    let translation = concepts.reduce((acc, concept) => {
+    let translation = concepts.reduce((acc, concept, index) => {
       let word = this.vocabulary[concept]
       acc = acc.trim()
       let space = true
-      if (acc.endsWith('-')) { space = false; acc = acc.replaceAll('-', '') }
-      if (acc.endsWith('*')) { space = false; acc = acc.replaceAll('*', '') }
-      if (word.startsWith('-')) { space = false; word = word.replaceAll('-', '') }
+      if (acc.endsWith('-') || acc.endsWith('*')) {
+        space = false; acc = acc.substring(0, acc.length-1)
+      }
+      if (index > 0 && (word.startsWith('-') || word.startsWith('*'))) {
+        space = false; word = word.substring(1, word.length) //replaceAll('-', '')
+      }
       // if (word.startsWith(acc[acc.length-1])) { space = false; acc = acc.substring(0, acc.length - 1) }
 
       let elements = [acc, word]
       if (concept.startsWith('-')) {
         space = false;
-        if (word.endsWith('-')) {
-          word = word.replaceAll('-', '')
-          // elements = [word, acc]
-        }
+        // if (word.endsWith('-')) {
+        //   word = word.replaceAll('-', '')
+        //   // elements = [word, acc]
+        // }
       }
       return elements.join(space ? ' ' : '')
     }, '')
 
+    // translation = translation.replaceAll
     // okay, need to map these irregulars to a process...
     
     let result = this.enhanceTranslation
@@ -167,7 +187,7 @@ export class DictionarySequence
 
   generate(): string {
     console.log(`Generate ${this.notions.join('/')} using ${this.dictionary.languageName} dictionary...`)
-    const ideas: Concept[] = choose(randomInteger(1,2), theConcepts);
+    const ideas: Concept[] = choose(1, theConcepts);
     const inventName = this.invertOrder
       ? this.dictionary.nameInverse(sample(this.notions))
       : this.dictionary.name(sample(this.notions))

@@ -21,10 +21,13 @@ import { Aelvic } from "./Languages/Sindarin";
 // const markov = (lines: string) => new MarkovSequence(lines.split("\n"))
 class Linguist {
   static names = {
-    places: new DictionarySequence(Aelvic, true, 'realm', 'haven', 'place'),
-    regions: new DictionarySequence(Aelvic, false, 'land', 'isle', 'realm'),
-    waterways: new DictionarySequence(Aelvic, false, 'sea', 'lake'),
-    ranges: new DictionarySequence(Aelvic, false, 'mountain', 'peak', 'hill'),
+    places: new DictionarySequence(Aelvic, true, 'realm', 'haven', 'place', 'land'),
+    regions: new DictionarySequence(Aelvic, false, 'isle'),
+    waterways: new DictionarySequence(Aelvic, false, 'sea', 'lake', 'water', 'pool'),
+    ranges: new DictionarySequence(Aelvic, true, 'mountain-chain'),
+    mountains:  new DictionarySequence(Aelvic, false, 'mountain'),
+    // peaks 'peak', 'tower'),
+    // hills: 'hill', 'mound' ...
     valleys: new DictionarySequence(Aelvic, false, 'valley'),
     bays: new DictionarySequence(Aelvic, false, 'bay')
   }
@@ -67,14 +70,20 @@ class Linguist {
 
   nameRegion(rawRegionName: string, _area: number) {
     if (this.regionNames[rawRegionName] === undefined) {
-      this.regionNames[rawRegionName] = sample([ Linguist.names.regions, Linguist.names.places ]).next
+      this.regionNames[rawRegionName] = sample([
+        Linguist.names.regions,
+        Linguist.names.places
+      ]).next
     }
     return this.regionNames[rawRegionName]
   }
 
   nameRange(rawRangeName: string, _area: number): string | undefined {
     if (this.rangeNames[rawRangeName] === undefined) {
-      this.rangeNames[rawRangeName] = Linguist.names.ranges.next
+      this.rangeNames[rawRangeName] = sample([
+        Linguist.names.ranges,
+        Linguist.names.mountains
+      ]).next
     }
     return this.rangeNames[rawRangeName]
   }

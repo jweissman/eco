@@ -26,9 +26,9 @@ export type Creature<T> = Individual<T> & {
 
 function pick<T>(elements: T[]): T {
   const d100 = randomInteger(0,100)
-  if (d100 > 92) {
+  if (d100 > 95) {
     return elements[3]
-  } else if (d100 < 10) {
+  } else if (d100 < 5) {
     return elements[0]
   }
 
@@ -74,7 +74,6 @@ type Power = 'inconsequential' | 'marginal' | 'influential' | 'sovereign'
 type Knowledge = 'clueless' | 'well-informed' | 'wise' | 'prescient'
 type Technology = 'lost' | 'primitive' | 'archaic' | 'advanced'
 
-
 export type Moiety = BasicEntity & {
   wealth: Wealth
   sophistication: Sophistication
@@ -100,6 +99,7 @@ type Depth = 'superficial' | 'substantial' | 'profound' | 'inscrutable'
 type Education = 'unlettered' | 'literate' | 'tutored' | 'well-read'
 type Disposition = 'dismal' | 'hopeful' | 'propitious' | 'roseate'
 type Valor = 'timid' | 'bold' | 'courageous' | 'fearless'
+type Personality = 'bland' | 'charismatic' | 'captivating' | 'magnetic' 
 
 type Mind = {
   insight: Insight
@@ -107,6 +107,7 @@ type Mind = {
   education: Education
   disposition: Disposition
   valor: Valor
+  personality: Personality
 }
 
 export const createMind = (): Mind => {
@@ -115,7 +116,8 @@ export const createMind = (): Mind => {
   const education: Education = pick([ 'unlettered', 'literate', 'tutored', 'well-read' ])
   const disposition: Disposition = pick([ 'dismal', 'hopeful', 'propitious', 'roseate' ])
   const valor: Valor = pick([ 'timid', 'bold', 'courageous', 'fearless' ])
-  return { insight, depth, education, disposition, valor }
+  const personality: Personality = pick([ 'bland', 'magnetic', 'charismatic', 'captivating' ])
+  return { insight, depth, education, disposition, valor, personality }
 }
 
 type Wit = 'slow' | 'clever' | 'biting' | 'savage'
@@ -123,6 +125,7 @@ type Empathy = 'sadistic' | 'generous' | 'benevolent' | 'selfless'
 type Integrity = 'uncertain' | 'sound' | 'solid' | 'incorruptible'
 type Beauty = 'ugly' | 'fair' | 'radiant' | 'resplendent'
 type Charm  = 'repulsive' | 'inoffensive' | 'affable' | 'likeable'
+type Resolve = 'vacillating' | 'steadfast' | 'intrepid' | 'relentless'
 
 type Soul = {
   wit: Wit
@@ -130,6 +133,7 @@ type Soul = {
   integrity: Integrity
   beauty: Beauty
   charm: Charm
+  resolve: Resolve
 }
 
 export const createSoul = (): Soul => {
@@ -138,7 +142,9 @@ export const createSoul = (): Soul => {
   const integrity: Integrity = pick([ 'uncertain', 'sound', 'solid', 'incorruptible' ])
   const beauty: Beauty = pick([ 'ugly', 'fair', 'radiant', 'resplendent' ])
   const charm: Charm = pick([ 'repulsive', 'inoffensive', 'affable', 'likeable' ])
-  return { wit, empathy, integrity, beauty, charm }
+  const resolve: Resolve = pick([ 'vacillating', 'steadfast', 'intrepid', 'relentless' ])
+  
+  return { wit, empathy, integrity, beauty, charm, resolve }
 }
 
 // type Category = BasicEntity

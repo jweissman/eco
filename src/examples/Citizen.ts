@@ -10,7 +10,9 @@ import { Aelvic } from "./Languages/Sindarin";
 const generatePerson = () => {
   const moiety = createMoiety('A Social Group')
   const gender = sample(['male', 'female'])
-  let suffices: Concept[] = gender === 'male' ? ['-person', '-man'] : ['-woman', '-maid']
+  let suffices: Concept[] = gender === 'male'
+    ? ['-person', '-man', '-son']
+    : ['-woman', '-maid', '-daughter']
   let concepts: Concept[] = choose(randomInteger(1,2), theConcepts)
   let nameElements: Concept[] = [
     ...concepts,
@@ -68,6 +70,8 @@ class Citizen extends Model {
     'integrity': () => this.subject.soul.integrity,
     'knowledge': () => this.subject.kind.knowledge,
     'power': () => this.subject.kind.power,
+    'personality': () => this.subject.mind.personality,
+    'resolve': () => this.subject.soul.resolve,
     'sophistication': () => this.subject.kind.sophistication,
     'spirit': () => this.subject.body.spirit,
     'strength': () => this.subject.body.strength,
