@@ -2,16 +2,18 @@
 import { assembleDictionary, Dictionary, Roots } from "../../ecosphere/Dictionary";
 const khuzdulRoots: Roots = {
   man: 'lâ',
-  place: 'êh', //le',
+  place: 'u', //le',
   many: 'v',
   crown: 'nï',
   run: 'rüt',
-  hard: 'thä',
+  hard: 'rä',
   heat: 'ni',
-  great: 'a',
+  great: 'ou',
   no: 'u-',
   water: 'hea',
-  sing: 'ila',
+  sing: 'ija',
+  fear: 'ga',
+  tooth: 'tur',
 
   air: 'ur',
   all: 'even',
@@ -32,7 +34,6 @@ const khuzdulRoots: Roots = {
   drink: 'le',
   eat: 'zu',
   elephant: 'ofan',
-  fear: 'wa',
   flower: 'ela',
   good: 'lu',
   heart: 'eru',
@@ -63,7 +64,6 @@ const khuzdulRoots: Roots = {
   woman: 'lyn',
   sound: 'ada',
   wood: 'fel',
-  tooth: 'tuf',
   over: 'ion',
   face: 'vih',
   fight: 'klak',
@@ -73,6 +73,8 @@ const khuzdulRoots: Roots = {
 
 const khuzdul: Dictionary = assembleDictionary('Khuzdul', khuzdulRoots, {
   'enion': 'ion',
+  'ouio': 'eo',
+  'oue': 'ory',
   // 'uia': 'uvia',
   // 'vn': 'phon',
   // 'vw': 'ph',

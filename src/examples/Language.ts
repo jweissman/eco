@@ -1,7 +1,7 @@
 import { Concept, Dictionary } from "../ecosphere/Dictionary"
 import { Model } from "../ecosphere/Model"
 import Khuzdul from "./Languages/Khuzdul"
-import { Aelvic } from "./Languages/Sindarin"
+// import { Aelvic } from "./Languages/Sindarin"
 class Language extends Model {
   constructor(private dictionary: Dictionary) { super(`${dictionary.languageName} (Language)`) }
 
