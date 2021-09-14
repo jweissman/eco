@@ -150,7 +150,7 @@ export class Dictionary {
       return elements.join(space ? ' ' : '')
     }, '')
 
-    // translation = translation.replaceAll
+    translation = translation.replaceAll('-', '')
     // okay, need to map these irregulars to a process...
     
     let result = this.enhanceTranslation
@@ -289,6 +289,7 @@ export type Roots = {
   coat: string
   face: string
   fight: string
+  mere: string
 }
 
 // try to support building the 150+ word dictionary from
@@ -337,6 +338,7 @@ const assembleDictionary = (name: string, roots: Roots, replacements: { [key: st
     coat,
     fight,
     face,
+    mere,
   } = roots
 
   // const kernel = {
@@ -371,7 +373,7 @@ const assembleDictionary = (name: string, roots: Roots, replacements: { [key: st
     queen: crown + woman,
     sea: great + water,
     lake: water + place,
-    pool: small + water,
+    pool: water + mere,
     bay: cove + place,
     harbor: safe + cove,
     haven: safe + place,
@@ -514,7 +516,7 @@ const assembleDictionary = (name: string, roots: Roots, replacements: { [key: st
     frost: hard + ice,
     dew: small + morning + water,
     dread: fear + king,
-    lonely: one + one,
+    lonely: one + at + mere,
     giant: one + large + man,
     awe: great + fear,
     ash: fire + death,

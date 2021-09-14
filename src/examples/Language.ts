@@ -1,39 +1,45 @@
 import { Concept, Dictionary } from "../ecosphere/Dictionary"
 import { Model } from "../ecosphere/Model"
 import Khuzdul from "./Languages/Khuzdul"
-// import { Aelvic } from "./Languages/Sindarin"
+import { Aelvic } from "./Languages/Sindarin"
 class Language extends Model {
-  constructor(private dictionary: Dictionary) { super(`${dictionary.languageName} (Language)`) }
+  constructor(private dictionary: Dictionary) {
+    super(`${dictionary.languageName} (Language)`)
+    this.actions.create({ name: 'Sindarin', act: () => this.dictionary = Aelvic })
+    this.actions.create({ name: 'Khuzdul', act: () => this.dictionary = Khuzdul })
+  }
 
   t = (...concepts: Concept[]) => this.dictionary.translate(...concepts)
   notes = {
-    'Land of Pines': () => this.t('land', 'pine'),
+    '"Nightingale"': () => this.t('spark', '-daughter'),
     'Lonely Isle': () => this.t('isle', 'lonely'),
-    // 'Mound of Ever-Summer': () => this.t('mound', 'ever-', 'summer'),
-    'Mound of Summer': () => this.t('mound', 'summer'),
-    'Iron Prison': () => this.t('iron', 'prison'),
+    'Haven of the Gods': () => this.t('at-', 'divine'),
     'Swan Haven': () => this.t('swans', 'haven'),
+    'Star-Eagle': () => this.t('eagles', 'stars'),
+    'Land of Pines': () => this.t('land', 'pine'),
+    'Mound of Summer': () => this.t('mound', 'summer'),
+    'Mountains of Tyranny': () => this.t('tyranny', 'mountain-chain'),
+    'Magic Woman': () => this.t('magic', '-woman'),
+    'Fire Stronghold': () => this.t('fire', 'stronghold'),
+    'Grey-Mantle': () => this.t('gray', 'mantle'),
+    'Iron Prison': () => this.t('iron', 'prison'),
     'Icy Fangs': () => this.t('ice', 'fangs'),
     'Pale-horn Mountains': () => this.t('mountain', 'pale', 'horns'),
     'Silver River': () => this.t('silver', 'river'),
     'Ever-White': () => this.t('ever-', 'snow'),
     'Tall White Point': () => this.t('tall', 'white', 'point'),
-    '"Nightingale"': () => this.t('spark', '-daughter'),
     'Mist-Needle': () => this.t('mist', 'needle'),
     'Mist-Shadow': () => this.t('mist', 'shadow'),
-    'Star-Eagle': () => this.t('eagles', 'stars'),
     'Dark Foe': () => this.t('black', 'foe'),
-    'Grey-Mantle': () => this.t('gray', 'mantle'),
     'Spirit of Fire': () => this.t('spirit', 'fire'),
-    'Magic Woman': () => this.t('magic', '-woman'),
-    'Mountains of Tyranny': () => this.t('tyranny', 'mountain-chain'),
-    'Fire Stronghold': () => this.t('fire', 'stronghold'),
     'Shipwright': () => this.t('ship', 'smith'),
     'Land of Holly': () => this.t('holly', 'land'),
     '--': () => '...',
 
     /// other examples (not necessarily from beleriand)
     'Pathless Sea': () => this.t('-less', 'path', 'sea'),
+    'Dragon': () => this.t('dragons'),
+    'Star-Music': () => this.t('stars', 'music'),
     'Hills of Evendim': () => this.t('hill', 'evening'),
     'Mere of Shadows': () => this.t('pool', 'shadow'),
     'Vale of Nightingales': () => this.t('valley', 'nightingales'),
@@ -46,8 +52,6 @@ class Language extends Model {
     'Star Bay': () => this.t('bay', 'stars'),
     'Bell-Star': () => this.t('bell', 'stars'),
     'Saturday': () => this.t('day', 'stars'),
-    'Star-Music': () => this.t('stars', 'music'),
-    'Haven of the Gods': () => this.t('at-', 'divine')
     // ...Object.fromEntries(descriptiveIdeas.map(idea => {
     //   let [name, significance] = this.dictionary.nameMountain(idea);
     //   return [name, () => significance] // `Mount ${capitalize(idea)}`, () => this.dictionary.nameMountain(idea)[1]])
