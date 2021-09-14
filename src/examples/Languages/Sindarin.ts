@@ -96,7 +96,7 @@ export const Sindarin: Vocabulary = {
   king: 'aran',
   kingdom: 'arnad',
   lake: 'ael',
-  land: 'dor-',
+  land: '-dor',
   large: 'daer',
   light: 'ea',
   lily: 'loth',
@@ -189,6 +189,23 @@ export const Sindarin: Vocabulary = {
   wind: 'gwae',
   wine: 'miru',
   winter: 'rhîw',
+  holly: 'ereg*',
+  garden: 'sant',
+  queen: 'bereth',
+  prince: 'ernil',
+  princess: 'brethil',
+  cloud: 'fan',
+  hounds: 'hû',
+  wolves: 'draug',
+  embers: 'iûl',
+  soot: 'ast',
+  ash: 'lith',
+  salt: 'sing',
+  void: 'gaw',
+  steam: 'tuim',
+  magma: 'orodu',
+  radiance: 'aglar',
+  // hail: 'ai',
 }
 
 const replacements = {
@@ -204,6 +221,8 @@ const replacements = {
   // 'aire': 'ere',
   'rngil': 'rgil*',
   'nn': 'n',
+  'egdor': 'egion',
+  'ororo': 'oro',
 }
 const dashBeginnings: { [begin: string]: string } = { 'ng': 'a' }
 
@@ -220,6 +239,7 @@ const starEndings: { [end: string]: string } = {
   'r': 'iand',
   'on': 'ion',
   'il': 'ion',
+  // 'eg': 'ion',
   'd': 'ë',
 }
 

@@ -8,13 +8,13 @@ import worldMapMaker from "./WorldMap"
 import Language from "./Language"
 
 const models = [
+  Language,
   worldMapMaker,
   Building,
   arena,
   zep,
   Avernus,
   Citizen,
-  Language,
   // Society,
 ]
 

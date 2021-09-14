@@ -21,7 +21,7 @@ import { Aelvic } from "./Languages/Sindarin";
 // const markov = (lines: string) => new MarkovSequence(lines.split("\n"))
 class Linguist {
   static names = {
-    places: new DictionarySequence(Aelvic, true, 'realm', 'haven', 'place', 'land'),
+    places: new DictionarySequence(Aelvic, true, 'land'), //'realm', 'haven', 'place'),
     regions: new DictionarySequence(Aelvic, false, 'isle'),
     waterways: new DictionarySequence(Aelvic, false, 'sea', 'lake', 'water', 'pool'),
     ranges: new DictionarySequence(Aelvic, true, 'mountain-chain'),

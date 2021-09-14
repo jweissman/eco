@@ -1,5 +1,6 @@
 import { Concept, Dictionary } from "../ecosphere/Dictionary"
 import { Model } from "../ecosphere/Model"
+import Khuzdul from "./Languages/Khuzdul"
 import { Aelvic } from "./Languages/Sindarin"
 class Language extends Model {
   constructor(private dictionary: Dictionary) { super(`${dictionary.languageName} (Language)`) }
@@ -28,6 +29,7 @@ class Language extends Model {
     'Mountains of Tyranny': () => this.t('tyranny', 'mountain-chain'),
     'Fire Stronghold': () => this.t('fire', 'stronghold'),
     'Shipwright': () => this.t('ship', 'smith'),
+    'Land of Holly': () => this.t('holly', 'land'),
     '--': () => '...',
 
     /// other examples (not necessarily from beleriand)
@@ -53,5 +55,5 @@ class Language extends Model {
   }
 }
 
-export default new Language(Aelvic);
+export default new Language(Khuzdul);
 
