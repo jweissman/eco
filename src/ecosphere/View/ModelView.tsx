@@ -1,14 +1,17 @@
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { Canvas } from "@react-three/fiber";
 import ReactTooltip from 'react-tooltip';
+
 import { Machine, Moiety, Person } from "../types";
 import { LastDelta } from "../../ModelPresenter";
 import { presentItem } from "../Model/presentItem";
-import './View.css';
 import { Tile } from "./Tile";
 import { presentCommunity } from "./presentCommunity";
 import { Population } from "../Population";
 import { Community } from "../Community";
 
+import './View.css';
+import { Scene } from "./Scene";
 
 export type ModelViewProps = {
   modelName: string;
@@ -17,40 +20,45 @@ export type ModelViewProps = {
   communities: Population<Moiety, Person>[];
   machines: Machine[];
   lastChanges: LastDelta;
-  metrics: { [name: string]: number }; //[ { name: string, value: number} ];
-  notes: { [name: string]: string }; //[ { name: string, value: number} ];
+  metrics: { [name: string]: number };
+  notes: { [name: string]: string };
   board: IBoard
 }
 
+const ViewHeightmap = () => <>
+<Canvas camera={{ zoom: 40, position: [0, 0, 500] }}>
+  <Suspense
+    fallback={<div className="loading">Loading</div>}
+  >
+  </Suspense>
+  <Scene />
+</Canvas>
+</>
+ 
+
 interface IBoard { tiles: string[][], tileColors: { [tile: string]: string }, tileInspect: (x: number, y: number) => string}
 
+
 const BoardTable = ({ tiles, tileColors, tileInspect }: IBoard) => {
-  // const [isInspecting, setIsInspecting] = useState(false);
   const [inspecting, setInspecting] = useState([-1,-1]);
   const message = inspecting[0] > 0 && inspecting[1] > 0
-    ? tileInspect(inspecting[0], inspecting[1]) //.split('\n').map(r => <div>{r}</div>)}
+    ? tileInspect(inspecting[0], inspecting[1])
     : <>--</>
 
-  return <div style={{ flexDirection: "column", overflow: "scroll" }}>
-    {/* <div/> */}
-    {/* <div>{message}</div> */}
+  return <div style={{ flexDirection: "column" }}>
     <ReactTooltip />
+    <ViewHeightmap />
     <table style={{
-      // fontFamily: 'monospace',
       fontFamily: '"Source Code Pro", "Fira Code", "Inconsolata", Menlo, Monaco, "Courier New", monospace',
-      // fontWeight: 'bold',
-      // fontSize: '8pt',
       cursor: 'pointer',
-      width: '100%'
     }}>
       <tbody>
         {tiles.map((row: string[], y: number) =>
-
           <tr key={`row-${y}`}>
             {row.map((cell: string, x: number) =>
               <td
                 style={{
-                  // highlight cell errors
+                  // highlight cell errors..
                   // color: tileInspect(x,y).match(/error/) ? 'red' : tileColors[cell],
                   // maxWidth: '4px',
                   // maxHeight: '2px',
