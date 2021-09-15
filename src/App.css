@@ -1,8 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700;900&display=swap');
 
 .App {
-  display: flex;
-  flex-direction: column;
   color: #eaeaea;
   text-align: center;
   height: 100vh;
@@ -38,5 +36,9 @@
 .Dropdown-menu { background: #303030 !important; color: #eaeaea !important }
 .Dropdown-option { background: #303030 !important; color: #eaeaea !important }
 
-div[aria-label='View'] { display: flex; justify-content: center; flex-grow: 1 }
+div[aria-label='View'] {
+  display: flex;
+  justify-content: center;
+  flex-grow: 1
+}
 div[aria-label='Controls'] { padding: 20px; margin-top: auto }

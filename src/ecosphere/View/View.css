@@ -1,15 +1,19 @@
 .Model {
   display: flex;
-  flex-direction: row-wrap;
-  padding: 2px;
+  /* flex-direction: row-wrap; */
+  padding: 4px;
+  /* overflow: scroll;
+  width: 100vh;
+  height: 100vh; */
 }
 
 .Model .Tile {
   /* margin-top: 10px; */
-  font-size: 10px;
-  min-width: 200px;
-  min-height: 140px;
-  /* height: 50%; */
+  font-size: 18px;
+  overflow-y: scroll;
+  min-width: 380px;
+  min-height: 500px;
+  max-height: 640px;
   color: #7d7d7d;
   overflow: hidden;
   overflow-y: overlay;

@@ -123,13 +123,23 @@ export function ModelView({
         </li>)}
       </ul>
     </Tile>}
+    <table>
+      <tbody>
     {Object.keys(notes).length > 0 && <Tile title='Notes'>
-      <ul>
-        {Object.entries(notes).map(([name, value]) => <li title={name} key={name}>
-          {name}
+      {/* <tr> */}
+        {Object.entries(notes).map(([name, value]) => 
+        <tr>
+          <td title={name} key={name} style={{textAlign: 'right'}}>
+          <b>{name}</b>
+          </td>
+          <td style={{width: '4px'}}></td>
+          <td style={{ minWidth: '180px', textAlign: 'left' }}>
           <span data-testid='Description'>{value}</span>
-        </li>)}
-      </ul>
+        </td>
+        </tr>)}
+      {/* </tr> */}
     </Tile>}
+    </tbody>
+    </table>
   </div>;
 }

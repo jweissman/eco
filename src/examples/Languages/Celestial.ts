@@ -88,7 +88,7 @@ const celestialRoots: Roots = {
   wild: 'pel',
   sound: 'ada',
   face: 'vih',
-  coat: 'reth',
+  mantle: 'reth',
 
   slow: 'ikshu',
 }

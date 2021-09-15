@@ -289,7 +289,7 @@ export type Roots = {
   wood: string
   over: string
   high: string
-  coat: string
+  mantle: string
   face: string
   fight: string
   mere: string
@@ -339,7 +339,7 @@ const assembleDictionary = (name: string, roots: Roots, replacements: { [key: st
     wood,
     over,
     high,
-    coat,
+    // mantle,
     fight,
     face,
     mere,
@@ -359,7 +359,7 @@ const assembleDictionary = (name: string, roots: Roots, replacements: { [key: st
     '-son': son,
     '-daughter': daughter,
 
-    mantle: over + coat,
+    // mantle: over + coat,
     veil: over + face,
 
     star: soft + light,

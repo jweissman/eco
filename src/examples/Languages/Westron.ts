@@ -4,16 +4,19 @@
 // (quality here depends on better solutions
 // for syntax / ordering / particles / etc too)
 
+// actually just doing old english now but it's still metal
+
 import { Dictionary, Vocabulary } from "../../ecosphere/Dictionary"
+
 
 const westronVocab: Vocabulary = {
   abundant: 'over',
   afternoon: 'afternoon',
-  apple: 'apple',
-  autumn: 'fall', 
+  apple: 'æppel', // apple',
+  autumn: 'hærfest', 
   awe: 'awe',
-  battle: 'war',
-  bay: 'cove', //'-iâ',
+  battle: 'feoht',
+  bay: 'berie', //'-iâ',
   bears: 'bear',
   beautiful: 'beautiful',
   bell: 'bell',
@@ -33,7 +36,7 @@ const westronVocab: Vocabulary = {
   dandelion: 'puffball',
   day: 'day',
   deep: 'deep',
-  dew: 'dew',
+  dew: 'deaw',
   divine: 'godbearn',
   dragons: 'fýrdraca', //wyrm //sky-serpent',
   dread: 'bróga', //ghastly',
@@ -48,7 +51,7 @@ const westronVocab: Vocabulary = {
   elm: 'wahu',
 
   evening: 'evendim',
-  fangs: 'fangs',
+  fangs: 'fon',
   fate: 'fate',
   fell: 'fell', // deadly
   fire: 'bæl', //fire', //'naur-',
@@ -61,11 +64,11 @@ const westronVocab: Vocabulary = {
   freedom: 'freedom',
   friend: 'friend',
   frost: 'rime',
-  giant: 'colossus',
+  giant: 'ēoten', // colossus',
   glen: 'dell', // dell
   gloom: 'murk',
   gold: 'gold',
-  golden: 'golden',
+  golden: 'gylden',
   gray: 'græ',
   great: 'great',
   green: 'green',
@@ -79,7 +82,7 @@ const westronVocab: Vocabulary = {
   horror: 'horror',
   horses: 'horses',
 
-  ice: 'ice',
+  ice: 'īs',
   iron: 'ísen',
   isle: 'īegland', //island',
 
@@ -102,21 +105,21 @@ const westronVocab: Vocabulary = {
   magic: 'rún', //charm',
   mantle: 'hacele',
   midnight: 'midnyght',
-  mist: 'misty',
+  mist: 'mistur',
   moon: 'mone', // 'mōna',
   morning: '-morn',
   mound: 'tel-',
-  mountain: '-beorg',
+  mountain: 'munt-',
   music: 'dréamcræft', //-song',
 
   narrow: 'narrow-',
   needle: 'needle',
   night: 'nyght',
-  nightingales: 'thrush',
+  nightingales: 'stærlinc', //thrush',
   noon: 'noon',
   oak: 'eik',
   orange: 'orenge',
-  pale: 'pale-',
+  pale: 'wann-',
   path: 'brimlad',
   peak: 'peak', // see point, needle
   peoples: '-folk',
@@ -124,7 +127,7 @@ const westronVocab: Vocabulary = {
   pine: 'pintreow',
   place: '-stead',//bídung', //place',
   point: '-gad',
-  pool: '-mere',
+  pool: '-clæne', //mere',
   poppy: 'celandine',
   prison: 'gaol', // 'carcern'
 
@@ -141,17 +144,17 @@ const westronVocab: Vocabulary = {
 
   sea: 'estmere', //'mer',
   secret: 'secret',
-  shade: 'shade',
-  shadow: 'shadow', // 'gwath', //dûl',
+  shade: 'sceadu',
+  shadow: 'sceaduwe', //shadow', // 'gwath', //dûl',
   sharp: 'sharp',
-  ship: 'ship',
+  ship: 'scip',
   silence: 'stige',
   silver: 'seolfor',
   skill: 'skill',
   sky: 'sky',
   slave: 'thrall',
-  small: 'small*',
-  smith: '-wright',
+  small: 'smæl',
+  smith: '-wyrhta',
   snakes: 'serpent',
   snow: 'snow-',
   sorrow: 'sorrow',
@@ -163,7 +166,7 @@ const westronVocab: Vocabulary = {
   spring: 'spring',
   spruce: 'sæppe',
   starlight: 'starlight',
-  stars: 'steorra', //star',
+  stars: '-steorra', //star',
   stream: 'river',
   stronghold: '-fæsten',
   summer: 'sumor', //aer',
@@ -181,11 +184,11 @@ const westronVocab: Vocabulary = {
   treasure: 'prize*',
   tyranny: 'mánbealu',
 
-  valley: '-vale',
+  valley: 'dæl', //vale',
   veil: 'veil',
   water: 'water',
   wax: 'wax',
-  white: 'albe',
+  white: 'albe', // hwit
   wide: 'wide',
   willow: 'willow',
   wind: 'wind',
@@ -204,7 +207,7 @@ const westronVocab: Vocabulary = {
   ash: 'ash',
   salt: 'salt',
   void: 'space',
-  steam: 'steam',
+  steam: 'stēam',
   magma: 'lava',
   radiance: 'glæm', //brilliance',
 

@@ -43,7 +43,6 @@ class Language extends Model {
 
     /// other examples (not necessarily from beleriand)
     'Pathless Sea': () => this.t('-less', 'path', 'sea'),
-    'Dragon': () => this.t('dragons'),
     'Star-Music': () => this.t('stars', 'music'),
     'Hills of Evendim': () => this.t('hill', 'evening'),
     'Mere of Shadows': () => this.t('pool', 'shadow'),
@@ -57,6 +56,9 @@ class Language extends Model {
     'Star Bay': () => this.t('bay', 'stars'),
     'Bell-Star': () => this.t('bell', 'stars'),
     'Saturday': () => this.t('day', 'stars'),
+    // various vocab...
+    'Dragon': () => this.t('dragons'),
+    'Giant': () => this.t('giant'),
     // ...Object.fromEntries(descriptiveIdeas.map(idea => {
     //   let [name, significance] = this.dictionary.nameMountain(idea);
     //   return [name, () => significance] // `Mount ${capitalize(idea)}`, () => this.dictionary.nameMountain(idea)[1]])
