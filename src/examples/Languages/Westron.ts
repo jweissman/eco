@@ -19,7 +19,7 @@ const westronVocab: Vocabulary = {
   bay: 'berie', //'-iâ',
   bears: 'bear',
   beautiful: 'beautiful',
-  bell: 'bell',
+  bell: 'cnyll', //bell',
   birch: 'birce',
   birds: 'birds',
   black: 'blæc', //black',

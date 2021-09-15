@@ -299,7 +299,12 @@ export type Roots = {
 // try to support building the 150+ word dictionary from
 // smaller set of root words?
 // ensures some internal consistency too?
-const assembleDictionary = (name: string, roots: Roots, replacements: { [key: string]: string } = {}): Dictionary => {
+const assembleDictionary = (
+  name: string,
+  roots: Roots,
+  vocabOverrides: Partial<Vocabulary>,
+  replacements: { [key: string]: string } = {}
+): Dictionary => {
   const {
     man, woman, son, daughter,
     crown, place, tree, sleep, flower,
@@ -592,6 +597,8 @@ const assembleDictionary = (name: string, roots: Roots, replacements: { [key: st
     journey: place + time + person,
     treasure: good + joy,
     smith: iron + person,
+
+    ...vocabOverrides,
 
     /**
      *
