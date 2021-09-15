@@ -2,16 +2,16 @@
 import { assembleDictionary, Dictionary, Roots } from "../../ecosphere/Dictionary";
 const khuzdulRoots: Roots = {
   tree: 'an',
-  woman: 'or',
+  woman: 'lor',
   man: 'nar',
-  mound: 'tel',
+  mound: 'tell',
   quick: 'e',
   time: 'eon',
   over: 'o-',
   at: 'e-',
 
-  bitter: 'ra',
-  beauty: 'egr',
+  bitter: 'ral',
+  beauty: 'egl',
   high: 'i',
   wing: 'l',
   safe: '-ond',
@@ -20,9 +20,10 @@ const khuzdulRoots: Roots = {
   // place: 'ë',
 
   great: 'g',
-  hard: 'll',
-  heat: 'yth',
-  light: 'ien',
+  hard: 'ekh',
+  strong: 'l',
+  heat: 'aúr',
+  light: 'ie',
   daughter: 'en',
   deep: 't', //grim',
 
@@ -62,7 +63,7 @@ const khuzdulRoots: Roots = {
   heart: 'eru',
   horse: 'raph',
   ore: 'im',
-  point: 'el',
+  point: '-el',
   shadow: 'al',
   sleep: 'ol',
   small: 'i',
@@ -70,7 +71,7 @@ const khuzdulRoots: Roots = {
   soft: 'i',
   son: 'on',
   sweet: 'hl',
-  tall: 'mu',
+  tall: 'mu-',
   way: 'eh',
   wild: 'pel',
   sound: 'ada',
@@ -80,10 +81,14 @@ const khuzdulRoots: Roots = {
   slow: 'ikshu',
 }
 
-const khuzdul: Dictionary = assembleDictionary('Khuzdul', khuzdulRoots, {
+// todo add some vocab too? shield -- skjald
+// and override: oak -- eik
+const khuzdul: Dictionary = assembleDictionary('Khuzdul',
+  khuzdulRoots,
+  {
   // 'varl': 'l',
   'gll': 'll',
-  'enen': 'en',
+  'ienen': 'ien',
   'gg': 'eg',
   // 'noa': 'na',
   'rr': 'r',
@@ -91,7 +96,9 @@ const khuzdul: Dictionary = assembleDictionary('Khuzdul', khuzdulRoots, {
   // 'glt': 'gut',
   // 'gn': 'n',
   'ii': 'ī',
-  'lll': 'lp',
+  'īen': 'ilien',
+  'aúri': 'uthi',
+  'lll': 'lup',
   'ythe': 'eri',
   'dgn': 'ng',
   'nn': 'n',

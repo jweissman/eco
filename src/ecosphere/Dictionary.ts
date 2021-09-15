@@ -125,10 +125,12 @@ export class Dictionary {
     protected enhanceTranslation?: (input: string) => string
   ) {}
 
+  // todo support more 'syntax'
+  // (at least recognizing 'x of y', where x + y are translated 'first'...)
+  // (also -less should just modify the immediately preceding word)
   translate(...concepts: Concept[]): Lexeme {
     let translation = concepts.reduce((acc, concept, index) => {
       let word = this.vocabulary[concept]
-      // console.log("[Dictionary.translate]", { word, concept })
       acc = acc.trim()
       let space = true
       if (acc.endsWith('-') || acc.endsWith('*')) {
@@ -216,6 +218,7 @@ export class DictionarySequence
   }
 }
 
+// move this stuff outside? 
 // todo ... hard to construct full dict from scratch!
 // want some kind of system for assembling the dictionary from
 // (reasonably small number) roots
@@ -290,6 +293,7 @@ export type Roots = {
   face: string
   fight: string
   mere: string
+  strong: string
 }
 
 // try to support building the 150+ word dictionary from
@@ -339,6 +343,7 @@ const assembleDictionary = (name: string, roots: Roots, replacements: { [key: st
     fight,
     face,
     mere,
+    strong,
   } = roots
 
   // const kernel = {
@@ -405,7 +410,7 @@ const assembleDictionary = (name: string, roots: Roots, replacements: { [key: st
     harvest: tree + man + cut,
     night: shadow + time,
     garden: flower + place,
-    strong: great + hard,
+    // strong: great + hard,
     // giant: great + tall,
     vault: deep + cut + place,
 
@@ -423,6 +428,7 @@ const assembleDictionary = (name: string, roots: Roots, replacements: { [key: st
     tin: soft + ore,
     silver: beauty + ore,
     gold: deep + ore,
+
     bird: quick + wing,
     birds: good + wing,
     horses: horse,
@@ -444,14 +450,14 @@ const assembleDictionary = (name: string, roots: Roots, replacements: { [key: st
     music: man + woman + sing,
 
     abundant: many + many,
-    sparkling: run + light,
+    // sparkling: run + light,
     teeth: many + tooth,
     battle: many + man + fight,
   }
 
   const {
     fire, red,
-    vault, strong, star, night, ice, harvest, river, mountain, valley,
+    vault, star, night, ice, harvest, river, mountain, valley,
     king, land, lofty, sky, low, people, '-person': person,
     white, black, morning, evening, noon, bird,
     large, thirst, silence, music, teeth, battle,
@@ -547,6 +553,7 @@ const assembleDictionary = (name: string, roots: Roots, replacements: { [key: st
     ...roots,
     ...basics,
     ...intermediate,
+    sparkling: many + spark,
     horror: black + dread,
     embers: fire + ash,
     soot: black + ash,
@@ -585,6 +592,28 @@ const assembleDictionary = (name: string, roots: Roots, replacements: { [key: st
     journey: place + time + person,
     treasure: good + joy,
     smith: iron + person,
+
+    /**
+     *
+     avalon: magic + island / green + island
+     child: small + person
+     dungeon: dark + stone
+     citadel: castle + high / castle + city
+     fortress: castle + strong
+     throne: high + seat
+
+     aelves: light + people
+     orkh: dark + people
+
+     dwarrow: stone + people
+     men: lake + people
+     heflen: under + hill + people
+     fae: beautiful + people
+
+     gnomes: deep + people
+     colossi: giant + people
+
+     */
     
     
     // grievous: heavy + sorrow
@@ -600,8 +629,6 @@ const assembleDictionary = (name: string, roots: Roots, replacements: { [key: st
         input = input.replaceAll(key, replacements[key])
       }
     })
-    // if (input.includes('thatha')) { input = input.replaceAll('thatha', 'sata') }
-    // if (input.includes('thn')) { input = input.replaceAll('thn', 'thund') }
     return input
   })
 }

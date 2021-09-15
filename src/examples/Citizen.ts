@@ -5,7 +5,9 @@ import { createMoiety, createPerson, Memory, Person } from "../ecosphere/types";
 import { capitalize } from "../ecosphere/utils/capitalize";
 import { randomInteger } from "../ecosphere/utils/randomInteger";
 import { choose, sample } from "../ecosphere/utils/sample";
+import Khuzdul from "./Languages/Khuzdul";
 import { Aelvic } from "./Languages/Sindarin";
+import Westron from "./Languages/Westron";
 
 const generatePerson = () => {
   const moiety = createMoiety('A Social Group')
@@ -18,13 +20,17 @@ const generatePerson = () => {
     ...concepts,
     ...(randomInteger(0, 12) > 9 ? [sample(suffices)] : []),
   ]
-  let name = Aelvic.translate(...nameElements) //choose //(2, theConcepts))
+  
+  let dicts = [ Aelvic, Khuzdul, Westron ]
+  let name = sample(dicts).translate(...nameElements).trim()
   // const firstName = sample(gender === 'male' ? [ 'Sam', 'Eric', 'Ted', 'Jones' ] : ['Sarah', 'Edna', 'Terri', 'Rosa'])
   // const lastName = sample(['Smith', 'Lever', 'Token', 'Switch', 'Agent', 'Op'])
-  const significance = (concepts.map(n => capitalize(n)).reverse().join('-')); //.replaceAll('-', ''));
+  const significance = (concepts.map(n => capitalize(n)).reverse().join('-')).trim(); //.replaceAll('-', ''));
 
   const person = createPerson(
-    name + ' (' +  significance + ')',
+    (name === significance
+      ? name
+      : name + ' (' +  significance + ')'),
     moiety
     )
   return person

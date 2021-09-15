@@ -2,16 +2,21 @@ import { Concept, Dictionary } from "../ecosphere/Dictionary"
 import { Model } from "../ecosphere/Model"
 import Khuzdul from "./Languages/Khuzdul"
 import { Aelvic } from "./Languages/Sindarin"
+import Westron from "./Languages/Westron"
+// import { Celestial } from "./Languages/Celestial"
 class Language extends Model {
   constructor(private dictionary: Dictionary) {
-    super(`${dictionary.languageName} (Language)`)
+    super(`Language Explorer`)
+    this.actions.create({ name: 'Westron', act: () => this.dictionary = Westron })
     this.actions.create({ name: 'Sindarin', act: () => this.dictionary = Aelvic })
     this.actions.create({ name: 'Khuzdul', act: () => this.dictionary = Khuzdul })
+    // todo :)
+    // this.actions.create({ name: 'Primordial', act: () => this.dictionary = Celestial })
   }
 
   t = (...concepts: Concept[]) => this.dictionary.translate(...concepts)
   notes = {
-    '"Nightingale"': () => this.t('spark', '-daughter'),
+    '"Nightingale"': () => this.t('spark', '-maid'),
     'Lonely Isle': () => this.t('isle', 'lonely'),
     'Haven of the Gods': () => this.t('at-', 'divine'),
     'Swan Haven': () => this.t('swans', 'haven'),
@@ -32,7 +37,7 @@ class Language extends Model {
     'Mist-Shadow': () => this.t('mist', 'shadow'),
     'Dark Foe': () => this.t('black', 'foe'),
     'Spirit of Fire': () => this.t('spirit', 'fire'),
-    'Shipwright': () => this.t('ship', 'smith'),
+    'Shipmaker': () => this.t('ship', 'smith'),
     'Land of Holly': () => this.t('holly', 'land'),
     '--': () => '...',
 

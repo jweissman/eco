@@ -96,7 +96,7 @@ export const Sindarin: Vocabulary = {
   king: 'aran',
   kingdom: 'arnad',
   lake: 'ael',
-  land: '-dor',
+  land: '-dor-',
   large: 'daer',
   light: 'ea',
   lily: 'loth',
@@ -209,6 +209,7 @@ export const Sindarin: Vocabulary = {
 }
 
 const replacements = {
+  'uwen': 'uviel',
   'db': 'v',
   'dc': 'g',
   'nc': 'g',

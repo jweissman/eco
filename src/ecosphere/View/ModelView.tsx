@@ -1,5 +1,6 @@
-import { Suspense, useState } from "react";
-import { Canvas } from "@react-three/fiber";
+// import { Suspense, useState } from "react";
+// import { Canvas } from "@react-three/fiber";
+import { useState } from 'react';
 import ReactTooltip from 'react-tooltip';
 
 import { Machine, Moiety, Person } from "../types";
@@ -11,7 +12,7 @@ import { Population } from "../Population";
 import { Community } from "../Community";
 
 import './View.css';
-import { Scene } from "./Scene";
+// import { Scene } from "./Scene";
 
 export type ModelViewProps = {
   modelName: string;
@@ -26,13 +27,13 @@ export type ModelViewProps = {
 }
 
 const ViewHeightmap = () => <>
-<Canvas camera={{ zoom: 40, position: [0, 0, 500] }}>
+{/* <Canvas camera={{ zoom: 40, position: [0, 0, 500] }}>
   <Suspense
     fallback={<div className="loading">Loading</div>}
   >
   </Suspense>
   <Scene />
-</Canvas>
+</Canvas> */}
 </>
  
 
