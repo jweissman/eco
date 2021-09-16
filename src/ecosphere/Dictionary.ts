@@ -629,7 +629,7 @@ const assembleDictionary = (
     // hollow: soft + place [ i prefer low + place ? ]
 
   }
-  console.log("FULL VOCAB", { vocab })
+  // console.log("FULL VOCAB", { vocab })
   return new Dictionary(name, vocab, (input: string) => {
     Object.keys(replacements).forEach(key => {
       if (input.includes(key)) {

@@ -1,6 +1,5 @@
-// import { Suspense, useState } from "react";
-// import { Canvas } from "@react-three/fiber";
-import { useState } from 'react';
+import { Suspense, useState } from "react";
+import { Canvas } from "@react-three/fiber";
 import ReactTooltip from 'react-tooltip';
 
 import { Machine, Moiety, Person } from "../types";
@@ -11,8 +10,8 @@ import { presentCommunity } from "./presentCommunity";
 import { Population } from "../Population";
 import { Community } from "../Community";
 
-import './View.css';
-// import { Scene } from "./Scene";
+// import './View.css';
+import { Scene } from "./Heightmap/Scene";
 
 export type ModelViewProps = {
   modelName: string;
@@ -26,14 +25,14 @@ export type ModelViewProps = {
   board: IBoard
 }
 
-const ViewHeightmap = () => <>
-{/* <Canvas camera={{ zoom: 40, position: [0, 0, 500] }}>
-  <Suspense
-    fallback={<div className="loading">Loading</div>}
-  >
-  </Suspense>
-  <Scene />
-</Canvas> */}
+const ViewHeightmap = ({ fullscreen }: { fullscreen: boolean }) => <>
+  <Canvas style={{ height: fullscreen ? '100vh' : 'inherit' }} camera={{ zoom: 40, position: [0, 0, 500] }}>
+    <Suspense
+      fallback={<div className="loading">Loading</div>}
+    >
+    </Suspense>
+    <Scene />
+  </Canvas>
 </>
  
 
@@ -46,9 +45,9 @@ const BoardTable = ({ tiles, tileColors, tileInspect }: IBoard) => {
     ? tileInspect(inspecting[0], inspecting[1])
     : <>--</>
 
-  return <div style={{ flexDirection: "column" }}>
+  return <div>
     <ReactTooltip />
-    <ViewHeightmap />
+    {/* <ViewHeightmap fullscreen={true} /> */}
     <table style={{
       fontFamily: '"Source Code Pro", "Fira Code", "Inconsolata", Menlo, Monaco, "Courier New", monospace',
       cursor: 'pointer',
@@ -96,6 +95,7 @@ export function ModelView({
   const folks = (communities as Community[]).map(presentCommunity)
   // console.log({ community: communities[0].list() })
   return <div className='Model'>
+    {/* <ViewHeightmap /> */}
     <h4 aria-label='Model Title' style={{display: 'none'}}>{modelName}</h4>
     {board.tiles.length > 0 && <BoardTable {...board} />}
     {items.length > 0 && (<Tile title='Items'>
