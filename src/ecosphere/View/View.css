@@ -9,7 +9,7 @@
 
 .Model .Tile {
   /* margin-top: 10px; */
-  font-size: 18px;
+  /* font-size: 18px; */
   overflow-y: scroll;
   min-width: 380px;
   min-height: 500px;
@@ -24,7 +24,7 @@
 }
 
 .Model .Tile .Title {
-  font-size: 12px;
+  /* font-size: 12px; */
   /* color: #474747; */
   /* color: #eaeaea; */
   color: #306d54;

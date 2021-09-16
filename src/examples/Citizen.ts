@@ -33,13 +33,18 @@ const generatePerson = () => {
       : name + ' (' +  significance + ')'),
     moiety
     )
-  return person
+  return { person, nameMeaning: significance }
 }
 class Citizen extends Model {
-  subject: Person = generatePerson()
+  subject: Person
+  nameMeaning: string
 
   constructor() {
     super('Citizen');
+
+    const { person, nameMeaning } = generatePerson() 
+    this.subject = person
+    this.nameMeaning = nameMeaning
 
     // this.people.create('Friends')
     // this.people.create('Rivals')
@@ -51,7 +56,9 @@ class Citizen extends Model {
     // this.resources.create('Money')
 
     this.actions.create({ name: 'New', act: () => {
-      this.subject = generatePerson() 
+      const { person, nameMeaning } = generatePerson() 
+      this.subject = person //generatePerson() 
+      this.nameMeaning = nameMeaning
     }})
 
     this.evolve(this.evolution)
@@ -62,8 +69,9 @@ class Citizen extends Model {
 
   // metrics = { age: () => this.subject.age, }
   notes = {
-    'current date': () => this.date.description,
-    'name': () => this.subject.name,
+    // 'current date': () => this.date.description,
+    '*name': () => this.subject.name,
+    // [this.subject.name]: () => this.nameMeaning,
     'agility': () => this.subject.body.agility,
     'beauty': () => this.subject.soul.beauty,
     'charm': () => this.subject.soul.charm,

@@ -228,10 +228,11 @@ const replacements = {
 const dashBeginnings: { [begin: string]: string } = { 'ng': 'a' }
 
 const dashEndings: { [end: string]: string } = {
-  'ss': 'ë',
+  'ss': 'ssë',
   'n': 'iath',
   'lt': 'hen',
   'll': 'l',
+  // 'oss': ''
 }
 
 const starEndings: { [end: string]: string } = {

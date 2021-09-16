@@ -123,23 +123,38 @@ export function ModelView({
         </li>)}
       </ul>
     </Tile>}
+    {Object.keys(notes).length > 0 && <div title='Notes'>
     <table>
       <tbody>
-    {Object.keys(notes).length > 0 && <Tile title='Notes'>
       {/* <tr> */}
-        {Object.entries(notes).map(([name, value]) => 
-        <tr>
-          <td title={name} key={name} style={{textAlign: 'right'}}>
-          <b>{name}</b>
-          </td>
-          <td style={{width: '4px'}}></td>
-          <td style={{ minWidth: '180px', textAlign: 'left' }}>
-          <span data-testid='Description'>{value}</span>
-        </td>
-        </tr>)}
-      {/* </tr> */}
-    </Tile>}
+        {
+          Object.entries(notes).map(([name, value]) => name.startsWith('*')
+            ? (
+                <tr key={name} style={{textAlign: 'center'}}>
+                  <td colSpan={3}>
+                    <b>{value}</b>
+                  </td>
+                </tr>
+              )
+            : (
+                <tr key={name}>
+                  <td title={name} key={name} style={{textAlign: 'right', color: 'gray' }}>
+                    {name}
+                  </td>
+                  <td style={{width: '4px'}}></td>
+                  <td style={{ minWidth: '180px', textAlign: 'left', fontSize: '15pt' }}>
+                    <span data-testid='Description'>
+                      {value}
+                    </span>
+                  </td>
+                </tr>
+              )
+          )
+        }
+
     </tbody>
     </table>
+      {/* </tr> */}
+    </div>}
   </div>;
 }

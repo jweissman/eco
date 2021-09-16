@@ -21,7 +21,7 @@ const westronVocab: Vocabulary = {
   beautiful: 'beautiful',
   bell: 'cnyll', //bell',
   birch: 'birce',
-  birds: 'birds',
+  birds: 'bridd',
   black: 'blæc', //black',
   blood: 'blood',
   blue: 'blue',
@@ -45,7 +45,7 @@ const westronVocab: Vocabulary = {
   dusty: 'dirty',
 
   eagles: 'earn',
-  earth: 'land',
+  earth: 'werdle',
   elderberry: 'elder',
   elephants: 'oliphaunt',
   elm: 'wahu',
@@ -54,9 +54,9 @@ const westronVocab: Vocabulary = {
   fangs: 'fon',
   fate: 'fate',
   fell: 'fell', // deadly
-  fire: 'bæl', //fire', //'naur-',
-  firmament: 'heavens',
-  fish: 'fish',
+  fire: 'fier', //bæl', //fire', //'naur-',
+  firmament: 'heuene-Rof', //heavens',
+  fish: 'fisc',
   foe: '-feond', //enemy',
   forest: 'woods',
   fortress: 'hold',
@@ -70,32 +70,32 @@ const westronVocab: Vocabulary = {
   gold: 'gold',
   golden: 'gylden',
   gray: 'græ',
-  great: 'great',
-  green: 'green',
+  great: 'ærgod', // great',
+  green: 'grene',
 
   harbor: 'hyth',
   haven: '-port',
   hill: 'dun', // tun
-  holy: 'hallowed',
-  honey: 'honey',
+  holy: 'hāliġ',
+  honey: 'huniġ',
   horns: 'horns',
-  horror: 'horror',
-  horses: 'horses',
+  horror: 'fyrhtu',
+  horses: 'eoh',
 
   ice: 'īs',
   iron: 'ísen',
   isle: 'īegland', //island',
 
-  jewel: 'jewel',
-  journey: 'quest',
-  joy: 'joy',
+  jewel: 'siġel',
+  journey: 'faru',
+  joy: 'ġefēa', //joy',
   king: 'kenning',
   kingdom: 'kenningdom',
   lake: 'lac',
-  land: 'eäth',
-  large: 'large',
-  light: 'light',
-  lily: 'tigerlily',
+  land: 'lond', //eäth',
+  large: 'rum',
+  light: 'leoht',
+  lily: 'lilie',
   lofty: 'lofty',
   lonely: 'syndrig',
 
@@ -177,11 +177,11 @@ const westronVocab: Vocabulary = {
   tall: "brant-", //nd-",
   tears: 'tears',
   thought: 'thought*',
-  tin: '-tin',
-  tiny: 'littel*',
+  tin: '-zin',
+  tiny: 'tyne*',
   tomorrow: 'morrow',
   tower: 'tower-',
-  treasure: 'prize*',
+  treasure: 'prize',
   tyranny: 'mánbealu',
 
   valley: 'dæl', //vale',
@@ -192,14 +192,14 @@ const westronVocab: Vocabulary = {
   wide: 'wide',
   willow: 'willow',
   wind: 'wind',
-  wine: 'wine',
+  wine: '-win',
   winter: 'winter',
   holly: 'holen-',
   garden: 'garden',
   queen: 'queen',
   prince: 'prince',
   princess: 'princess',
-  cloud: 'cloud',
+  cloud: 'walkne', //cloud',
   hounds: 'hund',
   wolves: 'wulf',
   embers: 'ysl', //embers',
@@ -230,6 +230,17 @@ const westronVocab: Vocabulary = {
 
 }
 
-const Westron = new Dictionary('Common', westronVocab)
+const replacements: { [key: string]: string } = {
+  'lenlond': 'llin',
+}
+
+const Westron = new Dictionary('Common', westronVocab, (input: string) => {
+  Object.keys(replacements).forEach(key => {
+    if (input.includes(key)) {
+      input = input.replaceAll(key, replacements[key])
+    }
+  })
+  return input
+})
 
 export default Westron
