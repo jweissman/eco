@@ -1,5 +1,7 @@
-import { Suspense, useState } from "react";
-import { Canvas } from "@react-three/fiber";
+import React, { useState } from 'react';
+
+// import { Suspense, useState } from "react";
+// import { Canvas } from "@react-three/fiber";
 import ReactTooltip from 'react-tooltip';
 
 import { Machine, Moiety, Person } from "../types";
@@ -11,7 +13,7 @@ import { Population } from "../Population";
 import { Community } from "../Community";
 
 // import './View.css';
-import { Scene } from "./Heightmap/Scene";
+// import { Scene } from "./Heightmap/Scene";
 
 export type ModelViewProps = {
   modelName: string;
@@ -25,15 +27,15 @@ export type ModelViewProps = {
   board: IBoard
 }
 
-const ViewHeightmap = ({ fullscreen }: { fullscreen: boolean }) => <>
-  <Canvas style={{ height: fullscreen ? '100vh' : 'inherit' }} camera={{ zoom: 40, position: [0, 0, 500] }}>
-    <Suspense
-      fallback={<div className="loading">Loading</div>}
-    >
-    </Suspense>
-    <Scene />
-  </Canvas>
-</>
+// const ViewHeightmap = ({ fullscreen }: { fullscreen: boolean }) => <>
+//   <Canvas style={{ height: fullscreen ? '100vh' : 'inherit' }} camera={{ zoom: 40, position: [0, 0, 500] }}>
+//     <Suspense
+//       fallback={<div className="loading">Loading</div>}
+//     >
+//     </Suspense>
+//     <Scene />
+//   </Canvas>
+// </>
  
 
 interface IBoard { tiles: string[][], tileColors: { [tile: string]: string }, tileInspect: (x: number, y: number) => string}
