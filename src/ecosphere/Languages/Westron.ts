@@ -223,8 +223,8 @@ const westronVocab: Vocabulary = {
   '-man': '-man',
   '-son': '-ing',
 
-  '-woman': '-wiman',
-  '-maid': '-mæden', //maid',
+  '-woman': '-fro',
+  '-maid': '-magað', //'-mæden', //maid',
   '-daughter': '-dohtor',
   
   'mountain-chain': 'beorgstede',
