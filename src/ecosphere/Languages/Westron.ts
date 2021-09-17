@@ -34,10 +34,10 @@ const westronVocab: Vocabulary = {
   cloudy: 'genipfull', //clouded',
   daisy: 'dæges', // woundwort',
   dandelion: 'æg-wyrt', // puffball',
-  day: 'day', //day',
-  deep: 'deopnes',
+  day: 'dæg', //day',
+  deep: 'deop', //deopnes',
   dew: 'deaw',
-  divine: 'godbearn',
+  divine: 'godcund', //godbearn',
   dragons: 'fýrdraca', //wyrm //sky-serpent',
   dread: 'bróga', //ghastly',
   dream: 'dréam',
@@ -54,7 +54,7 @@ const westronVocab: Vocabulary = {
   fangs: 'fon',
   fate: 'déaþwyrd', //fate',
   fell: 'fell', // deadly
-  fire: 'fier', //bæl', //fire', //'naur-',
+  fire: 'furen', //'fier', //bæl', //fire', //'naur-',
   firmament: 'heuene-Rof', //heavens',
   fish: 'fisc',
   foe: '-feond', //enemy',
@@ -75,7 +75,7 @@ const westronVocab: Vocabulary = {
 
   harbor: 'hyth',
   haven: '-haff', //hæfen', //port',
-  hill: 'dun', // tun
+  hill: 'holm', // 'hyll', // tun
   holy: 'hāliġ',
   honey: 'huniġ',
   horns: 'horns',
@@ -97,8 +97,8 @@ const westronVocab: Vocabulary = {
   large: 'rum',
   light: 'leoht',
   lily: 'lilie',
-  lofty: 'lofty',
-  lonely: 'syndrig',
+  lofty: 'hoch',
+  lonely: '-syndrig',
 
   lord: 'frēa', //-lord',
 
@@ -131,7 +131,7 @@ const westronVocab: Vocabulary = {
   point: '-gad',
   pool: '-clæne', //mere',
   poppy: 'popiġ', //celandine',
-  prison: 'gaol', // 'carcern'
+  prison: '-cweartern', //gaol', // 'carcern'
 
   quick: 'fast',
   rain: 'reġn', // regn',
@@ -165,13 +165,14 @@ const westronVocab: Vocabulary = {
   speech: 'sprǽc', //speech*',
   spirit: 'arodnes-',
   splendid: 'from', //splendid-',
-  spring: 'spring',
+  spring: 'lencten',
   spruce: 'sæppe',
-  starlight: 'starlight',
-  stars: '-steorra', //star',
+  starlight: 'tunglenleoht', //light',
+  stars: '-tunglen', // tungol // steorra', //star',
+  // astronomy: 'tungolcræft',
   stream: 'strēam', //river',
   stronghold: '-fæsten',
-  summer: 'sumor', //aer',
+  summer: 'haf', //sumor', //aer',
   sun: 'sunu',
   swans: 'ilfetu', //swan',
   sweet: 'swéte', //sweet',
@@ -215,7 +216,7 @@ const westronVocab: Vocabulary = {
 
   '-less': 'no-',
   'ever-': 'even-', // 'ever-dusk' --> evendim
-  'at-': 'upon-',
+  'at-': 'æt', //upon-',
 
   // fem/masculine suffices
   '-person': '-person',

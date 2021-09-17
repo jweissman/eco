@@ -80,7 +80,7 @@ export const Sindarin: Vocabulary = {
   great: 'beleg-',
   green: 'calen-',
   harbor: 'hûb',
-  haven: '-lond*',
+  haven: '-lond*', // cúan
   hill: '-amon', // tun
   holy: 'aer',
   honey: 'glî',
@@ -225,6 +225,9 @@ const replacements = {
   'nn': 'n',
   'egdor': 'egion',
   'ororo': 'oro',
+
+  'uilo': 'oiolo',
+  'oss': 'ossë',
 }
 const dashBeginnings: { [begin: string]: string } = { 'ng': 'a' }
 
@@ -244,6 +247,7 @@ const starEndings: { [end: string]: string } = {
   'il': 'ion',
   // 'eg': 'ion',
   'd': 'ë',
+
 }
 
 const simpleEnhance = (tx: string) => {
