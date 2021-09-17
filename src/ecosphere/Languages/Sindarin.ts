@@ -1,4 +1,4 @@
-import { Dictionary, Vocabulary } from "../../ecosphere/Dictionary";
+import { Dictionary, Vocabulary } from "../Dictionary";
 
 // see https://eldamo.org/content/vocabulary-indexes/vocabulary-words-ns.html
 export const Sindarin: Vocabulary = {
@@ -95,6 +95,7 @@ export const Sindarin: Vocabulary = {
   joy: 'glass-',
   king: 'aran',
   kingdom: 'arnad',
+  laughter: 'lalaith',
   lake: 'ael',
   land: '-dor-',
   large: 'daer',

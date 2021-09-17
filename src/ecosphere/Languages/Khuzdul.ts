@@ -1,5 +1,5 @@
 // dwarrow-folk
-import { assembleDictionary, Dictionary, Roots } from "../../ecosphere/Dictionary";
+import { assembleDictionary, Dictionary, Roots } from "../Dictionary";
 const khuzdulRoots: Roots = {
   shadow: 'um', //skado', //umbr', //fusk',
 
@@ -83,8 +83,9 @@ const khuzdulRoots: Roots = {
 }
 
 const khuzdulVocab = {
+  jewel: 'silmaril',
   horn: 'horn',
-  summer: 'sumar',
+  summer: 'sumrum',
   prison: 'fengsel',
   iron: 'jern',
   holly: 'kristtorn',
@@ -117,6 +118,10 @@ const khuzdulVocab = {
   valley: 'dalr',
   magic: 'seith',
   '-woman': 'víf',
+
+  haven: 'höfn',
+  swans: 'svanr-',
+  day: 'dagaz', //
 }
 
 // todo add some vocab too? shield -- skjald

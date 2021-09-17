@@ -11,6 +11,7 @@ import { Tile } from "./Tile";
 import { presentCommunity } from "./presentCommunity";
 import { Population } from "../Population";
 import { Community } from "../Community";
+import { capitalize } from '../utils/capitalize';
 
 // import './View.css';
 // import { Scene } from "./Heightmap/Scene";
@@ -47,12 +48,14 @@ const BoardTable = ({ tiles, tileColors, tileInspect }: IBoard) => {
     ? tileInspect(inspecting[0], inspecting[1])
     : <>--</>
 
-  return <div>
+  return <div style={{}}>
     <ReactTooltip />
     {/* <ViewHeightmap fullscreen={true} /> */}
     <table style={{
       fontFamily: '"Source Code Pro", "Fira Code", "Inconsolata", Menlo, Monaco, "Courier New", monospace',
       cursor: 'pointer',
+      // overflow: 'scroll',
+      // height: '800px'
     }}>
       <tbody>
         {tiles.map((row: string[], y: number) =>
@@ -125,22 +128,27 @@ export function ModelView({
         </li>)}
       </ul>
     </Tile>}
-    {Object.keys(notes).length > 0 && <div title='Notes'>
+    {Object.keys(notes).length > 0 && <div title='Notes'
+      style={{
+        overflow: 'scroll',
+        maxHeight: '640px'
+      }}
+    >
     <table>
       <tbody>
       {/* <tr> */}
         {
           Object.entries(notes).map(([name, value]) => name.startsWith('*')
             ? (
-                <tr key={name} style={{textAlign: 'center'}}>
+                <tr key={name} style={{textAlign: 'center'}} title={capitalize(name.replaceAll('*', ''))}>
                   <td colSpan={3}>
                     <b>{value}</b>
                   </td>
                 </tr>
               )
             : (
-                <tr key={name}>
-                  <td title={name} key={name} style={{textAlign: 'right', color: 'gray' }}>
+                <tr key={name} title={name} >
+                  <td key={name} style={{textAlign: 'right', color: 'gray' }}>
                     {name}
                   </td>
                   <td style={{width: '4px'}}></td>

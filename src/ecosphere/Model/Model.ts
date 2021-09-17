@@ -28,7 +28,7 @@ export class Model extends Simulation implements IModel  {
 
   // measurements
   public metrics: { [name: string]: () => number } = {}
-  public notes: { [name: string]: () => string } = {}
+  public notes: { [name: string]: () => string } = {} //() => { return {}}
 
   // interactive elements
   public actions: Collection<Action> = new Collection<Action>()

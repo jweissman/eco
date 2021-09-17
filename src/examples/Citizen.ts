@@ -5,9 +5,9 @@ import { createMoiety, createPerson, Memory, Person } from "../ecosphere/types";
 import { capitalize } from "../ecosphere/utils/capitalize";
 import { randomInteger } from "../ecosphere/utils/randomInteger";
 import { choose, sample } from "../ecosphere/utils/sample";
-import Khuzdul from "./Languages/Khuzdul";
-import { Aelvic } from "./Languages/Sindarin";
-import Westron from "./Languages/Westron";
+import Khuzdul from "../ecosphere/Languages/Khuzdul";
+import { Aelvic } from "../ecosphere/Languages/Sindarin";
+import Westron from "../ecosphere/Languages/Westron";
 
 const generatePerson = () => {
   const moiety = createMoiety('A Social Group')

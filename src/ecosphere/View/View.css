@@ -5,6 +5,8 @@
   /* overflow: scroll;
   width: 100vh;
   height: 100vh; */
+  max-height: 800px;
+  overflow-y: scroll;
 }
 
 .Model .Tile {

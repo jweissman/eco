@@ -6,235 +6,7 @@ import { randomInteger } from "../ecosphere/utils/randomInteger";
 import { construct } from "../ecosphere/utils/replicate";
 import { sample } from "../ecosphere/utils/sample";
 import { Heightmap } from "../ecosphere/Heightmap";
-// import { MarkovGenerator } from "../ecosphere/utils/MarkovGenerator";
-
-// eslint-disable-next-line import/no-webpack-loader-syntax
-// import cityNames from '!!raw-loader!./data/cities.txt';
-// eslint-disable-next-line import/no-webpack-loader-syntax
-// import seaNames from '!!raw-loader!./data/seas.txt';
-// eslint-disable-next-line import/no-webpack-loader-syntax
-// import rangeNames from '!!raw-loader!./data/ranges.txt';
-
-import { DictionarySequence } from "../ecosphere/Dictionary";
-import { Aelvic } from "./Languages/Sindarin";
-
-// const markov = (lines: string) => new MarkovSequence(lines.split("\n"))
-class Linguist {
-  static names = {
-    places: new DictionarySequence(Aelvic, true, 'land'), //'realm', 'haven', 'place'),
-    regions: new DictionarySequence(Aelvic, false, 'isle'),
-    waterways: new DictionarySequence(Aelvic, false, 'sea', 'lake', 'water', 'pool'),
-    ranges: new DictionarySequence(Aelvic, true, 'mountain-chain'),
-    mountains:  new DictionarySequence(Aelvic, false, 'mountain'),
-    // peaks 'peak', 'tower'),
-    // hills: 'hill', 'mound' ...
-    valleys: new DictionarySequence(Aelvic, false, 'valley'),
-    bays: new DictionarySequence(Aelvic, false, 'bay')
-  }
- 
-  // static describeWaterwaySize(area: number) {
-  //   if (area > 200) { return 'Ocean' }
-  //   if (area > 100) { return 'Sea' }
-  //   if (area > 50) { return 'Lake' }
-  //   if (area > 25) { return 'Pool' }
-  //   return 'Pond'
-  // }
-
-  // static describeRegionSize(area: number) {
-  //   if (area > 400) { return 'Supercontinent' }
-  //   if (area > 200) { return 'Continent' }
-  //   if (area > 100) { return 'Island' }
-  //   if (area > 50) { return 'Isle' }
-  //   return 'Point'
-  // }
-
-  // static describeRangeSize(area: number) {
-  //   if (area > 8) { return 'Range' }
-  //   if (area > 3) { return 'Mountains' }
-  //   return 'Peak'
-  // }
-
-  // cache names...
-  private waterwayNames: { [rawWaterbodyName: string]: string } = {}
-  private regionNames:   { [rawRegionName: string]: string } = {}
-  private rangeNames:    { [rawRangeName: string]: string } = {}
-  private valleyNames:   { [rawValleyName: string]: string } = {}
-  private bayNames:      { [rawBayName: string]: string } = {}
-
-  nameWaterway(rawWaterbodyName: string, _area: number) {
-    if (this.waterwayNames[rawWaterbodyName] === undefined) {
-      this.waterwayNames[rawWaterbodyName] = Linguist.names.waterways.next
-    }
-    return this.waterwayNames[rawWaterbodyName]
-  }
-
-  nameRegion(rawRegionName: string, _area: number) {
-    if (this.regionNames[rawRegionName] === undefined) {
-      this.regionNames[rawRegionName] = sample([
-        Linguist.names.regions,
-        Linguist.names.places
-      ]).next
-    }
-    return this.regionNames[rawRegionName]
-  }
-
-  nameRange(rawRangeName: string, _area: number): string | undefined {
-    if (this.rangeNames[rawRangeName] === undefined) {
-      this.rangeNames[rawRangeName] = sample([
-        Linguist.names.ranges,
-        Linguist.names.mountains
-      ]).next
-    }
-    return this.rangeNames[rawRangeName]
-  }
-
-  nameValley(rawValleyName: string, _area: number): string | undefined {
-    if (this.valleyNames[rawValleyName] === undefined) {
-      this.valleyNames[rawValleyName] = Linguist.names.valleys.next
-    }
-    return this.valleyNames[rawValleyName]
-  }
-
-  nameBay(rawBayName: string, area: number): string | undefined {
-    // throw new Error("Method not implemented.");
-    if (this.bayNames[rawBayName] === undefined) {
-      this.bayNames[rawBayName] = Linguist.names.bays.next
-    }
-    return this.bayNames[rawBayName]
-  }
-}
-class Cartographer {
-  private linguist = new Linguist()
-  private _waterways: { [rawWaterbodyName: string]: [number, number][] } = {}
-  private _regions: { [rawRegionName: string]: [number, number][] } = {}
-  private _ranges: { [rawRangeName: string]: [number, number][] } = {}
-  private _valleys: { [rawValleyName: string]: [number, number][] } = {}
-  private _bays: { [rawBayName: string]: [number, number][] } = {}
-
-  constructor(private world: WorldMap) {}
-
-  reset() {
-    this._regions = {}
-    this._waterways = {}
-    this._ranges = {}
-    this._valleys = {}
-    this._bays = {}
-  }
-
-  // cache heightmap regions + names..
-  get regions() {
-    if (Object.keys(this._regions).length === 0) {
-      this._regions = this.world.elevation.regions()
-    }
-    return this._regions
-  }
-
-  identifyRegion(x: number, y: number): string | undefined {
-    const rawRegionName = Object.keys(this.regions).find(region =>
-      this.regions[region].find(([x0,y0]) => x===x0 && y===y0)
-    ) || null
-
-    if (rawRegionName) {
-      let area = this.regions[rawRegionName].length
-      return this.linguist.nameRegion(rawRegionName, area)
-    }
-  }
-
-  get waterways() {
-    if (Object.keys(this._waterways).length === 0) {
-      this._waterways = this.world.elevation.waterways()
-    }
-    return this._waterways
-  }
-
-  identifyWaterway(x: number, y: number): string | undefined {
-    const rawWaterbodyName = Object.keys(this.waterways).find(waterway =>
-      this.waterways[waterway].find(([x0,y0]) => x===x0 && y===y0)
-    ) || null
-
-    if (rawWaterbodyName) {
-      let area = this.waterways[rawWaterbodyName].length
-      return this.linguist.nameWaterway(rawWaterbodyName, area)
-    }
-  }
-
-  identifyRegionOrWaterway(x: number, y: number): string | undefined {
-    return this.identifyRegion(x,y)
-        || this.identifyWaterway(x,y)
-        || '(err: unknown region/waterway)'
-  }
-
-  get ranges() {
-    if (Object.keys(this._ranges).length === 0) {
-      this._ranges = this.world.elevation.ranges()
-    }
-    return this._ranges
-  }
-
-  identifyRange(x: number, y: number): string | undefined {
-    const rangeName = Object.keys(this.ranges).find(range =>
-      this.ranges[range].find(([x0,y0]) => x===x0 && y===y0)
-    ) || null
-
-    if (rangeName) {
-      const area = this.ranges[rangeName].length
-      return this.linguist.nameRange(rangeName, area)
-    }
-  }
-
-  get valleys() {
-    if (Object.keys(this._valleys).length === 0) {
-      this._valleys = this.world.elevation.valleys()
-    }
-    return this._valleys
-  }
-
-  identifyValley(x: number, y: number): string | undefined {
-    const valleyName = Object.keys(this.valleys).find(valley =>
-      this.valleys[valley].find(([x0,y0]) => x===x0 && y===y0)
-    ) || null
-
-    if (valleyName) {
-      const area = this.valleys[valleyName].length
-      return this.linguist.nameValley(valleyName, area)
-    }
-  }
-
-  get bays() {
-    if (Object.keys(this._bays).length === 0) {
-      this._bays = this.world.elevation.bays()
-      console.log("Found bays", this._bays)
-    }
-    return this._bays
-  }
-
-  identifyBay(x: number, y: number): string | undefined {
-    const bayName = Object.keys(this.bays).find(bay =>
-      this.bays[bay].find(([x0,y0]: [number, number]) => x===x0 && y===y0)
-    ) || null
-
-    if (bayName) {
-      // console.log("Found a bay!", { bayName })
-      const area = this.bays[bayName].length
-      return this.linguist.nameBay(bayName, area)
-    }
-  }
-
-  // identifyFeature -- mountain range / valley / bay / ...
-  identifyFeatures(x: number, y: number): string | undefined {
-    if (this.world.aeon === 'Hadean' || this.world.aeon === 'Archean') {
-      return '(Cartography requires calmer aeon...)'
-    }    
-    return this.identifyRange(x,y)
-        || this.identifyValley(x,y)
-        || this.identifyBay(x,y)
-        || ''
-  }
-
-
-  // identifyMountain, identifyRiver
-  // identify -- include all single point features (mountains, rivers, ...'arrows'?)
-}
+import { Cartographer } from "../ecosphere/Cartographer";
 
 type Aeon = 'Hadean' | 'Archean' | 'Proterozoic'
 class WorldMap extends Model {
@@ -246,19 +18,14 @@ class WorldMap extends Model {
     if (this.ticks > this.mapgenTicks) { eon = 'Proterozoic' }
     return eon;
   }
-  // aeons = ['Hadean', 'Archean', 'Proterozoic', 'Pharezoic']
 
-  // todo highlight/indicate..
-  // pushpins = { mountains: { 'Everwhite (Peak of Tears)': [10, 10] } }
-
-  width = 160 //20
-  height = 40 //35
+  width = 60 //20
+  height = 20 //35
 
   private mapgenTicks = 40
   elevation: Heightmap = new Heightmap(this.width, this.height)
   private terrain: Board = new Board(this.width, this.height)
   // private vegetation: Board = new Board(this.width, this.height)
-
   private mountainSpots: [number, number][] = []
   private areaPercent = Math.floor(this.area / 100);
 
@@ -279,13 +46,13 @@ class WorldMap extends Model {
     }
 
     const region = this.cartographer.identifyRegionOrWaterway(x,y)
-    const features = this.cartographer.identifyFeatures(x,y)
+    const features = this.cartographer.identifyFeatures(this.aeon, x,y)
     return [ features, region, elevationMessage ].filter(Boolean).join(' / ')
     
     //`${features} / ${region} / ${elevationMessage}`
   }
 
-  protected cartographer = new Cartographer(this)
+  protected cartographer = new Cartographer(this.elevation)
 
   tileColors = {
     // terrain
@@ -363,22 +130,19 @@ class WorldMap extends Model {
     }
   }
 
-  genHeightmap(t: number) {
+  get volcanoes() {
     if (this.mountainSpots.length === 0) {
       let targetSpotCount = Math.floor(10 * this.areaPercent)
       let [a,b] = [ this.randomPosition(), this.randomPosition() ]
       let spots = construct(() => this.randomPositionAlongLine(a,b), targetSpotCount, false)
       this.mountainSpots = spots
     }
+    return this.mountainSpots
+  }
 
-    this.elevation.geoform(this.aeon === 'Hadean', this.mountainSpots)
-
-    // if (t > 0 && t % this.mapgenTicks === 0) {
-    //   console.log("[worldgen] hadean + archean aeons complete")
-    // }
-
-    // this.elevation.map.drawBox('0', 0, 0, this.width, this.height)
-    // this.elevation.map.drawBox('0', 1, 1, this.width-2, this.height-2)
+  genHeightmap() {
+    const hades = this.aeon === 'Hadean'
+    this.elevation.geoform(hades, this.volcanoes)
   }
 
   buildTerrain() {
@@ -425,7 +189,7 @@ class WorldMap extends Model {
   evolution({ resources }: EvolvingStocks, t: number) {
     if (t > 0) {
       if (t % 100 === 0) { console.log("The world is " + (t / 100) + " million years old") }
-      if (t <= this.mapgenTicks) { this.genHeightmap(t) }
+      if (t <= this.mapgenTicks) { this.genHeightmap() }
     }
   }
 }

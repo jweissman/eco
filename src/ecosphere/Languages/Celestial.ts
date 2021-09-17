@@ -11,7 +11,7 @@
 // for its own sake is an intersting exercise
 // (would be good to tease apart)
 
-import { assembleDictionary, Dictionary, Roots } from "../../ecosphere/Dictionary";
+import { assembleDictionary, Dictionary, Roots } from "../Dictionary";
 const celestialRoots: Roots = {
   tree: 'ö',
   woman: 'ml',

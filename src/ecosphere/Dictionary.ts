@@ -102,6 +102,9 @@ const concepts = [
   // bodily substances
   'blood', 'tears', 
 
+  // activities?
+  'laughter',
+
   // created things...
   'jewel', 'ship', 'needle', 'bell', 'candle',
 
@@ -111,6 +114,10 @@ const concepts = [
 
   // questing...
   'journey', 'treasure', 'battle', 'smith',
+
+  // names for the languages themselves? races?
+  // 'westron', 'khuzdul',?? 
+  // men (ylde/glishmen/...), dwarrow (dwarven/khuzdul...), aeldar (aelves/quenya...), maiar, valar,
 ] as const;
 
 export type Concept = typeof concepts[number];
@@ -541,6 +548,7 @@ const assembleDictionary = (
     broad: deep + deep,
     voice: person + music,
     war: great + battle,
+    laughter: joy + music,
     // was also thinking
     // orange: fire + color,
     // purple: red + blue, ....
