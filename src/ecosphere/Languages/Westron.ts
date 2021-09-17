@@ -37,7 +37,7 @@ const westronVocab: Vocabulary = {
   day: 'dæg', //day',
   deep: 'deop', //deopnes',
   dew: 'deaw',
-  divine: 'godcund', //godbearn',
+  divine: 'týr', //sublim', //godcund', //godbearn',
   dragons: 'fýrdraca', //wyrm //sky-serpent',
   dread: 'bróga', //ghastly',
   dream: 'dréam',
@@ -47,14 +47,14 @@ const westronVocab: Vocabulary = {
   eagles: 'earn',
   earth: 'werdle',
   elderberry: 'elder',
-  elephants: 'oliphaunt',
+  elephants: 'elpend', //oliphaunt',
   elm: 'wahu',
 
   evening: 'evendim',
   fangs: 'fon',
   fate: 'déaþwyrd', //fate',
   fell: 'fell', // deadly
-  fire: 'furen', //'fier', //bæl', //fire', //'naur-',
+  fire: 'fýr', //furen', //'fier', //bæl', //fire', //'naur-',
   firmament: 'heuene-Rof', //heavens',
   fish: 'fisc',
   foe: '-feond', //enemy',
@@ -69,7 +69,7 @@ const westronVocab: Vocabulary = {
   gloom: 'murk',
   gold: 'gold',
   golden: 'gylden',
-  gray: 'græ',
+  gray: 'grár', //græ',
   great: 'ærgod', // great',
   green: 'grene',
 
@@ -141,23 +141,23 @@ const westronVocab: Vocabulary = {
   red: 'reod-',
   region: '-guard',
   river: '-ex',
-  road: 'road',
+  road: 'rād', //road',
   rose: 'róse',
 
-  sea: 'estmere', //'mer',
+  sea: 'sǣ', // 'estmere', //'mer',
   secret: 'hord', //secret',
   shade: 'sceadu',
   shadow: 'sceaduwe', //shadow', // 'gwath', //dûl',
   sharp: 'sharp',
   ship: 'scip',
-  silence: 'stige',
+  silence: 'swīġe', //stilnes', //stige',
   silver: 'seolfor',
   skill: 'cræft', //searu',
   sky: 'heofon', //sky',
-  slave: 'thrall',
+  slave: 'träl', //thrall',
   small: 'smæl',
   smith: '-wyrhta',
-  snakes: 'serpent',
+  snakes: 'natra',
   snow: 'snáw', //snow-',
   sorrow: 'sorh',
   spark: 'ysl', //spark-',
@@ -215,8 +215,8 @@ const westronVocab: Vocabulary = {
   radiance: 'glæm', //brilliance',
 
   '-less': 'no-',
-  'ever-': 'even-', // 'ever-dusk' --> evendim
-  'at-': 'æt', //upon-',
+  'ever-': 'ǣfre-', //even-', // 'ever-dusk' --> evendim
+  'at-': 'æt-', //upon-',
 
   // fem/masculine suffices
   '-person': '-person',
@@ -234,7 +234,7 @@ const replacements: { [key: string]: string } = {
   'lenlond': 'llin',
 }
 
-const Westron = new Dictionary('Common', westronVocab, (input: string) => {
+const Westron = new Dictionary('Westron', westronVocab, (input: string) => {
   Object.keys(replacements).forEach(key => {
     if (input.includes(key)) {
       input = input.replaceAll(key, replacements[key])

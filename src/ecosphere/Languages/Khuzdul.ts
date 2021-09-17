@@ -1,6 +1,7 @@
 // dwarrow-folk
 import { assembleDictionary, Dictionary, Roots } from "../Dictionary";
 const khuzdulRoots: Roots = {
+  mantle: 'mötull', //re',
   shadow: 'uzn', //skado', //umbr', //fusk',
 
   tree: 'an',
@@ -10,14 +11,14 @@ const khuzdulRoots: Roots = {
   // on',
   quick: 'e',
   time: 'enor',
-  over: 'on-',
+  over: 'aya-',
   at: 'ae-', // a-',
 
   bitter: 'd', //mere, ',
   beauty: 'ari',
   high: 'l',
   wing: 'l',
-  safe: '-ond',
+  safe: '-cúan', //'-ond',
 
   place: '-', 
   // place: 'ë',
@@ -78,11 +79,13 @@ const khuzdulRoots: Roots = {
   wild: 'pel',
   sound: 'ada',
   face: 'vih',
-  mantle: 'mötull', //re',
   slow: 'ikshu',
 }
 
 const khuzdulVocab = {
+  // common: '',
+  dwarvish: 'khuzdul',
+
   jewel: 'silmaril',
   // horn: 'horn',
   summer: 'samhradh', //sumrum',
@@ -124,6 +127,7 @@ const khuzdulVocab = {
   day: 'dagaz', //
 
   cherry: 'kerásion',
+  mist: 'niwl',
 
   // actual khuzdul vocab!!
   lord: 'uzbad',
@@ -138,6 +142,10 @@ const khuzdulVocab = {
   great: 'gabil',
   laughter: 'gàire',
   spring: 'earrach',
+
+  lonely: 'ensam',
+  isle: 'ö',
+  speech: 'aglâb', //agbla'
 }
 
 // todo add some vocab too? shield -- skjald
@@ -146,7 +154,7 @@ const khuzdul: Dictionary = assembleDictionary('Khuzdul',
   khuzdulRoots,
   khuzdulVocab,
   {
-    'elleu': 'lû',
+    // 'elleu': 'lû',
     'illwyn': 'n',
     // 'esv': 'aev',
   //   'llent': 'lion',

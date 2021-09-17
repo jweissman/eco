@@ -21,6 +21,7 @@ class Language extends Model {
   t = (...concepts: Concept[]) => this.dictionary.translate(...concepts)
 
   notes = {
+    '*lang': () => this.dictionary.languageName,
     '"Nightingale"': () => this.t('spark', '-maid'),
     'Lonely Isle': () => this.t('isle', 'lonely'),
     'Haven of the Gods': () => this.t('at-', 'divine'),
