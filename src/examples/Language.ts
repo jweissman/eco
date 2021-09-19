@@ -38,7 +38,7 @@ class Language extends Model {
     'Silver River': () => this.t('silver', 'river'),
     'Ever-White': () => this.t('ever-', 'snow'),
     'Tall White Point': () => this.t('tall', 'white', 'point'),
-    'Dark Foe': () => this.t('black', 'foe'),
+    'Black Foe of the World': () => this.t('black', 'foe'),
     'Spirit of Fire': () => this.t('spirit', 'fire'),
     'Mist-Needle': () => this.t('mist', 'needle'),
     'Mist-Shadow': () => this.t('mist', 'shadow'),
@@ -68,7 +68,11 @@ class Language extends Model {
     // 'Giant': () => this.t('giant'),
     ...Object.fromEntries(theConcepts.sort().map(idea => {
       // let [name, significance] = this.t(idea);
-      return [idea, () => this.t(idea)] // `Mount ${capitalize(idea)}`, () => this.dictionary.nameMountain(idea)[1]])
+      return [idea, () => {
+        let tx = this.t(idea)
+        if (tx.length > 9) { return `%${tx}` }
+        return tx
+      }] // `Mount ${capitalize(idea)}`, () => this.dictionary.nameMountain(idea)[1]])
     }))
   }
 }

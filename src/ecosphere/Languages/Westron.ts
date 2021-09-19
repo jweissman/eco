@@ -10,17 +10,20 @@ import { Dictionary, Vocabulary } from "../Dictionary"
 
 
 const westronVocab: Vocabulary = {
+  heat: 'hǣte',
+  cold: 'cheald',
   abundant: 'ofer',
   afternoon: 'ofernón',//afternoon',
   apple: 'æppel', // apple',
   autumn: 'hærfest', 
   awe: 'ondrysnu', //awe',
-  battle: 'feoht',
+  battle: 'gefeoht', //'feoht',
   bay: 'berie', //'-iâ',
   bears: 'bera',
   beautiful: 'cyrten',
   bell: 'cnyll', //bell',
   birch: 'beorc',
+  bitter: 'āfor',
   birds: 'bord',
   black: 'blæc', //black',
   blood: 'blod',
@@ -35,23 +38,24 @@ const westronVocab: Vocabulary = {
   daisy: 'dæges', // woundwort',
   dandelion: 'æg-wyrt', // puffball',
   day: 'dæg', //day',
+  dark: 'dearc',
   deep: 'deop', //deopnes',
   dew: 'deaw',
   divine: 'týr', //sublim', //godcund', //godbearn',
   dragons: 'fýrdraca', //wyrm //sky-serpent',
   dread: 'bróga', //ghastly',
-  dream: 'dréam',
-  dusk: 'eventide',
+  dream: 'drēam', // dréam',
+  dusk: 'dosk', //eventide',
   dusty: 'dystig',
 
   eagles: 'earn',
-  earth: 'werdle',
+  earth: 'aarde',
   elderberry: 'elder',
   elephants: 'elpend', //oliphaunt',
-  elm: 'wahu',
+  elm: 'wych', //wahu',
 
-  evening: 'evendim',
-  fangs: 'fon',
+  evening: 'ǣfnung', //evendim',
+  fangs: '-fon',
   fate: 'déaþwyrd', //fate',
   fell: 'fell', // deadly
   fire: 'fýr', //furen', //'fier', //bæl', //fire', //'naur-',
@@ -59,15 +63,15 @@ const westronVocab: Vocabulary = {
   fish: 'fisc',
   foe: '-feond', //enemy',
   forest: 'forwest',
-  fortress: 'hold',
+  fortress: 'healden',
   fortunate: 'eádeg', //lucky',
   freedom: 'freodom',
   friend: 'frēond', //friend',
-  frost: 'rime',
+  frost: 'hrīm', //rime',
   giant: 'ēoten', // colossus',
-  glen: 'dell', // dell
-  gloom: 'murk',
-  gold: 'gold',
+  glen: 'glyn', // dell
+  gloom: 'glōm', //murk',
+  gold: 'guld',
   golden: 'gylden',
   gray: 'grár', //græ',
   great: 'ærgod', // great',
@@ -75,10 +79,10 @@ const westronVocab: Vocabulary = {
 
   harbor: 'hyth',
   haven: '-haff', //hæfen', //port',
-  hill: 'holm', // 'hyll', // tun
+  hill: '-holm', // 'hyll', // tun
   holy: 'hāliġ',
   honey: 'huniġ',
-  horns: 'horns',
+  horns: 'kern',
   horror: 'fyrhtu',
   horses: 'eoh',
 
@@ -88,7 +92,7 @@ const westronVocab: Vocabulary = {
 
   jewel: 'siġel',
   journey: 'faru',
-  joy: 'ġefēa', //joy',
+  joy: 'drēam', // 'ġefēa', //joy',
   king: 'kenning',
   kingdom: 'kenningdom',
   laughter: 'hleahtor',
@@ -106,12 +110,12 @@ const westronVocab: Vocabulary = {
   magic: 'rún', //charm',
   mantle: 'hacele',
   midnight: 'midnyght',
-  mist: 'mistur',
+  mist: '-hase', //'mistur',
   moon: 'mēnô', //mone', // 'mōna',
   morning: '-morn',
   mound: 'tel-',
   mountain: 'munt-',
-  music: 'dréamcræft', //-song',
+  music: 'dréam', //cræft', //-song',
 
   narrow: 'nearunes',//narrow-',
   needle: 'nædl', //needle',
@@ -123,8 +127,8 @@ const westronVocab: Vocabulary = {
   orange: 'orenge',
 
   pale: 'wann-',
-  path: 'brimlad',
-  peak: 'pinca', // see point, needle
+  path: 'pade-', //brimlad',
+  peak: 'piic', //pinca', // see point, needle
   peoples: '-folk',
   pine: 'pintreow',
   place: '-stead',//bídung', //place',
@@ -133,7 +137,7 @@ const westronVocab: Vocabulary = {
   poppy: 'popiġ', //celandine',
   prison: '-cweartern', //gaol', // 'carcern'
 
-  quick: 'fast',
+  quick: 'cwic', //fast',
   rain: 'reġn', // regn',
   rainbow: 'reġnboga', //rainbow',
 
@@ -179,24 +183,24 @@ const westronVocab: Vocabulary = {
 
   tall: "brant-", //nd-",
   tears: 'hróp', //tears',
-  thought: 'þóht', //thought*',
+  thought: 'thóht', //thought*',
   tin: '-zin',
   tiny: 'tyne*',
-  tomorrow: 'morrow',
+  tomorrow: 'tōmorgen', //morrow',
   tower: 'stipel-',
   treasure: 'sinc',
   tyranny: 'mánbealu',
 
   valley: 'dæl', //vale',
   veil: 'oferbræ', //veil',
-  water: 'water',
+  water: 'wæter', //water',
   wax: 'weax',
   white: 'albe', // hwit
   wide: 'wide',
   willow: 'welig',
   wind: 'wend',
   wine: '-win',
-  winter: 'winter',
+  winter: 'yver', //'winter',
   holly: 'holen-',
   garden: 'gewyrtún', //garden',
   queen: 'cwen', //queen',
@@ -219,7 +223,7 @@ const westronVocab: Vocabulary = {
   'at-': 'æt-', //upon-',
 
   // fem/masculine suffices
-  '-person': '-person',
+  '-person': '-wight',
   '-man': '-man',
   '-son': '-ing',
 

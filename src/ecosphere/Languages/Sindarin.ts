@@ -2,6 +2,8 @@ import { Dictionary, Vocabulary } from "../Dictionary";
 
 // see https://eldamo.org/content/vocabulary-indexes/vocabulary-words-ns.html
 export const Sindarin: Vocabulary = {
+  'heat': 'ast',
+  'cold': 'ring',
   // was confusing to try to do this one b/c of the order!
   '-less': 'uv-',
 
@@ -29,6 +31,7 @@ export const Sindarin: Vocabulary = {
   bears: 'graw',
   beautiful: 'bain',
   bell: 'nell',
+  bitter: 'saer',
   birch: 'hwinn*',
   birds: 'aewen',
   black: 'morn',
@@ -53,7 +56,7 @@ export const Sindarin: Vocabulary = {
   dusk: 'moth-',
   dusty: 'astren*',
   eagles: 'thoron',
-  earth: '-amar',
+  earth: 'amar',
   elderberry: 'gwennod',
   elephants: 'annabon',
   elm: 'alaf',
@@ -81,7 +84,7 @@ export const Sindarin: Vocabulary = {
   green: 'calen-',
   harbor: 'hûb',
   haven: '-lond*', // cúan
-  hill: '-amon', // tun
+  hill: 'amon', // tun
   holy: 'aer',
   honey: 'glî',
   horns: 'rais',
@@ -97,9 +100,12 @@ export const Sindarin: Vocabulary = {
   kingdom: 'arnad',
   laughter: 'lalaith',
   lake: 'ael',
-  land: '-dor-',
+  land: 'dor-',
   large: 'daer',
+
   light: 'ea',
+  dark: 'dûr',
+
   lily: 'loth',
   lofty: 'raud',
   lonely: 'air*',
@@ -143,7 +149,9 @@ export const Sindarin: Vocabulary = {
   sea: '-geaer', //'mer',
   secret: 'dolen*',
   shade: 'gwath',
+  // irish is scáth 
   shadow: '-lum', // 'gwath', //dûl',
+
   sharp: 'crisg-',
   ship: 'cair*',
   silence: 'dhín-',

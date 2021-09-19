@@ -8,7 +8,7 @@ import { BasicEntity } from "./BasicEntity"
 export type Substance = BasicEntity
 export type Entity<T> = BasicEntity & { kind: T }
 
-export type Quality = 'terrible' | 'poor' | 'adequate' | 'good' | 'excellent'
+export type Quality = 'terrible' | 'adequate' | 'good' | 'excellent'
 type Size = 'fine' | 'small' | 'medium' | 'large' | 'huge'
 export type Species = BasicEntity & {
   name: string
@@ -19,6 +19,7 @@ export type Species = BasicEntity & {
 export type Individual<T> = Entity<T> & {
   age: number // maybe simpler to do bornAt?
 }
+
 
 export type Creature<T> = Individual<T> & {
   health: 'dying' | 'unwell' | 'flourishing' | 'triumphant'
@@ -41,6 +42,8 @@ type Cunning = 'foolish' | 'sly' | 'crafty' | 'manipulative'
 //'dim' | 'attentive' | 'creative' | 'ingenious'
 type Agility = 'clumsy' | 'nimble' | 'spry' | 'balletic'
 type Guile = 'transparent' | 'convincing' | 'beguiling' | 'insidious'
+
+type PhysicalQuality = Spirit | Strength | Cunning | Agility | Guile
 
 export type Animal = Creature<Species> & {
   spirit: Spirit
@@ -72,14 +75,16 @@ type Wealth = 'impoverished' | 'well-off' | 'luxuriant' | 'decadent'
 type Sophistication = 'unpretentious' | 'savvy' | 'urbane' | 'sleek'
 type Power = 'inconsequential' | 'marginal' | 'influential' | 'sovereign'
 type Knowledge = 'clueless' | 'well-informed' | 'wise' | 'prescient'
-type Technology = 'lost' | 'primitive' | 'archaic' | 'advanced'
+// type Technology = 'lost' | 'primitive' | 'archaic' | 'advanced'
+
+type SocialQuality = Wealth | Sophistication | Power | Knowledge // | Technology
 
 export type Moiety = BasicEntity & {
   wealth: Wealth
   sophistication: Sophistication
   power: Power
   knowledge: Knowledge
-  tech: Technology
+  // tech: Technology
 }
 
 const moietyIds = new Sequence()
@@ -88,8 +93,8 @@ export const createMoiety = (name: string): Moiety => {
   const sophistication: Sophistication = pick([ 'unpretentious', 'savvy', 'urbane', 'sleek' ])
   const power: Power = pick([ 'inconsequential', 'marginal', 'influential', 'sovereign' ])
   const knowledge: Knowledge = pick([ 'clueless', 'well-informed', 'wise', 'prescient' ])
-  const tech: Technology = pick([ 'lost', 'primitive', 'archaic', 'advanced' ])
-  return { id: moietyIds.next, name, wealth, sophistication, power, knowledge, tech }
+  // const tech: Technology = pick([ 'lost', 'primitive', 'archaic', 'advanced' ])
+  return { id: moietyIds.next, name, wealth, sophistication, power, knowledge } //, tech }
 }
 
 type Body = Animal
@@ -101,7 +106,12 @@ type Disposition = 'dismal' | 'hopeful' | 'propitious' | 'roseate'
 type Valor = 'timid' | 'bold' | 'courageous' | 'fearless'
 type Personality = 'bland' | 'charismatic' | 'captivating' | 'magnetic' 
 
+type MentalQuality = Insight | Depth | Education | Disposition | Valor | Personality
+export type MentalAttribute = 'insight' | 'depth' | 'education' | 'disposition' | 'valor' | 'personality'
+
 type Mind = {
+  // [key in MentalAttribute]: MentalQuality,
+  
   insight: Insight
   depth: Depth
   education: Education
@@ -127,6 +137,8 @@ type Beauty = 'ugly' | 'fair' | 'radiant' | 'resplendent'
 type Charm  = 'repulsive' | 'inoffensive' | 'affable' | 'likeable'
 type Resolve = 'vacillating' | 'steadfast' | 'intrepid' | 'relentless'
 
+type SpiritualQuality = Wit | Empathy | Integrity | Beauty | Charm | Resolve
+
 type Soul = {
   wit: Wit
   empathy: Empathy
@@ -135,6 +147,7 @@ type Soul = {
   charm: Charm
   resolve: Resolve
 }
+
 
 export const createSoul = (): Soul => {
   const wit: Wit = pick([ 'slow', 'clever', 'biting', 'savage' ])
@@ -154,6 +167,78 @@ export const createSoul = (): Soul => {
 
 // export type Trait = { id: number, name: string, rank: 0 | 1 | 2 | 3 | 4 | 5 }
 export type Memory = { id: number, name: string, description: string }
+
+type IndividualQuality = PhysicalQuality | SocialQuality | MentalQuality | SpiritualQuality
+export type PhysicalAttribute = 'spirit' | 'strength' | 'cunning' | 'agility' | 'guile'
+export type SocialAttribute =  'wealth' | 'sophistication' | 'power' | 'knowledge'
+export type SpiritualAttribute = 'wit' | 'empathy' | 'integrity' | 'beauty' | 'charm' | 'resolve'
+type AttributeMatrix = {
+  physical: { [key in PhysicalAttribute]: PhysicalQuality[] },
+  social: { [key in SocialAttribute]: SocialQuality[] },
+  mental: { [key in MentalAttribute]: MentalQuality[] },
+  spiritual: { [key in SpiritualAttribute]: SpiritualQuality[] },
+}
+
+export const attributes: AttributeMatrix = {
+  physical: {
+    spirit: [ 'languorous', 'vigorous', 'impetuous', 'ferocious' ],
+    strength: [ 'weak', 'robust', 'mighty', 'indomitable' ],
+    cunning: [ 'foolish', 'sly', 'crafty', 'manipulative' ],
+    agility: [ 'clumsy', 'nimble', 'spry', 'balletic' ],
+    guile: [ 'transparent', 'convincing', 'beguiling', 'insidious' ],
+  },
+
+  social: {
+    wealth: [ 'impoverished', 'well-off', 'luxuriant', 'decadent' ],
+    sophistication: [ 'unpretentious', 'savvy', 'urbane', 'sleek' ],
+    power: [ 'inconsequential', 'marginal', 'influential', 'sovereign' ],
+    knowledge: [ 'clueless', 'well-informed', 'wise', 'prescient' ]
+
+  },
+  mental: {
+    insight: ['dense' , 'intuitive' , 'incisive' , 'brilliant' ],
+    depth:[ 'superficial' , 'substantial' , 'profound' , 'inscrutable' ],
+    education:[ 'unlettered' , 'literate' , 'tutored' , 'well-read'],
+    disposition:[ 'dismal' , 'hopeful' , 'propitious' , 'roseate'],
+    valor: [ 'timid' , 'bold' , 'courageous' , 'fearless'],
+    personality: [ 'bland' , 'charismatic' , 'captivating' , 'magnetic' ]
+    
+  },
+  spiritual: {
+    wit: [ 'slow', 'clever', 'biting', 'savage' ],
+    empathy: [ 'sadistic', 'generous', 'benevolent', 'selfless' ],
+    integrity: [ 'uncertain', 'sound', 'solid', 'incorruptible' ],
+    beauty: [ 'ugly', 'fair', 'radiant', 'resplendent' ],
+    charm: [ 'repulsive', 'inoffensive', 'affable', 'likeable' ],
+    resolve: [ 'vacillating', 'steadfast', 'intrepid', 'relentless' ],
+  },
+}
+export const judge = (quality: IndividualQuality): Quality => {
+  const qualityValues: Quality[] = ['terrible', 'adequate', 'good', 'excellent']
+  const matrix = attributes;
+  let result = null
+  Object.entries(matrix).forEach(([attributeGroupName, attributeGroup]) => {
+    Object.entries(attributeGroup).forEach(([attributeName, qualities]) => {
+      qualities.forEach((q: IndividualQuality) => {
+        // console.log("compare", { q, quality })
+         if (q===quality) {
+           result = qualityValues[qualities.indexOf(q)]
+         }
+      })
+    })
+  })
+  // const terribleQualities: IndividualQuality[] = [ 'ugly', 'weak', 'dismal', 'clueless' ]
+  // if (terribleQualities.includes(quality)) {
+  //   return 'terrible'
+  // }
+
+  if (result === null) {
+  throw new Error("Cannot judge unknown quality " + quality)
+  } else {
+    return result
+  }
+  // return 'adequate'
+}
 
 export type Person = Individual<Moiety> & {
   body: Body

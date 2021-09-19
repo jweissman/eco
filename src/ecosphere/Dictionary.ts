@@ -24,10 +24,12 @@ const concepts = [
   'friend', 'foe', 'lord', 'slave', 'king', 'queen', 'prince', 'princess',
 
   // ...aspects...
-  'light', 'shadow', 'shade',
+  'light', 'dark',
+  'shadow', 'shade',
   'sun', 'moon', 'stars',
   'day', 'night', 'spark', 'starlight', 'firmament',
   // weather
+  'heat', 'cold',
   'mist', 'snow', 'wind', 'rain', 'cloud', //'hail',
   'rainbow', 'dew', 'frost',
   // metals...
@@ -42,6 +44,7 @@ const concepts = [
   'bears', 'birds', 'horses', 'snakes', 'wolves',
 
   // tame animals..
+  // 'boars',
   'hounds',
 
   // birds in particular...
@@ -75,7 +78,7 @@ const concepts = [
   'tall', 'deep', 'lofty', 'lonely',
   'great', 'large', 'small', 'tiny',
   'narrow', 'wide', 'sharp', 'giant',
-  'quick', 'pale',
+  'quick', 'pale', 'bitter',
 
   'golden', 'holy', 'fortunate', 'dusty', 'beautiful',
   'fell', 'cloudy', 'secret', 'sweet', 'bold',
@@ -136,6 +139,8 @@ export class Dictionary {
   // (at least recognizing 'x of y', where x + y are translated 'first'...)
   // (also -less should just modify the immediately preceding word)
   translate(...concepts: Concept[]): Lexeme {
+    // let lastConcept: Concept | null = null;
+    let lastWord: string = ''
     let translation = concepts.reduce((acc, concept, index) => {
       let word = this.vocabulary[concept]
       acc = acc.trim()
@@ -149,13 +154,17 @@ export class Dictionary {
       // if (word.startsWith(acc[acc.length-1])) { space = false; acc = acc.substring(0, acc.length - 1) }
 
       let elements = [acc, word]
-      if (concept.startsWith('-')) {
+      // if (concept.startsWith('-')) {
+      if (lastWord.startsWith('-')) {
         space = false;
         // if (word.endsWith('-')) {
         //   word = word.replaceAll('-', '')
-        //   // elements = [word, acc]
+        elements = [word, acc]
         // }
       }
+
+      // lastConcept = concept;
+      lastWord = word;
       return elements.join(space ? ' ' : '')
     }, '')
 
@@ -465,6 +474,7 @@ const assembleDictionary = (
     // sparkling: run + light,
     teeth: many + tooth,
     battle: many + man + fight,
+    dark: no + light,
   }
 
   const {

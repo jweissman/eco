@@ -153,8 +153,12 @@ export function ModelView({
                   </td>
                   <td style={{width: '4px'}}></td>
                   <td style={{ minWidth: '180px', textAlign: 'left', fontSize: '15pt' }}>
-                    <span data-testid='Description'>
-                      {value}
+                    <span data-testid='Description' style={{
+                      ...(value.startsWith('*') && {color: 'lightgreen'}),
+                      ...(value.startsWith('%') && {color: 'goldenrod'}),
+                      ...(value.startsWith('~') && {color: 'darkgray'}),
+                    }}>
+                      {value.replaceAll('*','').replaceAll('%','').replaceAll('~','')}
                     </span>
                   </td>
                 </tr>

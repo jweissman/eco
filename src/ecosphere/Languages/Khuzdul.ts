@@ -1,38 +1,49 @@
 // dwarrow-folk
 import { assembleDictionary, Dictionary, Roots } from "../Dictionary";
 const khuzdulRoots: Roots = {
+  crown: 'aïr', //'lï',
+  at: 'as-', // a-',
+  great: 'g', //'gh',
+
+  strong: 'ou', //[STRONG]', //'iar', //'ell',
+  heat: 'r', //'[HEAT]', //'eut',
+  light: 'an-', // '[LIGHT]', //'luth-', //'glâ',
+  small: 'i', //'[SMALL]',
+  woman: 'a', //'[WOMAN]', //llwyn',
+
+  man: 'd', //rd', //il',
+  deep: 'ei', //'t', //grim',
+  water: 'le', //'ol',
+  place: 'an', //'-ai', 
+
+  shadow: 'uz',// //'uzn', //skado', //umbr', //fusk',
+
+  daughter: 'al', //'[DAUGHTER]', //'enne',
+  // fire: 'brann-',
+
+  way: 'nâla', // path/river-course
   mantle: 'mötull', //re',
-  shadow: 'uzn', //skado', //umbr', //fusk',
 
   tree: 'an',
-  woman: 'llwyn',
-  man: 'nor', //il',
   mound: 'hæð',
   // on',
   quick: 'e',
-  time: 'enor',
+  time: 'gaz', //enor',
   over: 'aya-',
-  at: 'ae-', // a-',
 
-  bitter: 'd', //mere, ',
-  beauty: 'ari',
-  high: 'l',
-  wing: 'l',
-  safe: '-cúan', //'-ond',
+  bitter: 'amé', // 'd', //mere, ',
+  beauty: 'ea',
+  high: 'tl',
+  wing: 'hla',
+  safe: '-cúa', //n', //'-ond',
 
-  place: '-', 
   // place: 'ë',
 
-  great: 'val', //'gab', //'h',
+  // 'ghav', //'val', //'gab', //'h',
   hard: 'ekh',
-  strong: 'ell',
-  heat: 'euth',
-  light: 'ie',
-  daughter: 'enne',
-  deep: 't', //grim',
+  // light: 'valo', //'soll', //'soillse', // 'golow', //sols',
 
-  water: 'ul',
-  many: 'o',
+  many: 'a',
   cold: 'í',
 
   one: 'er',
@@ -41,9 +52,8 @@ const khuzdulRoots: Roots = {
   all: 'er',
   wood: 'taf',
   cut: 'k',
-  crown: 'lï',
   run: 'r',
-  sorrow: 'uj',
+  sorrow: 'sorg',
   joy: 'je',
   no: 'u-',
   sing: 'ina',
@@ -55,7 +65,7 @@ const khuzdulRoots: Roots = {
   air: 'ur',
   bad: 'nu',
   bear: 'gruw', // bero
-  bell: 'du',
+  bell: 'bjel',
   cove: 'cof',
   death: 'lun',
   dog: 'hu',
@@ -66,16 +76,14 @@ const khuzdulRoots: Roots = {
   good: 'lu',
   heart: 'eru',
   horse: 'raph',
-  ore: 'im',
+  ore: 'ann', //il', //m',
   point: '-el',
   sleep: 'ol',
-  small: 'i',
   snake: 'lug',
   soft: 'i',
   son: 'on',
   sweet: 'hl',
   tall: 'mu-',
-  way: 'eh',
   wild: 'pel',
   sound: 'ada',
   face: 'vih',
@@ -113,9 +121,8 @@ const khuzdulVocab = {
   pine: 'furu',
   eagles: 'orn-',
   gray: 'grå-',
-  fire: 'brann-',
   stronghold: 'daingneach', //bfort',
-  tyranny: 'tiren-', //grusomhet',
+  tyranny: 'dyren-', // 'tiren-', //grusomhet',
   nightingales: 'nattergal',
   vale: 'dal',
   valley: 'dalr',
@@ -127,35 +134,96 @@ const khuzdulVocab = {
   day: 'dagaz', //
 
   cherry: 'kerásion',
-  mist: 'niwl',
+  mist: 'niwl', // also like (icelandic for fog): fjúka
 
   // actual khuzdul vocab!!
+  great: 'gabil',
+  laughter: 'gàire',
+  spring: 'earrach',
+
+  // lonely: 'ensam',
+  // isle: 'ö',
+}
+
+const trueKhudzulVocab = {
+  speech: 'aglâb', //agbla'
   lord: 'uzbad',
   path: 'nâla', // river-course
   black: 'narâg',
   cloud: 'shathûr',
   lake: 'zâram',
+  pool: 'zâram',
   silver: 'kibil', // 'zigil',
   stream: 'ûl',
+  // river: 'ûlnâla', // river-course
   horn: 'inbar',
   fortress: 'gathol',
-  great: 'gabil',
-  laughter: 'gàire',
-  spring: 'earrach',
-
-  lonely: 'ensam',
-  isle: 'ö',
-  speech: 'aglâb', //agbla'
 }
 
 // todo add some vocab too? shield -- skjald
 // and override: oak -- eik
 const khuzdul: Dictionary = assembleDictionary('Khuzdul',
   khuzdulRoots,
-  khuzdulVocab,
   {
+    ...khuzdulVocab,
+    ...trueKhudzulVocab
+  },
+  {
+    'æð': 'eth',
+    'gt': 'zu',
+    'izu': 'su',
+
+    'anan': 'enon',
+    'heth': 'art',
+    'aï': 'ul',
+    'lrd': 'rt',
+
+    'ieie': 'e',
+    'eaeh': 'ea',
+    'aa': 'â',
+    'nn': 'rn',
+    // 'ai': 'e',
+    'ae': 'a',
+    'ai': 'e',
+    'dk': 'h',
+    // 'nran': 'n',
+    // 'our': 'rhad',
+    // 'aï': 'o',
+    // 'uo': 'aga',
+    // 'atur': 'odor',
+    // 'dodo': 'nesi',
+    // 'uaï': 'o',
+    // 'aeian': 'an',
+    // // 'ïr': 'yrio',
+    // 'uio': 'uri',
+    // // 'ae': 'e',
+    // // 'ana': 'uina',
+    // 'lel': 'ill',
+    // 'aia': 'arâ', //a', //'eauphi',
+    // // 'uinan': 'ion',
+    // 'anan': 'ion',
+    // 'lehl': 'hr',
+    
+    // 'heth': 'ut',
+    // 'aio': 'uro',
+    // 'gtl': 'cul',
+    // 'ayau': 'oyu',
+    // 'tv': 'ph',
+    // 'tl': 'r',
+    // 'utg': 'gha',
+    // 'lol': 'll',
+    // 'ia': 'ou',
+    // 'aee': 'ere',
+    // 'eae': 'ea',
+    // 'oo': 'u', 
+    // 'aa': 'gl',
+    // 'ghg': 'n',
+    // 'lz': 'ys',
+    // 'uru': 'ni*',
+    // 'tgl': 'l',
+    // 'iareu': 'elu',
     // 'elleu': 'lû',
-    'illwyn': 'n',
+    // 'ie n': 'ine',
     // 'esv': 'aev',
   //   'llent': 'lion',
   //   'laú': 'lû',
