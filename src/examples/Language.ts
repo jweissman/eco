@@ -1,7 +1,7 @@
 import { Concept, Dictionary, theConcepts } from "../ecosphere/Dictionary"
 import { Model } from "../ecosphere/Model"
 import Khuzdul from "../ecosphere/Languages/Khuzdul"
-import { Aelvic } from "../ecosphere/Languages/Sindarin"
+import { Sindarin } from "../ecosphere/Languages/Sindarin"
 import Westron from "../ecosphere/Languages/Westron"
 import Common from "../ecosphere/Languages/Common"
 // import { Celestial } from "./Languages/Celestial"
@@ -10,7 +10,7 @@ class Language extends Model {
     super(`Language Explorer`)
     this.actions.create({ name: 'Common', act: () => this.dictionary = Common })
     this.actions.create({ name: 'Westron', act: () => this.dictionary = Westron })
-    this.actions.create({ name: 'Sindarin', act: () => this.dictionary = Aelvic })
+    this.actions.create({ name: 'Sindarin', act: () => this.dictionary = Sindarin })
     this.actions.create({ name: 'Khuzdul', act: () => this.dictionary = Khuzdul })
     // todo :)
     // this.actions.create({ name: 'Primordial', act: () => this.dictionary = Celestial })
@@ -20,32 +20,47 @@ class Language extends Model {
 
   t = (...concepts: Concept[]) => this.dictionary.translate(...concepts)
 
+  check = (translation: string, ...concepts: Concept[]) => {
+    let tx = this.t(...concepts)
+    if (tx === translation) { return `*${tx}`}
+    return tx; //`%${tx}`;
+  }
+
   notes = {
     '*lang': () => this.dictionary.languageName,
-    '"Nightingale"': () => this.t('spark', '-maid'),
-    'Lonely Isle': () => this.t('isle', 'lonely'),
-    'Haven of the Gods': () => this.t('at-', 'divine'),
-    'Swan Haven': () => this.t('swans', 'haven'),
-    'Star-Eagle': () => this.t('eagles', 'stars'),
-    'Land of Pines': () => this.t('land', 'pine'),
-    'Mound of Summer': () => this.t('mound', 'summer'),
-    'Mountains of Tyranny': () => this.t('tyranny', 'mountain-chain'),
-    'Magic Woman': () => this.t('magic', '-woman'),
-    'Fire Stronghold': () => this.t('fire', 'stronghold'),
-    'Grey-Mantle': () => this.t('gray', 'mantle'),
-    'Iron Prison': () => this.t('iron', 'prison'),
-    'Icy Fangs': () => this.t('ice', 'fangs'),
-    'Silver River': () => this.t('silver', 'river'),
-    'Ever-White': () => this.t('ever-', 'snow'),
-    'Tall White Point': () => this.t('tall', 'white', 'point'),
-    'Black Foe of the World': () => this.t('black', 'foe'),
-    'Spirit of Fire': () => this.t('spirit', 'fire'),
-    'Mist-Needle': () => this.t('mist', 'needle'),
-    'Mist-Shadow': () => this.t('mist', 'shadow'),
-    'Pale-horn Mountains': () => this.t('mountain', 'pale', 'horns'),
-    'Shipmaker': () => this.t('ship', 'smith'),
-    'Land of Holly': () => this.t('holly', 'land'),
-    'Fate Hill': () => this.t('hill', 'fate'),
+    // validate that we haven't broken sindarin
+    '"Nightingale"': () => this.check("Tinuviel", 'spark', '-maid'),
+    'Dream Island': () => this.check("Lórien", 'dream', 'island'),
+    'Lonely Isle': () => this.check("Tol Eressëa", 'isle', 'lonely'),
+    'Haven of the Gods': () => this.check("Avallónë", 'at-', 'divine'),
+    'Swan Haven': () => this.check("Alqualondë", 'swans', 'haven'),
+    'Star-Eagle': () => this.check("Thorongil", 'eagles', 'stars'),
+    'Land of Pines': () => this.check("Dorthonion", 'land', 'pine'),
+    // 'Mound of Summer': () => this.check("Corollaerë", 'mound', 'summer'),
+    'Mound of Summer': () => this.check("Corollairë", 'mound', 'summer'),
+    'Silver River': () => this.check("Celebrant", 'silver', 'river'),
+    'Tall White Point': () => this.check("Taniquetil", 'tall', 'white', 'point'),
+    'Spirit of Fire': () => this.check("Fëanor", 'spirit', 'fire'),
+    'Magic Woman': () => this.check("Lûthien", 'magic', '-woman'),
+    'Mountains of Tyranny': () => this.check("Thangorodrim", 'tyranny', 'mountain-chain'),
+    'Fire Stronghold': () => this.check("Norgothrond", 'fire', 'stronghold'),
+    'Grey-Mantle': () => this.check("Thingol", 'gray', 'mantle'),
+    'Iron Prison': () => this.check("Angband", 'iron', 'prison'),
+    'Black Foe': () => this.check("Morgoth", 'black', 'foe'),
+    'Icy Fangs': () => this.check("Helcaraxë", 'ice', 'fangs'),
+    'Ever-White': () => this.check("Oiolossë", 'ever-', 'snow'),
+    'Mist-Needle': () => this.check("Hithaeglin", 'mist', 'needle'),
+    'Mist-Shadow': () => this.check("Hithlum", 'mist', 'shadow'),
+    'Pale-horn Mountains': () => this.check("Ered Nimrais", 'mountain', 'pale', 'horns'),
+    'Shipmaker': () => this.check("Círdan", 'ship', 'smith'),
+    'Land of Holly': () => this.check("Eregion", 'holly', 'land'),
+    'Fate Hill': () => this.check("Amon Amarth", 'hill', 'fate'),
+    // todo -- build out sindarin a bit...
+    // 'Heavenly Arch': () => this.check("Egalmoth", 'firmament', 'arch'),
+    // 'Golden Flower': () => this.check("Glorfindel", 'golden', 'flower'),
+    // 'Land of the Fence': () => this.check("Doriath", 'land', 'fence'),
+    // 'Forsaken Land': () => this.check("Eglador", 'forsaken', 'land'),
+    // 'Hidden Rock': () => this.check("Gondolin", 'hidden', 'rock'),
     '--': () => '...',
 
     /// other examples (not necessarily from beleriand)

@@ -5,7 +5,7 @@
   /* overflow: scroll;
   width: 100vh;
   height: 100vh; */
-  max-height: 800px;
+  /* max-height: 700px; */
   overflow-y: scroll;
 }
 
@@ -14,8 +14,8 @@
   /* font-size: 18px; */
   overflow-y: scroll;
   min-width: 380px;
-  min-height: 500px;
-  max-height: 640px;
+  /* min-height: 300px;
+  max-height: 340px; */
   color: #7d7d7d;
   overflow: hidden;
   overflow-y: overlay;

@@ -6,7 +6,7 @@ import { capitalize } from "../ecosphere/utils/capitalize";
 import { randomInteger } from "../ecosphere/utils/randomInteger";
 import { choose, sample } from "../ecosphere/utils/sample";
 import Khuzdul from "../ecosphere/Languages/Khuzdul";
-import { Aelvic } from "../ecosphere/Languages/Sindarin";
+import { Sindarin } from "../ecosphere/Languages/Sindarin";
 import Westron from "../ecosphere/Languages/Westron";
 import Common from "../ecosphere/Languages/Common";
 
@@ -22,7 +22,7 @@ const generatePerson = () => {
     ...(randomInteger(0, 12) > 9 ? [sample(suffices)] : []),
   ]
   
-  let dicts = [ Aelvic, Khuzdul, Westron, Common ]
+  let dicts = [ Sindarin, Khuzdul, Westron, Common ]
   let name = sample(dicts).translate(...nameElements).trim()
   // const firstName = sample(gender === 'male' ? [ 'Sam', 'Eric', 'Ted', 'Jones' ] : ['Sarah', 'Edna', 'Terri', 'Rosa'])
   // const lastName = sample(['Smith', 'Lever', 'Token', 'Switch', 'Agent', 'Op'])
@@ -72,12 +72,13 @@ class Citizen extends Model {
   }
 
   displayAttribute = (value: string): string => {
+    const val = capitalize(value)
     // let value = this.subject
     // && this.subject.soul[attr as unknown as SpiritualAttribute]
-    if (judge(value as any) === 'excellent') return `*${value}`
-    if (judge(value as any) === 'adequate') return `~${value}`
-    if (judge(value as any) === 'terrible') return `%${value}`
-    return value
+    if (judge(value as any) === 'excellent') return `*${val}`
+    if (judge(value as any) === 'adequate') return `~${val}`
+    if (judge(value as any) === 'terrible') return `%${val}`
+    return val
   }
 
   get attributeNames() {
@@ -92,6 +93,7 @@ class Citizen extends Model {
   notes = {
     // 'current date': () => this.date.description,
     '*name': () => this.subject.name,
+    'role': () => capitalize(this.subject.role),
     // ...
 
     // ...

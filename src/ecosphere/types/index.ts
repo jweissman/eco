@@ -104,10 +104,13 @@ type Depth = 'superficial' | 'substantial' | 'profound' | 'inscrutable'
 type Education = 'unlettered' | 'literate' | 'tutored' | 'well-read'
 type Disposition = 'dismal' | 'hopeful' | 'propitious' | 'roseate'
 type Valor = 'timid' | 'bold' | 'courageous' | 'fearless'
-type Personality = 'bland' | 'charismatic' | 'captivating' | 'magnetic' 
 
-type MentalQuality = Insight | Depth | Education | Disposition | Valor | Personality
-export type MentalAttribute = 'insight' | 'depth' | 'education' | 'disposition' | 'valor' | 'personality'
+// a better word for this...
+// presence?
+type Presence = 'bland' | 'charismatic' | 'captivating' | 'magnetic' 
+
+type MentalQuality = Insight | Depth | Education | Disposition | Valor | Presence
+export type MentalAttribute = 'insight' | 'depth' | 'education' | 'disposition' | 'valor' | 'presence'
 
 type Mind = {
   // [key in MentalAttribute]: MentalQuality,
@@ -117,7 +120,7 @@ type Mind = {
   education: Education
   disposition: Disposition
   valor: Valor
-  personality: Personality
+  presence: Presence
 }
 
 export const createMind = (): Mind => {
@@ -126,8 +129,8 @@ export const createMind = (): Mind => {
   const education: Education = pick([ 'unlettered', 'literate', 'tutored', 'well-read' ])
   const disposition: Disposition = pick([ 'dismal', 'hopeful', 'propitious', 'roseate' ])
   const valor: Valor = pick([ 'timid', 'bold', 'courageous', 'fearless' ])
-  const personality: Personality = pick([ 'bland', 'magnetic', 'charismatic', 'captivating' ])
-  return { insight, depth, education, disposition, valor, personality }
+  const presence: Presence = pick([ 'bland', 'magnetic', 'charismatic', 'captivating' ])
+  return { insight, depth, education, disposition, valor, presence }
 }
 
 type Wit = 'slow' | 'clever' | 'biting' | 'savage'
@@ -136,8 +139,15 @@ type Integrity = 'uncertain' | 'sound' | 'solid' | 'incorruptible'
 type Beauty = 'ugly' | 'fair' | 'radiant' | 'resplendent'
 type Charm  = 'repulsive' | 'inoffensive' | 'affable' | 'likeable'
 type Resolve = 'vacillating' | 'steadfast' | 'intrepid' | 'relentless'
+type Temperament = 'guardian' | 'artisan' | 'rational' | 'idealist'
 
-type SpiritualQuality = Wit | Empathy | Integrity | Beauty | Charm | Resolve
+type SpiritualQuality = Wit
+                      | Empathy
+                      | Integrity
+                      | Beauty
+                      | Charm
+                      | Resolve
+                      | Temperament
 
 type Soul = {
   wit: Wit
@@ -146,6 +156,7 @@ type Soul = {
   beauty: Beauty
   charm: Charm
   resolve: Resolve
+  temperament: Temperament
 }
 
 
@@ -156,8 +167,9 @@ export const createSoul = (): Soul => {
   const beauty: Beauty = pick([ 'ugly', 'fair', 'radiant', 'resplendent' ])
   const charm: Charm = pick([ 'repulsive', 'inoffensive', 'affable', 'likeable' ])
   const resolve: Resolve = pick([ 'vacillating', 'steadfast', 'intrepid', 'relentless' ])
+  const temperament: Temperament = pick([ 'guardian', 'artisan', 'rational', 'idealist'])
   
-  return { wit, empathy, integrity, beauty, charm, resolve }
+  return { wit, empathy, integrity, beauty, charm, resolve, temperament }
 }
 
 // type Category = BasicEntity
@@ -171,7 +183,7 @@ export type Memory = { id: number, name: string, description: string }
 type IndividualQuality = PhysicalQuality | SocialQuality | MentalQuality | SpiritualQuality
 export type PhysicalAttribute = 'spirit' | 'strength' | 'cunning' | 'agility' | 'guile'
 export type SocialAttribute =  'wealth' | 'sophistication' | 'power' | 'knowledge'
-export type SpiritualAttribute = 'wit' | 'empathy' | 'integrity' | 'beauty' | 'charm' | 'resolve'
+export type SpiritualAttribute = 'wit' | 'empathy' | 'integrity' | 'beauty' | 'charm' | 'resolve' | 'temperament'
 type AttributeMatrix = {
   physical: { [key in PhysicalAttribute]: PhysicalQuality[] },
   social: { [key in SocialAttribute]: SocialQuality[] },
@@ -201,7 +213,7 @@ export const attributes: AttributeMatrix = {
     education:[ 'unlettered' , 'literate' , 'tutored' , 'well-read'],
     disposition:[ 'dismal' , 'hopeful' , 'propitious' , 'roseate'],
     valor: [ 'timid' , 'bold' , 'courageous' , 'fearless'],
-    personality: [ 'bland' , 'charismatic' , 'captivating' , 'magnetic' ]
+    presence: [ 'bland' , 'charismatic' , 'captivating' , 'magnetic' ]
     
   },
   spiritual: {
@@ -211,6 +223,7 @@ export const attributes: AttributeMatrix = {
     beauty: [ 'ugly', 'fair', 'radiant', 'resplendent' ],
     charm: [ 'repulsive', 'inoffensive', 'affable', 'likeable' ],
     resolve: [ 'vacillating', 'steadfast', 'intrepid', 'relentless' ],
+    temperament: [ 'guardian', 'artisan', 'rational', 'idealist' ],
   },
 }
 export const judge = (quality: IndividualQuality): Quality => {
@@ -240,10 +253,29 @@ export const judge = (quality: IndividualQuality): Quality => {
   // return 'adequate'
 }
 
+type Rational = 'inventor' | 'architect' | 'fieldmarshal' | 'mastermind'
+type Idealist = 'champion' | 'healer' | 'teacher' | 'counselor'
+type Artisan = 'performer' | 'composer' | 'persuader' | 'crafter'
+type Guardian = 'provider' | 'protector' | 'supervisor' | 'inspector'
+// type RoleKind = 'ration'
+// }
+
+type SocialRole = Rational
+                | Idealist
+                | Artisan
+                | Guardian
+const roles: { [key in Temperament]: SocialRole[] } = {
+  rational: [ 'inventor', 'architect', 'fieldmarshal', 'mastermind' ],
+  idealist: [ 'champion', 'healer',    'teacher',      'counselor' ],
+  artisan: [ 'performer', 'composer',  'persuader',    'crafter' ],
+  guardian: [ 'provider', 'protector', 'supervisor',   'inspector' ],
+}
+
 export type Person = Individual<Moiety> & {
   body: Body
   mind: Mind
   soul: Soul
+  role: SocialRole
 
 
   // ie within my moiety, I am (thought of as)...
@@ -273,15 +305,24 @@ export const createPerson = (name: string, moiety: Moiety): Person => {
   const traits = new Stocks<any>(`${name}'s Traits`)
   // const state = new Stocks<any>(`${name}'s State`)
     // personAttrs.things = inventory.manageAll()
+    const soul: Soul = createSoul()
+    let roleOptions = roles[soul.temperament]
+    // if (soul.temperament === 'rational') {
+
+    // }
+
+
+
   return {
     id: personId.next,
     kind: moiety,
+    role: sample(roleOptions),
     // kind: createMoiety()
     name,
     age: 0,
     body: createAnimal(name, human),
     mind: createMind(),
-    soul: createSoul(),
+    soul,
     // rank: 'commoner',
     // reputation: 'unknown',
     currency: 0,

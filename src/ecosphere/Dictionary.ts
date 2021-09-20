@@ -6,7 +6,7 @@ import { choose, sample } from "./utils/sample";
 const concepts = [
   'earth', 'sky',
   'mountain', 'hill', 'valley', 'peak', 'mound', 'point', 'mountain-chain',
-  'isle', 
+  'island', 'isle', 
   'sea', 'lake', 'bay', 'pool', 'harbor',
   'forest',
   'river', 'glen', 'stream',
@@ -34,6 +34,8 @@ const concepts = [
   'rainbow', 'dew', 'frost',
   // metals...
   'tin', 'iron', 'silver', 'gold', 
+  // weapons
+  // 'axe', 'sword', 'bow', 'shield',
 
   // cut, delve, hew, till, hunt...?
 
@@ -42,6 +44,7 @@ const concepts = [
   // ...animals,
   'dragons', 'elephants',
   'bears', 'birds', 'horses', 'snakes', 'wolves',
+  // mole...
 
   // tame animals..
   // 'boars',
@@ -49,6 +52,7 @@ const concepts = [
 
   // birds in particular...
   'swans', 'eagles', 'nightingales',
+  // swallow
 
   // ...elements,
   'ice', 'fire', 'earth', 'water',
@@ -61,8 +65,12 @@ const concepts = [
   'morning', 'evening', 'dusk', 'noon', 'afternoon', 'midnight',
   // trees
   'willow', 'pine', 'cherry', 'oak', 'spruce', 'birch', 'elm', 'holly',
+
   // flowers
   'rose', 'daisy', 'poppy', 'dandelion', 'lily',
+  // jasmine/jessamine, violet
+  // lotus
+
   // seasons
   'autumn', 'winter', 'spring', 'summer',
   // moods
@@ -73,6 +81,8 @@ const concepts = [
   'wax',
   // 'nut',
 
+  // instruments..?
+  // lute, harp, viol ...
 
   // adjectives...
   'tall', 'deep', 'lofty', 'lonely',
@@ -119,8 +129,17 @@ const concepts = [
   'journey', 'treasure', 'battle', 'smith',
 
   // names for the languages themselves? races?
-  // 'westron', 'khuzdul',?? 
+  // 'dwarves', // dwarrow, khazad,
+  // 'dwarvish', // dwarvish, khuzdul...
+  // 'elves', // aelves, 
+  // 'elvish', // aelvish, sindarin,
+  // 'men', // men
+  // 'mannish', // westron, ...
+
+  // 'peoples',
+  // 'common',
   // men (ylde/glishmen/...), dwarrow (dwarven/khuzdul...), aeldar (aelves/quenya...), maiar, valar,
+
 ] as const;
 
 export type Concept = typeof concepts[number];
@@ -421,7 +440,8 @@ const assembleDictionary = (
     sky: great + high + over,
     low: small + one,
     river: water + run + way,
-    isle: deep + water + place,
+    isle: small + water + place,
+    island: deep + water + place,
     wine: joy + drink,
     honey: sweet + drink,
     apple: small + eat,

@@ -1,18 +1,18 @@
 import { DictionarySequence } from "../ecosphere/Dictionary";
 import { Heightmap } from "./Heightmap";
-import { Aelvic } from "./Languages/Sindarin";
+import { Sindarin } from "./Languages/Sindarin";
 import { sample } from "./utils/sample";
 
 // const markov = (lines: string) => new MarkovSequence(lines.split("\n"))
 class Linguist {
   static names = {
-    places: new DictionarySequence(Aelvic, true, 'land'), //'realm', 'haven', 'place'),
-    regions: new DictionarySequence(Aelvic, false, 'isle'),
-    waterways: new DictionarySequence(Aelvic, false, 'sea', 'lake', 'water', 'pool'),
-    ranges: new DictionarySequence(Aelvic, true, 'mountain-chain'),
-    mountains:  new DictionarySequence(Aelvic, false, 'mountain'),
-    valleys: new DictionarySequence(Aelvic, false, 'valley'),
-    bays: new DictionarySequence(Aelvic, false, 'bay')
+    places: new DictionarySequence(Sindarin, true, 'land', 'place'), //'realm', 'haven', 'place'),
+    regions: new DictionarySequence(Sindarin, false, 'isle', 'place'),
+    waterways: new DictionarySequence(Sindarin, false, 'sea', 'lake', 'water', 'pool'),
+    ranges: new DictionarySequence(Sindarin, true, 'mountain-chain'),
+    mountains:  new DictionarySequence(Sindarin, false, 'mountain'),
+    valleys: new DictionarySequence(Sindarin, false, 'valley'),
+    bays: new DictionarySequence(Sindarin, false, 'bay')
   }
 
   // cache names...

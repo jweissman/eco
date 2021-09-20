@@ -1,13 +1,13 @@
 import { Dictionary, Vocabulary } from "../Dictionary";
 
 // see https://eldamo.org/content/vocabulary-indexes/vocabulary-words-ns.html
-export const Sindarin: Vocabulary = {
+export const sindarinVocabulary: Vocabulary = {
   'heat': 'ast',
   'cold': 'ring',
   // was confusing to try to do this one b/c of the order!
   '-less': 'uv-',
 
-  'ever-': 'ui-', // 'ever-dusk' --> evendim
+  'ever-': 'oio-', // 'ever-dusk' --> evendim
   'at-': 'ad-',
 
   // fem/masculine suffices
@@ -34,7 +34,7 @@ export const Sindarin: Vocabulary = {
   bitter: 'saer',
   birch: 'hwinn*',
   birds: 'aewen',
-  black: 'morn',
+  black: 'morn', 
   blood: 'sereg',
   blue: 'luin-',
   bold: 'beren',
@@ -49,10 +49,10 @@ export const Sindarin: Vocabulary = {
   day: 'or-',
   deep: 'nûr-',
   dew: 'mîdh-',
-  divine: 'ballean',
+  divine: 'ballónë', //lean',
   dragons: 'amlug',
   dread: 'gost',
-  dream: 'ôl',
+  dream: 'ôl-',
   dusk: 'moth-',
   dusty: 'astren*',
   eagles: 'thoron',
@@ -106,9 +106,9 @@ export const Sindarin: Vocabulary = {
   light: 'ea',
   dark: 'dûr',
 
-  lily: 'loth',
+  lily: 'loth-',
   lofty: 'raud',
-  lonely: 'air*',
+  lonely: 'er*', //air*',
   lord: '-gon',
   love: 'mîl',
   magic: 'lûth',
@@ -176,7 +176,7 @@ export const Sindarin: Vocabulary = {
   stream: 'sîr',
   stronghold: '-gothrond',
   summer: 'llairë', //aer',
-  sun: 'anor*',
+  sun: 'anor',
   swans: 'alqua',
   sweet: 'laich',
   tall: "ta-", //nd-",
@@ -214,72 +214,79 @@ export const Sindarin: Vocabulary = {
   steam: 'tuim',
   magma: 'orodu',
   radiance: 'aglar',
+
+  island: 'mineth', //minath',
   // hail: 'ai',
 }
 
 const replacements = {
-  'uwen': 'uviel',
-  'db': 'v',
+  'iandë': 'essëa',
+  // 'airia': 'ere',
+  // 'endë': 'essëa', //ssea',
   'dc': 'g',
   'nc': 'g',
-  'uie': 'uvie',
-  'airt': 'írd',
-  // 'aire': 'ere',
-  'ir': 'er',
-  'ln': 'len',
+  'db': 'v',
+  'uwen': 'uviel',
   'ean': 'ónë',
-  'fn': 'van',
-  'rngil': 'rgil*',
-  'nn': 'n',
-  'egdor': 'egion',
-  'ororo': 'oro',
+  'nng': 'ng',
+  'airt': 'írd',
+  'gdor': 'gion',
+  'ôlm': 'lór',
+  'rineth': 'rien',
+  // 'egdor': 'egion',
 
-  'uilo': 'oiolo',
-  'oss': 'ossë',
+  // 'uie': 'uvie',
+  // 'ir': 'er',
+  // 'ln': 'len',
+  // 'fn': 'van',
+  // 'rngil': 'rgil*',
+  // 'nn': 'n',
+  // 'ororo': 'oro',
+
+  // 'oss': 'ossë',
+
 }
-const dashBeginnings: { [begin: string]: string } = { 'ng': 'a' }
+// const dashBeginnings: { [begin: string]: string } = { 'ng': 'a' }
 
-const dashEndings: { [end: string]: string } = {
-  'ss': 'ssë',
-  'n': 'iath',
-  'lt': 'hen',
-  'll': 'l',
+const generalEndings: { [end: string]: string } = {
+  'ss': 'ë',
+  // 'dor': 'ion',
+  // 'n': 'iath',
+  // 'lt': 'hen',
+  // 'll': 'l',
   // 'oss': ''
 }
 
 const starEndings: { [end: string]: string } = {
-  'er': 'essëa',
+  // 'er': 'essëa',
   // 'er': 'essëa',
   'r': 'iand',
   'on': 'ion',
   'il': 'ion',
   // 'eg': 'ion',
-  'd': 'ë',
-
+  'nd': 'ë',
 }
 
 const simpleEnhance = (tx: string) => {
   tx = tx.split(' ').map(word => {
-    if (word.startsWith('-')) {
-      word = word.substring(1, word.length)
-      Object.keys(dashBeginnings).forEach(beginning => {
-        if (word.startsWith(beginning)) {
-          word = dashBeginnings[beginning] + word
-        }
-      })
-    }
-    if (word.endsWith('-')) {
-      word = word.substring(0, word.length - 1)
-      Object.keys(dashEndings).forEach(ending => {
-        if (word.endsWith(ending)) {
-          word += dashEndings[ending]
-        }
-      })
-    }
+    // if (word.startsWith('-')) {
+    //   word = word.substring(1, word.length)
+    //   Object.keys(dashBeginnings).forEach(beginning => {
+    //     if (word.startsWith(beginning)) {
+    //       word = dashBeginnings[beginning] + word
+    //     }
+    //   })
+    // }
+    // if (word.endsWith('-')) {
+      // word = word.substring(0, word.length - 1)
 
-    Object.entries(replacements).forEach(([search, replace]) => {
-      word = word.replaceAll(search, replace)
-    })
+      Object.keys(generalEndings).forEach(ending => {
+        if (word.endsWith(ending)) {
+          word += generalEndings[ending]
+        }
+      })
+    // }
+
 
     if (word.endsWith('*')) {
       word = word.replaceAll('*', '')
@@ -290,15 +297,19 @@ const simpleEnhance = (tx: string) => {
       })
     }
 
+    Object.entries(replacements).forEach(([search, replace]) => {
+      word = word.replaceAll(search, replace)
+    })
+
     // hmmm
-    word.replaceAll('*', '')
+    // word.replaceAll('*', '')
     return word
   }).join(' ')
   return tx
 }
 
-const Aelvic = new Dictionary("Aelvic (Neo-Sindarin)",  Sindarin,
+const sindarinDictionary = new Dictionary("Sindarin",  sindarinVocabulary,
   (tx) => simpleEnhance(tx))
   // (tx) => tx)
   //enhance(tx))
-export { Aelvic }
+export { sindarinDictionary as Sindarin }

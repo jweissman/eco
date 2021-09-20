@@ -19,8 +19,8 @@ class WorldMap extends Model {
     return eon;
   }
 
-  width = 60 //20
-  height = 20 //35
+  width = 120 //20
+  height = 26 //35
 
   private mapgenTicks = 40
   elevation: Heightmap = new Heightmap(this.width, this.height)

@@ -7,6 +7,9 @@ import { randomInteger } from "./utils/randomInteger";
 import { sample } from "./utils/sample";
 import { times } from "./utils/times";
 export class Heightmap {
+  // todo just directly use raw integer map here?
+  // even array buffers maybe if perf improvements
+
   map: Board = new Board(this.width, this.height);
   seaLevel = 5
 
@@ -74,7 +77,7 @@ export class Heightmap {
       if (value < average) { return [value] }
       return [
         value,
-        // value - 1,
+        value - 1,
         // value - 2,
         // average - 1,
         // Math.floor((value + average) / 2),
