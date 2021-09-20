@@ -302,7 +302,7 @@ export type Roots = {
   good: string
   bad: string
   quick: string
-  slow: string
+  // slow: string
   time: string
   cut: string
   all: string
@@ -314,18 +314,18 @@ export type Roots = {
   snake: string
   horse: string
   bear: string
-  elephant: string
+  // elephant: string
   dog: string
-  wild: string
+  // wild: string
   fear: string
   death: string
-  sound: string
+  // sound: string
   tooth: string
   // wood: string
   over: string
   high: string
   mantle: string
-  face: string
+  // face: string
   fight: string
   mere: string
   strong: string
@@ -362,18 +362,18 @@ const assembleDictionary = (
     // forever,
     no, at, eat, drink,
     good, bad,
-    quick, slow,
+    quick, //slow,
     time, air,
     cut,
     all,
     hard, soft,
     color, ore,
     wing,
-    snake, horse, bear, elephant, dog,
-    wild,
+    snake, horse, bear, dog,
+    // wild,
     fear,
     death,
-    sound,
+    // sound,
     tooth,
     heart,
     // wood,
@@ -381,7 +381,7 @@ const assembleDictionary = (
     high,
     // mantle,
     fight,
-    face,
+    // face,
     mere,
     strong,
   } = roots
@@ -400,7 +400,7 @@ const assembleDictionary = (
     '-daughter': daughter,
 
     // mantle: over + coat,
-    veil: over + face,
+    // veil: over + face,
     cove: cut + water,
 
     star: soft + light,
@@ -472,22 +472,24 @@ const assembleDictionary = (
     bird: quick + wing,
     birds: good + wing,
     horses: horse,
-    elephants: elephant,
+    elephants: great + horse, //elephant,
     bears: bear,
     snakes: snake,
-    wolves: wild + dog,
+    wolves: bad + dog,
     hounds: good + dog,
     // gray: light + shadow + color, 'red', 'blue', 'green', 'orange',
     large: tall + great,
     tiny: small + small,
     thirst: no + drink,
-    wax: slow + soft,
+    wax: soft + quick,
+
+    veil: small + soft,
 
     fortunate: great + good,
     beautiful: great + beauty,
-    silence: no + sound,
+    // silence: no + sound,
 
-    music: man + woman + sing,
+    music: man + sing,
 
     abundant: many + many,
     // sparkling: run + light,
@@ -503,7 +505,7 @@ const assembleDictionary = (
     vault, star, night, ice, harvest, river, mountain, // valley,
     king, land, lofty, sky, low, people, '-person': person,
     white, black, morning, evening, noon, bird,
-    large, thirst, silence, music, teeth, battle,
+    large, thirst, music, teeth, battle,
     wood,
   } = basics
 
@@ -586,11 +588,12 @@ const assembleDictionary = (
     // was also thinking
     // orange: fire + color,
     // purple: red + blue, ....
+    silence: soft + music,
   } //= intermediate
 
   const {
     dread, ash, rainbow, dry, food, space, dark, broad, orange,
-    divine, voice, iron, spark, //music,
+    divine, voice, iron, spark, silence, //music,
     // frost, rainbow
   } = intermediate
 
@@ -681,5 +684,8 @@ const assembleDictionary = (
     return input
   })
 }
+
+// todo grammatical pipeline
+// radicals -> conjugations -> vocab kernel -> extensions, intermediate aggluts -> final vocab
 
 export { assembleDictionary }

@@ -47,7 +47,12 @@ class WorldMap extends Model {
 
     const region = this.cartographer.identifyRegionOrWaterway(x,y)
     const features = this.cartographer.identifyFeatures(this.aeon, x,y)
-    return [ features, region, elevationMessage ].filter(Boolean).join(' / ')
+    return [
+      features, region,
+      // elevationMessage
+    ]
+      .filter(Boolean)
+      .join("\n")
     
     //`${features} / ${region} / ${elevationMessage}`
   }

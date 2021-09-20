@@ -7,11 +7,11 @@ import Terrain from "./Terrain";
 
 
 // export default Controls;
-const Scene = () => (
+const Scene = ({ tiles }: { tiles: string[][] }) => (
   <>
     <Lights />
     <Controls />
-    <Terrain tiles={[]} />
+    <Terrain tiles={tiles} />
   </>
 );
 

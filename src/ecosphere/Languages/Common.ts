@@ -57,12 +57,12 @@ const commonVocabulary: Vocabulary = {
   evening: 'evenyng', //dim',
   fangs: 'fangtooth',
   fate: 'doom', //fate',
-  fell: 'fell', // deadly
+  fell: 'fellen', // deadly
   fire: 'fier', //'fȳr', //fier', //bæl', //fire', //'naur-',
   firmament: 'heven', //heavens',
   fish: 'fisch',
   foe: 'faman', //enemy',
-  forest: 'forwest',
+  forest: 'foreste',
   fortress: 'holden',
   fortunate: 'lukky', //lucky',
   freedom: 'freodom',
@@ -117,7 +117,7 @@ const commonVocabulary: Vocabulary = {
   mountain: 'mount',
   music: 'musika', //dréamcræft', //-song',
 
-  narrow: 'nearunes',//narrow-',
+  narrow: 'narrowe',//narrow-',
   needle: 'nedle', //needle',
   night: 'nyght',
   nightingales: 'thrust', //stærlinc', //thrush',
@@ -143,7 +143,7 @@ const commonVocabulary: Vocabulary = {
 
   realm: 'ward', // -ríce', //ward',
   red: 'reod-',
-  region: '-guard',
+  region: '-regioun', //guard',
   river: 'ryver',
   road: 'rode',
   rose: 'rose',
@@ -182,7 +182,7 @@ const commonVocabulary: Vocabulary = {
 
   tall: "-talle", // brant-", //nd-",
   tears: 'cryinge', //tears',
-  thought: 'thought', //thought*',
+  thought: 'thoughte', //thought*',
   tin: 'tin',
   tiny: 'tyny',
   tomorrow: 'tomorwe',

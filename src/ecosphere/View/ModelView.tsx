@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+// import React, { useState } from 'react';
 
-// import { Suspense, useState } from "react";
-// import { Canvas } from "@react-three/fiber";
+import React, { Suspense, useState } from "react";
+import { Canvas } from "@react-three/fiber";
 import ReactTooltip from 'react-tooltip';
 
 import { Machine, Moiety, Person } from "../types";
@@ -14,7 +14,7 @@ import { Community } from "../Community";
 import { capitalize } from '../utils/capitalize';
 
 // import './View.css';
-// import { Scene } from "./Heightmap/Scene";
+import { Scene } from "./Heightmap/Scene";
 
 export type ModelViewProps = {
   modelName: string;
@@ -28,15 +28,15 @@ export type ModelViewProps = {
   board: IBoard
 }
 
-// const ViewHeightmap = ({ fullscreen }: { fullscreen: boolean }) => <>
-//   <Canvas style={{ height: fullscreen ? '100vh' : 'inherit' }} camera={{ zoom: 40, position: [0, 0, 500] }}>
-//     <Suspense
-//       fallback={<div className="loading">Loading</div>}
-//     >
-//     </Suspense>
-//     <Scene />
-//   </Canvas>
-// </>
+const ViewHeightmap = ({ fullscreen, tiles }: { fullscreen: boolean, tiles: string[][] }) => <>
+  <Canvas style={{ height: fullscreen ? '100vh' : 'inherit' }} camera={{ zoom: 40, position: [0, 0, 500] }}>
+    <Suspense
+      fallback={<div className="loading">Loading</div>}
+    >
+    </Suspense>
+    <Scene tiles={tiles} />
+  </Canvas>
+</>
  
 
 interface IBoard { tiles: string[][], tileColors: { [tile: string]: string }, tileInspect: (x: number, y: number) => string}
@@ -45,12 +45,13 @@ interface IBoard { tiles: string[][], tileColors: { [tile: string]: string }, ti
 const BoardTable = ({ tiles, tileColors, tileInspect }: IBoard) => {
   const [inspecting, setInspecting] = useState([-1,-1]);
   const message = inspecting[0] > 0 && inspecting[1] > 0
-    ? tileInspect(inspecting[0], inspecting[1])
+    ? tileInspect(inspecting[0], inspecting[1]).split("\n").join("<br/>")
     : <>--</>
 
+  const renderView = false;
   return <div style={{}}>
-    <ReactTooltip />
-    {/* <ViewHeightmap fullscreen={true} /> */}
+    <ReactTooltip multiline />
+    {renderView && <ViewHeightmap fullscreen={true} tiles={tiles} />}
     <table style={{
       fontFamily: '"Source Code Pro", "Fira Code", "Inconsolata", Menlo, Monaco, "Courier New", monospace',
       cursor: 'pointer',

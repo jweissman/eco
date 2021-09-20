@@ -27,9 +27,9 @@ export type Creature<T> = Individual<T> & {
 
 function pick<T>(elements: T[]): T {
   const d100 = randomInteger(0,100)
-  if (d100 > 95) {
+  if (d100 > 98) {
     return elements[3]
-  } else if (d100 < 5) {
+  } else if (d100 < 2) {
     return elements[0]
   }
 
@@ -260,13 +260,14 @@ type Guardian = 'provider' | 'protector' | 'supervisor' | 'inspector'
 // type RoleKind = 'ration'
 // }
 
-type SocialRole = Rational
-                | Idealist
+type SocialRole = Idealist
+                | Rational
                 | Artisan
                 | Guardian
+
 const roles: { [key in Temperament]: SocialRole[] } = {
-  rational: [ 'inventor', 'architect', 'fieldmarshal', 'mastermind' ],
   idealist: [ 'champion', 'healer',    'teacher',      'counselor' ],
+  rational: [ 'inventor', 'architect', 'fieldmarshal', 'mastermind' ],
   artisan: [ 'performer', 'composer',  'persuader',    'crafter' ],
   guardian: [ 'provider', 'protector', 'supervisor',   'inspector' ],
 }

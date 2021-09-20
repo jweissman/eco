@@ -57,7 +57,7 @@ const westronVocab: Vocabulary = {
   evening: 'ǣfnung', //evendim',
   fangs: '-fon',
   fate: 'déaþwyrd', //fate',
-  fell: 'fell', // deadly
+  fell: 'fiellan', // deadly
   fire: 'fýr', //furen', //'fier', //bæl', //fire', //'naur-',
   firmament: 'heofon', //heavens',
   fish: 'fisc',
