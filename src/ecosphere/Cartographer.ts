@@ -1,18 +1,21 @@
-import { DictionarySequence } from "../ecosphere/Dictionary";
+import { Dictionary, DictionarySequence } from "../ecosphere/Dictionary";
 import { Heightmap } from "./Heightmap";
 import { Sindarin } from "./Languages/Sindarin";
+// import Common from "./Languages/Common";
+// import Westron from "./Languages/Westron";
 import { sample } from "./utils/sample";
 
 // const markov = (lines: string) => new MarkovSequence(lines.split("\n"))
 class Linguist {
-  static names = {
-    places: new DictionarySequence(Sindarin, true, 'land', 'place'), //'realm', 'haven', 'place'),
-    regions: new DictionarySequence(Sindarin, false, 'isle', 'place'),
-    waterways: new DictionarySequence(Sindarin, false, 'sea', 'lake', 'water', 'pool'),
-    ranges: new DictionarySequence(Sindarin, true, 'mountain-chain'),
-    mountains:  new DictionarySequence(Sindarin, false, 'mountain'),
-    valleys: new DictionarySequence(Sindarin, false, 'valley'),
-    bays: new DictionarySequence(Sindarin, false, 'bay')
+  constructor(private dictionary: Dictionary) {}
+  names = {
+    places: new DictionarySequence(this.dictionary, true, 'land', 'place'), //'realm', 'haven', 'place'),
+    regions: new DictionarySequence(this.dictionary, false, 'isle', 'place'),
+    waterways: new DictionarySequence(this.dictionary, false, 'sea', 'lake', 'water', 'pool'),
+    ranges: new DictionarySequence(this.dictionary, true, 'mountain-chain'),
+    mountains:  new DictionarySequence(this.dictionary, false, 'mountain'),
+    valleys: new DictionarySequence(this.dictionary, false, 'valley'),
+    bays: new DictionarySequence(this.dictionary, false, 'bay')
   }
 
   // cache names...
@@ -24,7 +27,7 @@ class Linguist {
 
   nameWaterway(rawWaterbodyName: string, _area: number) {
     if (this.waterwayNames[rawWaterbodyName] === undefined) {
-      this.waterwayNames[rawWaterbodyName] = Linguist.names.waterways.next
+      this.waterwayNames[rawWaterbodyName] = this.names.waterways.next
     }
     return this.waterwayNames[rawWaterbodyName]
   }
@@ -32,8 +35,8 @@ class Linguist {
   nameRegion(rawRegionName: string, _area: number) {
     if (this.regionNames[rawRegionName] === undefined) {
       this.regionNames[rawRegionName] = sample([
-        Linguist.names.regions,
-        Linguist.names.places
+        this.names.regions,
+        this.names.places
       ]).next
     }
     return this.regionNames[rawRegionName]
@@ -42,8 +45,8 @@ class Linguist {
   nameRange(rawRangeName: string, _area: number): string | undefined {
     if (this.rangeNames[rawRangeName] === undefined) {
       this.rangeNames[rawRangeName] = sample([
-        Linguist.names.ranges,
-        Linguist.names.mountains
+        this.names.ranges,
+        this.names.mountains
       ]).next
     }
     return this.rangeNames[rawRangeName]
@@ -51,28 +54,32 @@ class Linguist {
 
   nameValley(rawValleyName: string, _area: number): string | undefined {
     if (this.valleyNames[rawValleyName] === undefined) {
-      this.valleyNames[rawValleyName] = Linguist.names.valleys.next
+      this.valleyNames[rawValleyName] = this.names.valleys.next
     }
     return this.valleyNames[rawValleyName]
   }
 
   nameBay(rawBayName: string, area: number): string | undefined {
     if (this.bayNames[rawBayName] === undefined) {
-      this.bayNames[rawBayName] = Linguist.names.bays.next
+      this.bayNames[rawBayName] = this.names.bays.next
     }
     return this.bayNames[rawBayName]
   }
 }
 
 export class Cartographer {
-  private linguist = new Linguist()
+  // private language: d
+  private linguist = new Linguist(this.dictionary)
   private _waterways: { [rawWaterbodyName: string]: [number, number][] } = {}
   private _regions: { [rawRegionName: string]: [number, number][] } = {}
   private _ranges: { [rawRangeName: string]: [number, number][] } = {}
   private _valleys: { [rawValleyName: string]: [number, number][] } = {}
   private _bays: { [rawBayName: string]: [number, number][] } = {}
 
-  constructor(private elevation: Heightmap) {}
+  constructor(
+    private elevation: Heightmap,
+    private dictionary: Dictionary = Sindarin
+  ) {}
 
   reset() {
     this._regions = {}

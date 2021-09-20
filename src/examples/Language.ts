@@ -27,7 +27,7 @@ class Language extends Model {
   }
 
   notes = {
-    '*lang': () => this.dictionary.languageName,
+    '*lang': () => `${this.dictionary.languageName} Phrasebook`,
     // validate that we haven't broken sindarin
     '"Nightingale"': () => this.check("Tinuviel", 'spark', '-maid'),
     'Dream Island': () => this.check("Lórien", 'dream', 'island'),
@@ -55,13 +55,13 @@ class Language extends Model {
     'Shipmaker': () => this.check("Círdan", 'ship', 'smith'),
     'Land of Holly': () => this.check("Eregion", 'holly', 'land'),
     'Fate Hill': () => this.check("Amon Amarth", 'hill', 'fate'),
+    // '*dictionary': () => `${this.dictionary.languageName} Dictionary`,
     // todo -- build out sindarin a bit...
     // 'Heavenly Arch': () => this.check("Egalmoth", 'firmament', 'arch'),
     // 'Golden Flower': () => this.check("Glorfindel", 'golden', 'flower'),
     // 'Land of the Fence': () => this.check("Doriath", 'land', 'fence'),
     // 'Forsaken Land': () => this.check("Eglador", 'forsaken', 'land'),
     // 'Hidden Rock': () => this.check("Gondolin", 'hidden', 'rock'),
-    '--': () => '...',
 
     /// other examples (not necessarily from beleriand)
     // 'Hills of Evendim': () => this.t('hill', 'evening'),
@@ -81,6 +81,7 @@ class Language extends Model {
     // various vocab...
     // 'Dragon': () => this.t('dragons'),
     // 'Giant': () => this.t('giant'),
+    '*dictionary': () => `${this.dictionary.languageName} Dictionary`,
     ...Object.fromEntries(theConcepts.sort().map(idea => {
       // let [name, significance] = this.t(idea);
       return [idea, () => {

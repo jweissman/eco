@@ -44,7 +44,7 @@ const commonVocabulary: Vocabulary = {
   divine: 'gode', //divin',
   // dragons: 'fýrdraca', //wyrm //sky-serpent',
   dread: 'drede', //ghastly',
-  dream: 'drem',
+  dream: 'dreame',
   dusk: 'eventide',
   dusty: 'dusti',
 
@@ -52,7 +52,7 @@ const commonVocabulary: Vocabulary = {
   earth: 'erthe',
   elderberry: 'elder',
   elephants: 'olifant',
-  elm: 'elm', //wahu',
+  elm: 'elme', //wahu',
 
   evening: 'evenyng', //dim',
   fangs: 'fangtooth',
@@ -190,9 +190,9 @@ const commonVocabulary: Vocabulary = {
   treasure: 'tresour',
   tyranny: 'tirranye', //mánbealu',
 
-  valley: 'dæl', //vale',
-  veil: 'oferbræ', //veil',
-  water: 'water',
+  valley: 'valeye', //'dæl', //vale',
+  veil: 'veyl', //veil',
+  water: 'watir',
   wax: 'waxe',
   white: 'hwit', // hwit
   wide: 'wyd',
@@ -200,8 +200,8 @@ const commonVocabulary: Vocabulary = {
   wind: 'wynd-',
   wine: '-wyn',
   winter: 'wintre',
-  holly: 'holen-',
-  garden: 'gewyrtún', //garden',
+  holly: 'holi-',
+  garden: 'gardyn', //garden',
   queen: 'cwen', //queen',
   prince: 'prince',
   princess: 'princess',
