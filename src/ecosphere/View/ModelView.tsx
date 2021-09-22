@@ -48,7 +48,7 @@ const BoardTable = ({ tiles, tileColors, tileInspect }: IBoard) => {
     ? tileInspect(inspecting[0], inspecting[1]).split("\n").join("<br/>")
     : <>--</>
 
-  const renderView = true;
+  const renderView = !(process.env.NODE_ENV === 'test');
   return <div style={{}}>
     <ReactTooltip multiline />
     {renderView && <ViewHeightmapThree fullscreen={true} tiles={tiles} />}
