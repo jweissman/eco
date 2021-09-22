@@ -5,7 +5,7 @@ import "@react-three/fiber";
 import { Lights } from "./Lights";
 import Controls from "./Controls";
 import Terrain from "./Terrain";
-import THREE from "three";
+// import THREE from "three";
 
 
 // export default Controls;

@@ -59,7 +59,7 @@ const Terrain = ({ tiles }: { tiles: string[][] }) => { //[number,number][] }) =
   // const imageData = generateTexture(tiles) //new DataTexture2DArray(buffer, width, height) //, 32)
   // const texture = new DataTexture(imageData, width, height) //, format, type, ...);
 
-  const textureSize = 16
+  // const textureSize = 16
   // const dataSize = 10;
   const data = new Uint8Array(width * height);
   
