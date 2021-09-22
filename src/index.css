@@ -36,3 +36,5 @@ canvas,
   padding: 10px;
   transform: translate3d(-50%, -50%, 0);
 }
+
+/* table { max-width: 50vw; overflow: hidden } */

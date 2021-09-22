@@ -29,7 +29,7 @@ export type ModelViewProps = {
 }
 
 const ViewHeightmapThree = ({ fullscreen, tiles }: { fullscreen: boolean, tiles: string[][] }) => <>
-  <Canvas style={{ height: fullscreen ? '100vh' : 'inherit' }} camera={{ zoom: 40, position: [0, 0, 500] }}>
+  <Canvas style={{}} camera={{ zoom: 40, position: [0, 0, 500] }}>
     <Suspense
       fallback={<div className="loading">Loading</div>}
     >
@@ -49,13 +49,17 @@ const BoardTable = ({ tiles, tileColors, tileInspect }: IBoard) => {
     : <>--</>
 
   const renderView = !(process.env.NODE_ENV === 'test');
-  return <div style={{}}>
+  return <div style={{ width: '100vw', height: '76vh', display: 'flex' }}>
     <ReactTooltip multiline />
     {renderView && <ViewHeightmapThree fullscreen={true} tiles={tiles} />}
     <table style={{
       fontFamily: '"Source Code Pro", "Fira Code", "Inconsolata", Menlo, Monaco, "Courier New", monospace',
+      fontSize: '3px',
       cursor: 'pointer',
-      // overflow: 'scroll',
+      userSelect: 'none',
+      overflow: 'hidden',
+      border: 'none',
+      maxWidth: '400px'
       // height: '800px'
     }}>
       <tbody>
@@ -68,8 +72,11 @@ const BoardTable = ({ tiles, tileColors, tileInspect }: IBoard) => {
                   // color: tileInspect(x,y).match(/error/) ? 'red' : tileColors[cell],
                   // maxWidth: '4px',
                   // maxHeight: '2px',
+                  // border: 'black',
+                  border: 'none',
+                  margin: 'none',
                   color: tileColors[cell],
-                  backgroundColor: inspecting[0] === x && inspecting[1] === y ? 'gray': 'black'
+                  backgroundColor: inspecting[0] === x && inspecting[1] === y ? 'white': tileColors[cell]
                 }}
                 key={`cell-${x}-${y}}`}
                 onMouseEnter={() => setInspecting([x,y])}

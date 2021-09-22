@@ -16,4 +16,8 @@ import { OrbitControls } from '@react-three/drei'
 //   return <orbitControls ref={ref} args={[camera, domElement]} {...props} />;
 // };
 
-export default OrbitControls;
+const Controls = () => {
+  return <OrbitControls />
+}
+
+export default Controls;
