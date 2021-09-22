@@ -28,7 +28,7 @@ export type ModelViewProps = {
   board: IBoard
 }
 
-const ViewHeightmap = ({ fullscreen, tiles }: { fullscreen: boolean, tiles: string[][] }) => <>
+const ViewHeightmapThree = ({ fullscreen, tiles }: { fullscreen: boolean, tiles: string[][] }) => <>
   <Canvas style={{ height: fullscreen ? '100vh' : 'inherit' }} camera={{ zoom: 40, position: [0, 0, 500] }}>
     <Suspense
       fallback={<div className="loading">Loading</div>}
@@ -48,10 +48,10 @@ const BoardTable = ({ tiles, tileColors, tileInspect }: IBoard) => {
     ? tileInspect(inspecting[0], inspecting[1]).split("\n").join("<br/>")
     : <>--</>
 
-  const renderView = false;
+  const renderView = true;
   return <div style={{}}>
     <ReactTooltip multiline />
-    {renderView && <ViewHeightmap fullscreen={true} tiles={tiles} />}
+    {renderView && <ViewHeightmapThree fullscreen={true} tiles={tiles} />}
     <table style={{
       fontFamily: '"Source Code Pro", "Fira Code", "Inconsolata", Menlo, Monaco, "Courier New", monospace',
       cursor: 'pointer',

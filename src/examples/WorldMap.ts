@@ -19,10 +19,10 @@ class WorldMap extends Model {
     return eon;
   }
 
-  width = 120 //20
-  height = 26 //35
+  width = 40 //20
+  height = 40 //35
 
-  private mapgenTicks = 40
+  private mapgenTicks = 120
   elevation: Heightmap = new Heightmap(this.width, this.height)
   private terrain: Board = new Board(this.width, this.height)
   // private vegetation: Board = new Board(this.width, this.height)
