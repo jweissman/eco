@@ -29,7 +29,7 @@ export type ModelViewProps = {
 }
 
 const ViewHeightmapThree = ({ fullscreen, tiles }: { fullscreen: boolean, tiles: string[][] }) => <>
-  <Canvas style={{}} camera={{ zoom: 40, position: [0, 0, 500] }}>
+  <Canvas style={{ flex: 3 }} camera={{ zoom: 1, position: [0,100,0]}}>
     <Suspense
       fallback={<div className="loading">Loading</div>}
     >
@@ -49,17 +49,20 @@ const BoardTable = ({ tiles, tileColors, tileInspect }: IBoard) => {
     : <>--</>
 
   const renderView = !(process.env.NODE_ENV === 'test');
+  const renderMap = true; //!(process.env.NODE_ENV === 'test');
   return <div style={{ width: '100vw', height: '76vh', display: 'flex' }}>
     <ReactTooltip multiline />
     {renderView && <ViewHeightmapThree fullscreen={true} tiles={tiles} />}
-    <table style={{
+    {renderMap && <table style={{
       fontFamily: '"Source Code Pro", "Fira Code", "Inconsolata", Menlo, Monaco, "Courier New", monospace',
       fontSize: '3px',
       cursor: 'pointer',
       userSelect: 'none',
       overflow: 'hidden',
-      border: 'none',
-      maxWidth: '400px'
+      // flex: 0.2,
+      // border: 'none',
+      // maxWidth: '400px',
+      // width: '400px',
       // height: '800px'
     }}>
       <tbody>
@@ -73,9 +76,10 @@ const BoardTable = ({ tiles, tileColors, tileInspect }: IBoard) => {
                   // maxWidth: '4px',
                   // maxHeight: '2px',
                   // border: 'black',
-                  border: 'none',
-                  margin: 'none',
-                  color: tileColors[cell],
+                  // border: 'none',
+                  // margin: 'none',
+                  // color: tileColors[cell],
+                  width: '2px', height: '2px',
                   backgroundColor: inspecting[0] === x && inspecting[1] === y ? 'white': tileColors[cell]
                 }}
                 key={`cell-${x}-${y}}`}
@@ -83,12 +87,14 @@ const BoardTable = ({ tiles, tileColors, tileInspect }: IBoard) => {
                 onMouseLeave={() => setInspecting([-1,-1])}
                 data-tip={inspecting[0] === x && inspecting[1] === y ? message : ''}
                 // data-html
-              >{cell}</td>
+              >
+                {/* {cell} */}
+                </td>
             )}
           </tr>
         )}
       </tbody>
-    </table>
+    </table>}
   </div>
 }
 

@@ -16,12 +16,12 @@ export function Lights() {
   return (
     <group>
       {/* <FakeSphere /> */}
-      <ambientLight position={[0, 4, 0]} intensity={0.3} />
+      <ambientLight position={[0, 0, -10]} intensity={4.9} />
       <directionalLight intensity={0.5} position={[0, 0, 0]} color={0xffffff} />
       <pointLight
         intensity={1.9}
         position={[-6, 3, -6]}
-        color={0xcca7ef}
+        color={0xaca7ef}
         // ref={setPointLightOne}
       >
         {/* {luminousMatterOne && <pointLightHelper args={[luminousMatterOne]} />} */}

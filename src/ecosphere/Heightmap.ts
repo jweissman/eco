@@ -60,12 +60,15 @@ export class Heightmap {
         // max + 1,
         // max,
         // value,
+        // max + 1,
+        // max,
+        max,
         max,
         max - 1,
         // max - 2,
         // max - 5,
         // value + 1,
-        // Math.min(...ns)+1,
+        // Math.max(...ns),
         // value - 1,
         // ...ns.filter(n => n >= this.groundLevel)
       ]

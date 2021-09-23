@@ -1,7 +1,7 @@
 import React from "react";
 import "@react-three/fiber";
 import { Lights } from "./Lights";
-// import Controls from "./Controls";
+import Controls from "./Controls";
 import Terrain from "./Terrain";
 import Effects from "./Effects";
 
@@ -9,7 +9,7 @@ import Effects from "./Effects";
 const Scene = ({ tiles }: { tiles: string[][] }) => (
   <>
     <Lights />
-    {/* <Controls /> */}
+    <Controls />
     <Terrain tiles={tiles} />
     <Effects />
   </>
