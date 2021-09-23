@@ -29,13 +29,13 @@ export type ModelViewProps = {
   board: IBoard
 }
 
-const ViewHeightmapThree = ({ isBoardEvolving, tiles }: { isBoardEvolving: boolean, tiles: string[][] }) => <>
+const ViewHeightmapThree = ({ tileColors, isBoardEvolving, tiles }: { tileColors: { [tile: string]: string }, isBoardEvolving: boolean, tiles: string[][] }) => <>
   <Canvas style={{ flex: 3 }} camera={{ zoom: 1, position: [0,10,0]}}>
     <Suspense
       fallback={<div className="loading">Loading</div>}
     >
     </Suspense>
-    <Scene tiles={tiles} evolving={isBoardEvolving} />
+    <Scene tiles={tiles} evolving={isBoardEvolving} tileColors={tileColors} />
   </Canvas>
 </>
  
@@ -53,7 +53,7 @@ const BoardTable = ({ tiles, tileColors, tileInspect, evolving }: IBoard) => {
   const renderView = !(process.env.NODE_ENV === 'test');
   const renderMap = !evolving || tiles.length-1 <= 64; //false; //!(process.env.NODE_ENV === 'test');
   return <div style={{ width: '100vw', height: '70vh', display: 'flex' }}>
-    {renderView && <ViewHeightmapThree isBoardEvolving={evolving} tiles={tiles} />}
+    {renderView && <ViewHeightmapThree isBoardEvolving={evolving} tiles={tiles} tileColors={tileColors} />}
     {renderMap && <BoardView
       tileColors={tileColors}
       message={message}

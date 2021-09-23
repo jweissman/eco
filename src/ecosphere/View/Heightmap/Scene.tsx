@@ -6,11 +6,11 @@ import Terrain from "./Terrain";
 import Effects from "./Effects";
 
 // export default Controls;
-const Scene = ({ tiles, evolving }: { evolving: boolean, tiles: string[][] }) => (
+const Scene = ({ tileColors, tiles, evolving }: { evolving: boolean, tiles: string[][], tileColors: { [tile: string]: string } }) => (
   <>
     <Lights />
     <Controls />
-    <Terrain tiles={tiles} evolving={evolving} />
+    <Terrain tiles={tiles} evolving={evolving} tileColors={tileColors} />
     <Effects />
   </>
 );
