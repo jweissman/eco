@@ -33,7 +33,12 @@ const view = (model: IModel, lastChanges: LastDelta) => {
         ([key, value]) => [key, (value as any as Function)()])
       ),
     lastChanges,
-    board: { tiles: tiles || [], tileColors: tileColors || {}, tileInspect: (model.tileInspect || (() => '--')) }
+    board: {
+      tiles: tiles || [],
+      tileColors: tileColors || {},
+      tileInspect: (model.tileInspect || (() => '--')),
+      evolving: model.tilesEvolving || false
+    }
   }
 
   return props

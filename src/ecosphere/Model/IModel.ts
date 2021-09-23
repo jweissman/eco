@@ -30,6 +30,7 @@ export interface IModel extends ISimulation {
 
   // todo inspect tile to see feature names.. (name of island/continent/body of water/mountain peak)
   tileInspect?(x: number, y: number): string;
+  tilesEvolving?: boolean
 
   // tileRegions?: { [regionName: string]: [number,number][] }
 

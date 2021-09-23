@@ -2,7 +2,7 @@
 
 import React, { Suspense, useState } from "react";
 import { Canvas } from "@react-three/fiber";
-import ReactTooltip from 'react-tooltip';
+// import ReactTooltip from 'react-tooltip';
 
 import { Machine, Moiety, Person } from "../types";
 import { LastDelta } from "../../ModelPresenter";
@@ -15,6 +15,7 @@ import { capitalize } from '../utils/capitalize';
 
 // import './View.css';
 import { Scene } from "./Heightmap/Scene";
+import { BoardView } from "./BoardView";
 
 export type ModelViewProps = {
   modelName: string;
@@ -28,73 +29,38 @@ export type ModelViewProps = {
   board: IBoard
 }
 
-const ViewHeightmapThree = ({ fullscreen, tiles }: { fullscreen: boolean, tiles: string[][] }) => <>
-  <Canvas style={{ flex: 3 }} camera={{ zoom: 1, position: [0,100,0]}}>
+const ViewHeightmapThree = ({ isBoardEvolving, tiles }: { isBoardEvolving: boolean, tiles: string[][] }) => <>
+  <Canvas style={{ flex: 3 }} camera={{ zoom: 1, position: [0,10,0]}}>
     <Suspense
       fallback={<div className="loading">Loading</div>}
     >
     </Suspense>
-    <Scene tiles={tiles} />
+    <Scene tiles={tiles} evolving={isBoardEvolving} />
   </Canvas>
 </>
  
 
-interface IBoard { tiles: string[][], tileColors: { [tile: string]: string }, tileInspect: (x: number, y: number) => string}
+interface IBoard { evolving: boolean, tiles: string[][], tileColors: { [tile: string]: string }, tileInspect: (x: number, y: number) => string}
 
 
-const BoardTable = ({ tiles, tileColors, tileInspect }: IBoard) => {
+const BoardTable = ({ tiles, tileColors, tileInspect, evolving }: IBoard) => {
   const [inspecting, setInspecting] = useState([-1,-1]);
   const message = inspecting[0] > 0 && inspecting[1] > 0
     ? tileInspect(inspecting[0], inspecting[1]).split("\n").join("<br/>")
-    : <>--</>
+    : '' //<>--</>
+  // if (message) console.log(message)
 
   const renderView = !(process.env.NODE_ENV === 'test');
-  const renderMap = true; //!(process.env.NODE_ENV === 'test');
-  return <div style={{ width: '100vw', height: '76vh', display: 'flex' }}>
-    <ReactTooltip multiline />
-    {renderView && <ViewHeightmapThree fullscreen={true} tiles={tiles} />}
-    {renderMap && <table style={{
-      fontFamily: '"Source Code Pro", "Fira Code", "Inconsolata", Menlo, Monaco, "Courier New", monospace',
-      fontSize: '3px',
-      cursor: 'pointer',
-      userSelect: 'none',
-      overflow: 'hidden',
-      // flex: 0.2,
-      // border: 'none',
-      // maxWidth: '400px',
-      // width: '400px',
-      // height: '800px'
-    }}>
-      <tbody>
-        {tiles.map((row: string[], y: number) =>
-          <tr key={`row-${y}`}>
-            {row.map((cell: string, x: number) =>
-              <td
-                style={{
-                  // highlight cell errors..
-                  // color: tileInspect(x,y).match(/error/) ? 'red' : tileColors[cell],
-                  // maxWidth: '4px',
-                  // maxHeight: '2px',
-                  // border: 'black',
-                  // border: 'none',
-                  // margin: 'none',
-                  // color: tileColors[cell],
-                  width: '2px', height: '2px',
-                  backgroundColor: inspecting[0] === x && inspecting[1] === y ? 'white': tileColors[cell]
-                }}
-                key={`cell-${x}-${y}}`}
-                onMouseEnter={() => setInspecting([x,y])}
-                onMouseLeave={() => setInspecting([-1,-1])}
-                data-tip={inspecting[0] === x && inspecting[1] === y ? message : ''}
-                // data-html
-              >
-                {/* {cell} */}
-                </td>
-            )}
-          </tr>
-        )}
-      </tbody>
-    </table>}
+  const renderMap = !evolving || tiles.length-1 <= 64; //false; //!(process.env.NODE_ENV === 'test');
+  return <div style={{ width: '100vw', height: '70vh', display: 'flex' }}>
+    {renderView && <ViewHeightmapThree isBoardEvolving={evolving} tiles={tiles} />}
+    {renderMap && <BoardView
+      tileColors={tileColors}
+      message={message}
+      setInspecting={setInspecting}
+      inspecting={inspecting as [number, number]}
+      tiles={tiles}
+      />}
   </div>
 }
 

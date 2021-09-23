@@ -19,7 +19,7 @@ class WorldMap extends Model {
     return eon;
   }
 
-  size = 128
+  size = 96
   width = this.size
   height = this.size
   // width = 92 //20
@@ -38,6 +38,9 @@ class WorldMap extends Model {
     // this.elevation.binaryImage(),
     // this.elevation.transform(),
   ] }) }
+
+  get tilesEvolving() { return this.aeon === 'Hadean' || this.aeon === 'Archean' }
+  
 
   @boundMethod
   tileInspect(x: number, y: number) {
