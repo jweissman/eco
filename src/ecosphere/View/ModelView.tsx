@@ -29,15 +29,20 @@ export type ModelViewProps = {
   board: IBoard
 }
 
-const ViewHeightmapThree = ({ tileColors, isBoardEvolving, tiles }: { tileColors: { [tile: string]: string }, isBoardEvolving: boolean, tiles: string[][] }) => <>
-  <Canvas style={{ flex: 3 }} camera={{ zoom: 1, position: [0,10,0]}}>
+const ViewHeightmapThree = ({ tileColors, isBoardEvolving, tiles }: { tileColors: { [tile: string]: string }, isBoardEvolving: boolean, tiles: string[][] }) => {
+return <>
+  <Canvas
+     camera={{ zoom: 1, position: [0,10,0], near: 0.3 }}
+  >
     <Suspense
       fallback={<div className="loading">Loading</div>}
     >
     </Suspense>
     <Scene tiles={tiles} evolving={isBoardEvolving} tileColors={tileColors} />
+    
   </Canvas>
 </>
+}
  
 
 interface IBoard { evolving: boolean, tiles: string[][], tileColors: { [tile: string]: string }, tileInspect: (x: number, y: number) => string}

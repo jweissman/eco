@@ -1,5 +1,6 @@
 import React from 'react';
 import { DataTexture, LuminanceFormat, RGBAFormat, UnsignedByteType, } from "three";
+// import { SkyBox } from './Scene';
 // import { useFrame } from '@react-three/fiber';
     var colors: { [color: string]: string } = {"aliceblue":"#f0f8ff","antiquewhite":"#faebd7","aqua":"#00ffff","aquamarine":"#7fffd4","azure":"#f0ffff",
     "beige":"#f5f5dc","bisque":"#ffe4c4","black":"#000000","blanchedalmond":"#ffebcd","blue":"#0000ff","blueviolet":"#8a2be2","brown":"#a52a2a","burlywood":"#deb887",
@@ -61,20 +62,16 @@ const bilinearInterpolator = (func: (x: number, y: number) => number) => (x: num
   / ((x2 - x1) * (y2 - y1));
 }
 
-const Terrain = ({ tileColors, evolving, tiles }: { evolving: boolean, tiles: string[][], tileColors: { [tile: string]: string } }) => {
-  // const [hover, setHover] = useState([0,0])
-  // const [_mesh, set] = useState()
-  // useFrame(() => {
-    // if (mesh) { (mesh as any).rotation.z += 0.005; }
-  // });
-  tiles = tiles || []
-
+const makeImageData = (
+  tiles: string[][],
+  tileColors: { [tile: string]: string },  
+  imageSize: number,
+  // evolving: boolean
+): { rgb: Uint8Array, grayscale: Uint8Array } => {
   var tileWidth = tiles[0].length,
       tileHeight = tiles.length;
-  
-  const interpolationRate = evolving ? 1 : 4
-  const imgSize = tileWidth * interpolationRate
-  const width = imgSize, height = imgSize
+
+  const width = imageSize, height = imageSize
   
   const grayscaleData = new Uint8Array(width * height);
   const rgbData = new Uint8Array(width * height * 4);
@@ -123,10 +120,82 @@ const Terrain = ({ tileColors, evolving, tiles }: { evolving: boolean, tiles: st
         //  greenData[rgbPos + 3] = 255
      }
     }
+    return { rgb: rgbData, grayscale: grayscaleData }
+}
+
+let cachedImageData: { grayscale: Uint8Array, rgb: Uint8Array } | null = null // {} // grayscale, rgb }
+
+const Terrain = ({ tileColors, evolving, tiles }: { evolving: boolean, tiles: string[][], tileColors: { [tile: string]: string } }) => {
+  // const [hover, setHover] = useState([0,0])
+  // const [_mesh, set] = useState()
+  // useFrame(() => {
+    // if (mesh) { (mesh as any).rotation.z += 0.005; }
+  // });
+  tiles = tiles || []
+
+  var tileWidth = tiles[0].length;
+      // tileHeight = tiles.length;
+  
+  const interpolationRate = evolving ? 1 : 8; //8;
+  const imgSize = tileWidth * interpolationRate;
+  const width = imgSize, height = imgSize;
+
+  const { grayscale, rgb }: { grayscale: Uint8Array, rgb: Uint8Array } = cachedImageData
+    || makeImageData(tiles, tileColors, imgSize) //, evolving)
+  if (!evolving) { cachedImageData = { grayscale, rgb }}
+  else { cachedImageData = null }
+  
+  // // const grayscaleData = new Uint8Array(width * height);
+  // // const rgbData = new Uint8Array(width * height * 4);
+  // // const greenData = new Uint8ClampedArray(width * height * 4)
+  // // }
+  // const interpolate = bilinearInterpolator((x,y) => {
+  //   if (tiles[y] !== undefined) return parseInt(tiles[y][x], 10)
+  //   return 0
+  // })
+  // // todo just interpolate for each color channel independently i think..?!
+  
+  //  for(var y = 0; y < height-1; y++) {
+  //    for(var x = 0; x < width-1; x++) {
+  //        var pos = (y * width + x)// * 4; // position in buffer based on x and y
+  //       //  let value = hover[0] === x && hover[1] === y
+  //       //  ? 0
+  //        let value = interpolate(
+  //          tileWidth - ((x/(width)) * (tileWidth)),  //+ 0.1,
+  //          (y/(height)) * (tileHeight), // + 0.1,
+  //         //  tiles
+  //          ) //parseInt(tiles[y][x] || '0', 10)
+  //        if (value < 4) { grayscale[pos] = 100 }
+  //       //  else if (value >= 9) { data[pos] = 225 }
+  //        else grayscale[pos] = value * 25 //> 0 ? (Math.log(value*8) * 25) : 0 //Math.floor(value * 25)
+
+
+  //       //  var rgbPos = ()
+  //        var rgbPos = (y * width + x) * 4; // position in buffer based on x and y
+  //        let color = tileColors[Math.round(value)]
+  //        let hex: string = colorNameToHex(color) //tileColors[Math.round(value)])
+  //        var red = parseInt(hex[1]+hex[2],16);
+  //        var green = parseInt(hex[3]+hex[4],16);
+  //        var blue = parseInt(hex[5]+hex[6],16);
+
+  //        rgb[rgbPos    ] = red //value * 25
+  //        rgb[rgbPos + 1] = green //value * 25
+  //        rgb[rgbPos + 2] = blue // value * 25
+  //        rgb[rgbPos + 3] = 255
+
+  //        // would love to interpolate these colors!!!
+
+  //       //  var rgbPos = (y * width + x) * 4; // position in buffer based on x and y
+  //       //  greenData[rgbPos    ] = 0 //value * 25
+  //       //  greenData[rgbPos + 1] = value * 25
+  //       //  greenData[rgbPos + 2] = 0 //value * 25
+  //       //  greenData[rgbPos + 3] = 255
+  //    }
+  //   }
   
   
-  const grayscaleTexture = new DataTexture(grayscaleData, width, height, LuminanceFormat, UnsignedByteType);
-  const rgbTexture = new DataTexture(rgbData, width, height, RGBAFormat, UnsignedByteType);
+  const grayscaleTexture = new DataTexture(grayscale, width, height, LuminanceFormat, UnsignedByteType);
+  const rgbTexture = new DataTexture(rgb, width, height, RGBAFormat, UnsignedByteType);
   // const greenTexture = new DataTexture(greenData, width, height, LuminanceFormat, UnsignedByteType) //UnsignedByteType);
   
   // texture.depthTest
@@ -134,10 +203,11 @@ const Terrain = ({ tileColors, evolving, tiles }: { evolving: boolean, tiles: st
   const geometry = 
       <planeBufferGeometry attach="geometry" args={[
         // width, height,
-        // 16, 16,
-        32, 32,
-        256, 256
-        // 1024, 1024
+        16, 16,
+        // 32, 32,
+        // 256, 256,
+        // 512, 512,
+        1024, 1024
         // 2048, 2048
       ]} />
   
@@ -152,13 +222,16 @@ const Terrain = ({ tileColors, evolving, tiles }: { evolving: boolean, tiles: st
       <meshPhongMaterial
         attach="material"
         // color={"hotpink"}
+        color={"navajowhite"}
+        // color={"ghostwhite"}
         // color={"forestgreen"}
+        // color={"mediumblue"}
         // bumpMap={greenTexture}
         // map={grayscaleTexture}
         map={rgbTexture}
         
         displacementMap={grayscaleTexture}
-        displacementScale={5}
+        displacementScale={1.2}
 
         shininess={2}
         flatShading

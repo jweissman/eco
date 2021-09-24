@@ -78,22 +78,34 @@ class WorldMap extends Model {
     '\'': 'darkgreen',
 
     // elevation map
-    '0': 'black',
+    // '0': 'black',
     // '1': 'white',
 
     // heightmap
-    '1': 'black',
-    '2': 'navy',
-    '3': 'midnightblue',
+    // '1': 'black',
+    '0': 'navy',
+    '1': 'navy',
+    // '2': 'navy',
+    '2': 'midnightblue',
+    '3': 'blue',
     // '4': 'midnightblue',
+    // '4': 'moccasin',
+    // '4': 'palegoldenrod',
     // '4': 'deepskyblue',
     // '5': 'deepskyblue',
-  '4': 'moccasin',
+    '4': 'lightblue',
+    // '4': 'forestgreen',
+    // '4': 'mediumorchid',
+    // '4': 'midnightblue',
     '5': 'lightgreen',
+    // '5': 'forestgreen',
+    // '6': 'darkgreen',
     '6': 'forestgreen',
+    // '7': 'forestgreen',
+    // '8': 'forestgreen',
     '7': 'darkgreen',
     '8': 'darkslategray',
-    '9': 'gray',
+    '9': 'white',
   }
 
   // todo profiles? islands/continents/ocean/grasslands/mountains
