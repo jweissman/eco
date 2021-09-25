@@ -6,6 +6,7 @@ import {
   Pixelation,
   Noise,
   Bloom, 
+  // Outline,
   // Glitch,
   // Pixelation,
   // DepthOfField, Noise, Vignette
@@ -24,6 +25,7 @@ export default function Effects() {
         <Pixelation granularity={2} />
         <Noise opacity={0.52} />
         <DotScreen scale={0.6} />
+        {/* <Outline pulseSpeed={2} edgeStrength={5} visibleEdgeColor={0x0a0a0a} /> */}
 
     </EffectComposer>
   )

@@ -192,8 +192,9 @@ const Terrain = ({ tileColors, evolving, tiles }: { evolving: boolean, tiles: st
   const geometry = 
       <planeBufferGeometry attach="geometry" args={[
         // width, height,
-        16, 16,
+        // 16, 16,
         // 32, 32,
+        64, 64,
         // 256, 256,
         // 512, 512,
         // 1024, 1024

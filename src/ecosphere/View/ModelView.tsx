@@ -30,7 +30,7 @@ export type ModelViewProps = {
 const ViewHeightmapThree = ({ tileColors, isBoardEvolving, tiles }: { tileColors: { [tile: string]: string }, isBoardEvolving: boolean, tiles: string[][] }) => {
 return <>
   <Canvas
-     camera={{ zoom: 1, position: [0,10,0], near: 0.3 }}
+     camera={{ zoom: 2, position: [0,10,0], near: 0.05 }}
   >
     <Suspense
       fallback={<div className="loading">Loading</div>}

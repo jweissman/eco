@@ -1,23 +1,7 @@
-// import React, { useRef } from "react";
-// import { extend, useFrame, useThree } from "@react-three/fiber";
-import { OrbitControls } from '@react-three/drei'
-
-// import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-
-// extend({ OrbitControls });
-
-// const Controls = props => {
-//   const ref = useRef();
-//   const {
-//     camera,
-//     gl: { domElement }
-//   } = useThree();
-//   useFrame(() => ref.current && ref.current.update());
-//   return <orbitControls ref={ref} args={[camera, domElement]} {...props} />;
-// };
+import { FlyControls } from '@react-three/drei'
 
 const Controls = () => {
-  return <OrbitControls />
+  return <FlyControls movementSpeed={2.4} rollSpeed={1} dragToLook />
 }
 
 export default Controls;
