@@ -1,6 +1,4 @@
-// import React, { useState } from 'react';
-
-import React, { Suspense, useState } from "react";
+import React, { Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
 // import ReactTooltip from 'react-tooltip';
 
@@ -49,22 +47,21 @@ interface IBoard { evolving: boolean, tiles: string[][], tileColors: { [tile: st
 
 
 const BoardTable = ({ tiles, tileColors, tileInspect, evolving }: IBoard) => {
-  const [inspecting, setInspecting] = useState([-1,-1]);
-  const message = inspecting[0] > 0 && inspecting[1] > 0
-    ? tileInspect(inspecting[0], inspecting[1]).split("\n").join("<br/>")
-    : '' //<>--</>
   // if (message) console.log(message)
 
-  const renderView = !(process.env.NODE_ENV === 'test');
-  const renderMap = !evolving || tiles.length-1 <= 64; //false; //!(process.env.NODE_ENV === 'test');
+  const showThreeScene = !(process.env.NODE_ENV === 'test');
+  const showCartogram = !evolving || tiles.length-1 <= 64; //false; //!(process.env.NODE_ENV === 'test');
+  const isMapCondensed = false
   return <div style={{ width: '100vw', height: '70vh', display: 'flex' }}>
-    {renderView && <ViewHeightmapThree isBoardEvolving={evolving} tiles={tiles} tileColors={tileColors} />}
-    {renderMap && <BoardView
+    {showThreeScene && <ViewHeightmapThree isBoardEvolving={evolving} tiles={tiles} tileColors={tileColors} />}
+    {showCartogram && <BoardView
       tileColors={tileColors}
-      message={message}
-      setInspecting={setInspecting}
-      inspecting={inspecting as [number, number]}
+      tileInspect={tileInspect}
+      // message={message}
+      // setInspecting={setInspecting}
+      // inspecting={inspecting as [number, number]}
       tiles={tiles}
+      condensed={isMapCondensed}
       />}
   </div>
 }

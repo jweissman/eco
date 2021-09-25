@@ -2,8 +2,13 @@ import React from "react";
 import "@react-three/fiber";
 import {
   EffectComposer,
+  DotScreen,
+  Pixelation,
+  Noise,
+  Bloom, 
+  // Glitch,
   // Pixelation,
-  // DepthOfField, Bloom, Noise, Vignette
+  // DepthOfField, Noise, Vignette
 } from '@react-three/postprocessing'
 // import { EffectComposer, Pixelation, Vignette } from '@react-three/postprocessing'
 
@@ -11,12 +16,14 @@ import {
 export default function Effects() {
   return (
     <EffectComposer>
-        {/* <Pixelation granularity={2} />
-        <Vignette eskil={false} offset={0.1} darkness={1.01} />
-      <Bloom luminanceThreshold={0} luminanceSmoothing={0.9} height={300} />
-        <DepthOfField focusDistance={0} focalLength={0.55} bokehScale={2} height={600} /> 
-        <Noise opacity={0.02} /> */}
-        {/* <DotScreen scale={2} /> */}
+      {/* <Glitch dtSize={20} /> */}
+        {/* <Vignette eskil={false} offset={0.1} darkness={1.01} /> */}
+        {/* <DepthOfField focusDistance={0} focalLength={0.55} bokehScale={2} height={600} />  */}
+        <Bloom luminanceThreshold={0} luminanceSmoothing={0.9} height={300} />
+        <DotScreen scale={2} />
+        <Pixelation granularity={2} />
+        <Noise opacity={0.52} />
+        <DotScreen scale={0.6} />
 
     </EffectComposer>
   )

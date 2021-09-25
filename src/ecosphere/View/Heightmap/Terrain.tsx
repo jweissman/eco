@@ -77,38 +77,75 @@ const makeImageData = (
   const rgbData = new Uint8Array(width * height * 4);
   // const greenData = new Uint8ClampedArray(width * height * 4)
   // }
-  const interpolate = bilinearInterpolator((x,y) => {
+  const heightAt = (x: number, y: number) => {
     if (tiles[y] !== undefined) return parseInt(tiles[y][x], 10)
     return 0
-  })
+  }
+  const colorAt = (x: number, y: number) => {
+    let h = heightAt(x,y)
+    let color = tileColors[Math.round(h)]
+    return color
+  }
+  const hexValueAt = (x: number, y: number) => {
+    let hex: string = colorNameToHex(colorAt(x,y)) //tileColors[Math.round(value)])
+    return hex;
+  }
+
+  const interpolate = bilinearInterpolator(heightAt)
+  // (x,y) => {
+  //   if (tiles[y] !== undefined) return parseInt(tiles[y][x], 10)
+  //   return 0
+  // })
   // todo just interpolate for each color channel independently i think..?!
+  // return just green channel
+  const interpolateRed = bilinearInterpolator((x, y) => {
+    let hex: string = hexValueAt(x,y) //colorNameToHex(colorAt(x,y)) //tileColors[Math.round(value)])
+    var red = parseInt(hex[1]+hex[2],16);
+    return red;
+  })
+  const interpolateGreen = bilinearInterpolator((x, y) => {
+    let hex: string = hexValueAt(x,y) //colorNameToHex(colorAt(x,y)) //tileColors[Math.round(value)])
+    var green = parseInt(hex[3]+hex[4],16);
+    return green;
+  })
+  const interpolateBlue = bilinearInterpolator((x, y) => {
+    let hex: string = hexValueAt(x,y) // colorNameToHex(colorAt(x,y)) //tileColors[Math.round(value)])
+    var blue = parseInt(hex[5]+hex[6],16);
+    return blue;
+  })
+
   
    for(var y = 0; y < height-1; y++) {
      for(var x = 0; x < width-1; x++) {
          var pos = (y * width + x)// * 4; // position in buffer based on x and y
         //  let value = hover[0] === x && hover[1] === y
         //  ? 0
+           let x0 = tileWidth - ((x/(width)) * (tileWidth)),  //+ 0.1,
+           y0 = (y/(height)) * (tileHeight); // + 0.1,
+
          let value = interpolate(
-           tileWidth - ((x/(width)) * (tileWidth)),  //+ 0.1,
-           (y/(height)) * (tileHeight), // + 0.1,
+           x0, y0
+          //  tileWidth - ((x/(width)) * (tileWidth)),  //+ 0.1,
+          //  (y/(height)) * (tileHeight), // + 0.1,
           //  tiles
            ) //parseInt(tiles[y][x] || '0', 10)
-         if (value < 4) { grayscaleData[pos] = 100 }
+        //  if (value < 4) { grayscaleData[pos] = 100 } else
         //  else if (value >= 9) { data[pos] = 225 }
-         else grayscaleData[pos] = value * 25 //> 0 ? (Math.log(value*8) * 25) : 0 //Math.floor(value * 25)
+         grayscaleData[pos] = value * 25 //> 0 ? (Math.log(value*8) * 25) : 0 //Math.floor(value * 25)
 
 
         //  var rgbPos = ()
          var rgbPos = (y * width + x) * 4; // position in buffer based on x and y
-         let color = tileColors[Math.round(value)]
-         let hex: string = colorNameToHex(color) //tileColors[Math.round(value)])
-         var red = parseInt(hex[1]+hex[2],16);
-         var green = parseInt(hex[3]+hex[4],16);
-         var blue = parseInt(hex[5]+hex[6],16);
+        //  let color = tileColors[Math.round(value)]
+        //  let hex: string = colorNameToHex(color) //tileColors[Math.round(value)])
+        //  var red = parseInt(hex[1]+hex[2],16);
+        //  var green = parseInt(hex[3]+hex[4],16);
+        //  var blue = parseInt(hex[5]+hex[6],16);
 
-         rgbData[rgbPos    ] = red //value * 25
-         rgbData[rgbPos + 1] = green //value * 25
-         rgbData[rgbPos + 2] = blue // value * 25
+        //  let factor = 25
+         rgbData[rgbPos    ] = interpolateRed(x0,y0) //* 25 //value * 25
+         rgbData[rgbPos + 1] = interpolateGreen(x0,y0) //value * 25
+         rgbData[rgbPos + 2] = interpolateBlue(x0,y0) // value * 25
          rgbData[rgbPos + 3] = 255
 
          // would love to interpolate these colors!!!
@@ -136,7 +173,7 @@ const Terrain = ({ tileColors, evolving, tiles }: { evolving: boolean, tiles: st
   var tileWidth = tiles[0].length;
       // tileHeight = tiles.length;
   
-  const interpolationRate = evolving ? 1 : 8; //8;
+  const interpolationRate = evolving ? 1 : 16; //8;
   const imgSize = tileWidth * interpolationRate;
   const width = imgSize, height = imgSize;
 
@@ -144,54 +181,6 @@ const Terrain = ({ tileColors, evolving, tiles }: { evolving: boolean, tiles: st
     || makeImageData(tiles, tileColors, imgSize) //, evolving)
   if (!evolving) { cachedImageData = { grayscale, rgb }}
   else { cachedImageData = null }
-  
-  // // const grayscaleData = new Uint8Array(width * height);
-  // // const rgbData = new Uint8Array(width * height * 4);
-  // // const greenData = new Uint8ClampedArray(width * height * 4)
-  // // }
-  // const interpolate = bilinearInterpolator((x,y) => {
-  //   if (tiles[y] !== undefined) return parseInt(tiles[y][x], 10)
-  //   return 0
-  // })
-  // // todo just interpolate for each color channel independently i think..?!
-  
-  //  for(var y = 0; y < height-1; y++) {
-  //    for(var x = 0; x < width-1; x++) {
-  //        var pos = (y * width + x)// * 4; // position in buffer based on x and y
-  //       //  let value = hover[0] === x && hover[1] === y
-  //       //  ? 0
-  //        let value = interpolate(
-  //          tileWidth - ((x/(width)) * (tileWidth)),  //+ 0.1,
-  //          (y/(height)) * (tileHeight), // + 0.1,
-  //         //  tiles
-  //          ) //parseInt(tiles[y][x] || '0', 10)
-  //        if (value < 4) { grayscale[pos] = 100 }
-  //       //  else if (value >= 9) { data[pos] = 225 }
-  //        else grayscale[pos] = value * 25 //> 0 ? (Math.log(value*8) * 25) : 0 //Math.floor(value * 25)
-
-
-  //       //  var rgbPos = ()
-  //        var rgbPos = (y * width + x) * 4; // position in buffer based on x and y
-  //        let color = tileColors[Math.round(value)]
-  //        let hex: string = colorNameToHex(color) //tileColors[Math.round(value)])
-  //        var red = parseInt(hex[1]+hex[2],16);
-  //        var green = parseInt(hex[3]+hex[4],16);
-  //        var blue = parseInt(hex[5]+hex[6],16);
-
-  //        rgb[rgbPos    ] = red //value * 25
-  //        rgb[rgbPos + 1] = green //value * 25
-  //        rgb[rgbPos + 2] = blue // value * 25
-  //        rgb[rgbPos + 3] = 255
-
-  //        // would love to interpolate these colors!!!
-
-  //       //  var rgbPos = (y * width + x) * 4; // position in buffer based on x and y
-  //       //  greenData[rgbPos    ] = 0 //value * 25
-  //       //  greenData[rgbPos + 1] = value * 25
-  //       //  greenData[rgbPos + 2] = 0 //value * 25
-  //       //  greenData[rgbPos + 3] = 255
-  //    }
-  //   }
   
   
   const grayscaleTexture = new DataTexture(grayscale, width, height, LuminanceFormat, UnsignedByteType);
@@ -207,8 +196,8 @@ const Terrain = ({ tileColors, evolving, tiles }: { evolving: boolean, tiles: st
         // 32, 32,
         // 256, 256,
         // 512, 512,
-        1024, 1024
-        // 2048, 2048
+        // 1024, 1024
+        2048, 2048
       ]} />
   
   return <>
@@ -231,7 +220,7 @@ const Terrain = ({ tileColors, evolving, tiles }: { evolving: boolean, tiles: st
         map={rgbTexture}
         
         displacementMap={grayscaleTexture}
-        displacementScale={1.2}
+        displacementScale={2.6}
 
         shininess={2}
         flatShading

@@ -61,14 +61,15 @@ export class Heightmap {
         // max,
         // value,
         // max + 1,
-        // max,
+        max,
+        max,
         max,
         max,
         max - 1,
         // max - 2,
         // max - 5,
         // value + 1,
-        // Math.max(...ns),
+        // Math.min(...ns),
         // value - 1,
         // ...ns.filter(n => n >= this.groundLevel)
       ]
@@ -140,7 +141,7 @@ export class Heightmap {
     if (hades) {
       this.orogeny(mountains)
       this.erode()
-      if (d100 < 32) { this.bombard(36); }
+      if (d100 < 32) { this.bombard(this.height * 0.5); }
     } else {
       this.smooth()
       // if (d100 < 24) this.smooth()

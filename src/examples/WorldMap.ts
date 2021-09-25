@@ -9,6 +9,8 @@ import { Heightmap } from "../ecosphere/Heightmap";
 import { Cartographer } from "../ecosphere/Cartographer";
 
 type Aeon = 'Hadean' | 'Archean' | 'Proterozoic'
+
+
 class WorldMap extends Model {
   notes = { aeon: () => this.aeon }
 
@@ -19,7 +21,7 @@ class WorldMap extends Model {
     return eon;
   }
 
-  size = 128
+  size = 64 //128 //256
   width = this.size
   height = this.size
   // width = 92 //20
@@ -31,6 +33,18 @@ class WorldMap extends Model {
   // private vegetation: Board = new Board(this.width, this.height)
   private mountainSpots: [number, number][] = []
   private areaPercent = Math.floor(this.area / 100);
+
+  constructor() {
+    super("Overworld")
+    this.evolve(this.evolution)
+    this.actions.create({ name: 'Geoform', act: () => {
+      this.ticks = 0
+      this.cartographer.reset()
+      // this.cartographer._regions = {}
+      // this.cartographer._waterways = {}
+    }});
+    // this.reboot()
+  }
 
   get tiles() { return this.elevation.map.view({ overlays: [
     // this.vegetation,
@@ -83,44 +97,30 @@ class WorldMap extends Model {
 
     // heightmap
     // '1': 'black',
+    // '0': 'navy',
+    // '1': 'navy',
+    // '2': 'midnightblue',
+    // '3': 'midnightblue',
+    // '4': 'blue',
+    // '5': 'moccasin',
+    // '6': 'forestgreen',
+    // '7': 'darkgreen',
+    // '8': 'darkgreen',
+    // '9': 'darkgreen',
     '0': 'navy',
     '1': 'navy',
-    // '2': 'navy',
     '2': 'midnightblue',
-    '3': 'blue',
-    // '4': 'midnightblue',
-    // '4': 'moccasin',
-    // '4': 'palegoldenrod',
-    // '4': 'deepskyblue',
-    // '5': 'deepskyblue',
-    '4': 'lightblue',
-    // '4': 'forestgreen',
-    // '4': 'mediumorchid',
-    // '4': 'midnightblue',
+    '3': 'mediumblue',
+    '4': 'mediumblue',
     '5': 'lightgreen',
-    // '5': 'forestgreen',
-    // '6': 'darkgreen',
     '6': 'forestgreen',
-    // '7': 'forestgreen',
-    // '8': 'forestgreen',
     '7': 'darkgreen',
     '8': 'darkslategray',
-    '9': 'white',
+    '9': 'darkslategray',
   }
 
   // todo profiles? islands/continents/ocean/grasslands/mountains
 
-  constructor() {
-    super("Overworld")
-    this.evolve(this.evolution)
-    this.actions.create({ name: 'Geoform', act: () => {
-      this.ticks = 0
-      this.cartographer.reset()
-      // this.cartographer._regions = {}
-      // this.cartographer._waterways = {}
-    }});
-    // this.reboot()
-  }
 
   @boundMethod
   randomPosition(): [number, number] {
