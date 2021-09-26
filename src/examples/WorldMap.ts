@@ -21,13 +21,14 @@ class WorldMap extends Model {
     return eon;
   }
 
-  size = 64 //128 //256
+  size = 256
+  // size = 128 //256
   width = this.size
   height = this.size
   // width = 92 //20
   // height = 92 //35
 
-  private mapgenTicks = 120
+  private mapgenTicks = 300
   elevation: Heightmap = new Heightmap(this.width, this.height)
   private terrain: Board = new Board(this.width, this.height)
   // private vegetation: Board = new Board(this.width, this.height)
@@ -46,7 +47,7 @@ class WorldMap extends Model {
     // this.reboot()
   }
 
-  get tiles() { return this.elevation.map.view({ overlays: [
+  get tiles() { return this.elevation.view({ overlays: [
     // this.vegetation,
     // this.terrain,
     // this.elevation.binaryImage(),
@@ -173,7 +174,7 @@ class WorldMap extends Model {
 
   buildTerrain() {
     this.terrain.each((x,y,_value) => {
-      let height = parseInt(this.elevation.map.at(x,y) || '0')
+      let height = this.elevation.at(x,y) //parseInt(this.elevation.at(x,y) || '0')
       if (height >= 9) {
         this.terrain.write("^", x, y)
       } else if (height <= 4) {

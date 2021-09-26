@@ -194,8 +194,9 @@ const Terrain = ({ tileColors, evolving, tiles }: { evolving: boolean, tiles: st
         // width, height,
         // 16, 16,
         // 32, 32,
-        64, 64,
-        // 256, 256,
+        // 64, 64,
+        // 128, 128,
+        256, 256,
         // 512, 512,
         // 1024, 1024
         2048, 2048
@@ -221,7 +222,7 @@ const Terrain = ({ tileColors, evolving, tiles }: { evolving: boolean, tiles: st
         map={rgbTexture}
         
         displacementMap={grayscaleTexture}
-        displacementScale={2.6}
+      displacementScale={10}
 
         shininess={2}
         flatShading

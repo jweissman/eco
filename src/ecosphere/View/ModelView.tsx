@@ -30,7 +30,7 @@ export type ModelViewProps = {
 const ViewHeightmapThree = ({ tileColors, isBoardEvolving, tiles }: { tileColors: { [tile: string]: string }, isBoardEvolving: boolean, tiles: string[][] }) => {
 return <>
   <Canvas
-     camera={{ zoom: 2, position: [0,10,0], near: 0.05 }}
+     camera={{ zoom: 1, position: [0,100,0], rotation: [Math.PI,Math.PI,Math.PI], near: 0.05 }}
   >
     <Suspense
       fallback={<div className="loading">Loading</div>}
@@ -50,7 +50,7 @@ const BoardTable = ({ tiles, tileColors, tileInspect, evolving }: IBoard) => {
   // if (message) console.log(message)
 
   const showThreeScene = !(process.env.NODE_ENV === 'test');
-  const showCartogram = !evolving || tiles.length-1 <= 64; //false; //!(process.env.NODE_ENV === 'test');
+  const showCartogram = false // !evolving || tiles.length-1 <= 64; //false; //!(process.env.NODE_ENV === 'test');
   const isMapCondensed = false
   return <div style={{ width: '100vw', height: '70vh', display: 'flex' }}>
     {showThreeScene && <ViewHeightmapThree isBoardEvolving={evolving} tiles={tiles} tileColors={tileColors} />}

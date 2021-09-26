@@ -171,7 +171,7 @@ export class Cartographer {
   get bays() {
     if (Object.keys(this._bays).length === 0) {
       this._bays = this.elevation.bays()
-      console.log("Found bays", this._bays)
+      // console.log("Found bays", this._bays)
     }
     return this._bays
   }

@@ -2,7 +2,6 @@ export type Tiles = string[][]
 
 const first = <T>(arr: T[], pred: (x: T) => boolean): T => {
   return arr.filter(pred)[0]
-  // return arr[0]
 }
 
 export class Board {
