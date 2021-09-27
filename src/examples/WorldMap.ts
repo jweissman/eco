@@ -21,8 +21,8 @@ class WorldMap extends Model {
     return eon;
   }
 
-  // size = 128
   size = 128
+  // size = 64
   width = this.size
   height = this.size
 
@@ -110,9 +110,9 @@ class WorldMap extends Model {
     '1': 'navy',
     '2': 'midnightblue',
     '3': 'midnightblue',
-    '4': 'mediumblue',
-    '5': 'moccasin',
-    '6': 'forestgreen',
+    '4': 'moccasin', //mediumblue',
+    '5': 'forestgreen',
+    '6': 'green',
     '7': 'green',
     '8': 'darkgreen',
     '9': 'darkslategray',

@@ -1,4 +1,5 @@
 import React from 'react';
+// import { Water } from '@react-three/drei'
 import { DataTexture, LuminanceFormat, RGBAFormat, UnsignedByteType, } from "three";
 // import { SkyBox } from './Scene';
 // import { useFrame } from '@react-three/fiber';
@@ -193,15 +194,17 @@ const Terrain = ({ tileColors, evolving, tiles }: { evolving: boolean, tiles: st
       <planeBufferGeometry attach="geometry" args={[
         // width, height,
         // 8, 8,
-        16, 16,
+        // 16, 16,
         // 32, 32,
         // 64, 64,
-        // 128, 128,
+        128, 128,
         // 512, 512,
         // 1024, 1024,
         2048, 2048
         // 4096, 4096,
       ]} />
+
+  const showOcean = true
   
   return <>
   {/* <mesh><boxGeometry /></mesh> */}
@@ -216,11 +219,34 @@ const Terrain = ({ tileColors, evolving, tiles }: { evolving: boolean, tiles: st
         color={"navajowhite"}
         map={rgbTexture}
         displacementMap={grayscaleTexture}
-        displacementScale={3}
+        displacementScale={10}
         shininess={2}
         flatShading
       />
     </mesh>
+
+    {showOcean && <mesh
+      // ref={set}
+      rotation={[-Math.PI/2,0,0]}
+      position={[0,4,0]}
+    >
+      {geometry}
+       
+      <meshPhongMaterial
+        attach="material"
+        color={"darkblue"}
+        transparent
+        opacity={0.85}
+        // alp
+        // opacity={0} //0.8}
+        // map={rgbTexture}
+        // displacementMap={grayscaleTexture}
+        displacementScale={0.5}
+        shininess={1}
+        flatShading
+      />
+    </mesh>}
+
   </>;
 };  
 

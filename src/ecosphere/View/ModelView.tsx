@@ -1,6 +1,4 @@
 import React from "react";
-// import ReactTooltip from 'react-tooltip';
-
 import { Machine, Moiety, Person } from "../types";
 import { LastDelta } from "../../ModelPresenter";
 import { presentItem } from "../Model/presentItem";
@@ -9,10 +7,7 @@ import { presentCommunity } from "./presentCommunity";
 import { Population } from "../Population";
 import { Community } from "../Community";
 import { capitalize } from '../utils/capitalize';
-
-// import './View.css';
-import { BoardView } from "./BoardView";
-import { HeightmapCanvas } from "./Heightmap/Canvas";
+import { BoardPresenter, IBoard } from "./BoardPresenter";
 
 export type ModelViewProps = {
   modelName: string;
@@ -26,40 +21,9 @@ export type ModelViewProps = {
   board: IBoard
 }
 
-
- 
-
-interface IBoard { evolving: boolean, tiles: string[][], tileColors: { [tile: string]: string }, tileInspect: (x: number, y: number) => string}
-
-
-const BoardTable = ({ tiles, tileColors, tileInspect, evolving }: IBoard) => {
-  // if (message) console.log(message)
-
-  const showThreeScene = !(process.env.NODE_ENV === 'test');
-  const showCartogram = tiles.length-1 <= 64 && !evolving; //false; //!(process.env.NODE_ENV === 'test');
-  const isMapCondensed = true //false
-  return <div style={{ width: '100vw', height: '70vh', display: 'flex' }}>
-    {showThreeScene && <HeightmapCanvas
-      isBoardEvolving={evolving}
-      tiles={tiles}
-      tileColors={tileColors}
-    />}
-    {showCartogram && <BoardView
-      tileColors={tileColors}
-      tileInspect={tileInspect}
-      // message={message}
-      // setInspecting={setInspecting}
-      // inspecting={inspecting as [number, number]}
-      tiles={tiles}
-      condensed={isMapCondensed}
-      />}
-  </div>
-}
-
 export function ModelView({
   modelName,
   items,
-  // individuals,
   communities,
   machines,
   animals,
@@ -67,14 +31,13 @@ export function ModelView({
   metrics,
   notes,
   board,
-  // work
 }: ModelViewProps) {
   const folks = (communities as Community[]).map(presentCommunity)
   // console.log({ community: communities[0].list() })
   return <div className='Model'>
     {/* <ViewHeightmap /> */}
     <h4 aria-label='Model Title' style={{display: 'none'}}>{modelName}</h4>
-    {board.tiles.length > 0 && <BoardTable {...board} />}
+    {board.tiles.length > 0 && <BoardPresenter {...board} />}
     {items.length > 0 && (<Tile title='Items'>
       <ul aria-label='Resources'>
         {items.map(presentItem(lastChanges.resources))}

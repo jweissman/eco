@@ -597,7 +597,7 @@ const assembleDictionary = (
     // frost, rainbow
   } = intermediate
 
-  console.log('assemble!', { roots, basics, intermediate })
+  // console.log('assemble!', { roots, basics, intermediate })
 
   const vocab: Vocabulary = {
     ...roots,

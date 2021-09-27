@@ -32,15 +32,17 @@ export class Heightmap {
   get evolution() { return {
     //  (# of steps to erode on height unit)
     // faster values erode more slowly
-    erosionSlowness: 32, //1024,
+    erosionSlowness: 8, //1024,
+    smoothSlowness: 1,
+    extrudeIntensity: 4,
 
-    smoothSlowness: 16,
-    extrudeIntensity: 3.5,
+    // flow slowness (for every 1 unit rise/fall, how many cells to run?)
+    viscosity: 8,
   }}
 
 
   matrix: number[][] = []
-  maxHeight = 1000
+  maxHeight = 100
   heightUnit = (this.maxHeight / 10)
   seaLevel = (this.maxHeight / 2) - this.heightUnit
 
@@ -146,38 +148,41 @@ export class Heightmap {
   smooth: HeightmapOperation = ({ value, neighbors: ns, localAverage: average }: Cell) => { // = () => {
     let u = this.mu / this.evolution.smoothSlowness
   //   // cleanup coastlines
-  //   // let above = ns.filter(n => n > this.seaLevel).length;
-  //   // if (above <= 4 && value > this.seaLevel) { return value - u }
-    if (value < average - this.mu) { return value + u }
-    if (value > average + this.mu) { return value - u }
+    let above = ns.filter(n => n > this.seaLevel).length;
+    if (above <= 1 && value >= this.seaLevel) { return this.seaLevel - u*2 }
+    if (above >= 7 && value <= this.seaLevel) { return this.seaLevel + u*2 }
+    if (value < Math.min(...ns) - this.mu) { return value + u }
+    if (value > Math.max(...ns) + this.mu) { return value - u }
     return value
   };
 
   mu = this.heightUnit
   flow: HeightmapOperation = ({ value, neighbors: ns, localAverage: average }: Cell) => {
-    if (value > 0.85 * this.maxHeight) { return value }
+    let tallestImmediate = Math.max(ns[1], ns[3], ns[5], ns[7])
+    if (value > average || value > tallestImmediate) { return value } //u = this.mu}
+
     let tallestNeighbor = Math.max(...ns)
-    if (value >= average || value >= tallestNeighbor) { return value }
-    let u = this.mu * 1.85
-    if (tallestNeighbor < 0.8 * this.maxHeight) {
-      // return average - this.mu/2
-    // }
-    //     // tallestNeighbor > 0.5 * this.seaLevel) {
-          u = this.mu * 0.5 
-        }
+    let { viscosity } = this.evolution
+    let u = this.mu / viscosity // / (3*this.evolution.viscosity)
+    if (tallestNeighbor >= 0.7 * this.maxHeight) { u = this.mu * 2.5 }
+    // else { u = this.mu / 64 }
     return sample([
       value,
-      // tallestNeighbor,
-      Math.max(
-        value,
-        tallestNeighbor - u, //this.mu, 
-        // Math.max(ns[1], ns[3], ns[5], ns[7]) - u,
-      )
-    ])
+      // Math.round((value+average)/2),
+      Math.max(value, tallestNeighbor - u),
+      Math.max(value, tallestImmediate - this.mu),
+      // Math.max(value, sample(ns) - 3*u),
+    ]);
   };
 
-  erode: HeightmapOperation = ({ value }) =>
-    value - this.mu/this.evolution.erosionSlowness
+  erode: HeightmapOperation = ({ value }) => {
+    let eroded = value - this.mu/this.evolution.erosionSlowness
+    return eroded
+
+    // return value > 0.85 * this.maxHeight
+    //   ? value - this.mu
+    //   : eroded
+  }
 
   adjuster = (amount: number) => (position: Position) => {
     let value = this.valueAtPosition(position)
@@ -189,11 +194,11 @@ export class Heightmap {
       this.heightUnit * this.evolution.extrudeIntensity
     )
     // choose(positions.length/2, positions).forEach(raiseGround)
-    positions.forEach(pos => raiseGround(pos))
+    positions.forEach(raiseGround) //pos => raiseGround(pos))
   };
 
   intrude = (positions: [number, number][]) => {
-    const lowerGround = this.adjuster(-this.evolution.extrudeIntensity) //heightUnit)
+    const lowerGround = this.adjuster(-this.heightUnit * this.evolution.extrudeIntensity) //heightUnit)
     positions.forEach(lowerGround)
   };
 
@@ -203,8 +208,9 @@ export class Heightmap {
     const distanceToImpact = (pos: [number, number]) => distance(pos, impactSite)
     let craterPositions: [number, number][] = []
     let craterEdge: [number, number][] = []
-    for (let x=0; x < this.width; x++) {
-      for(let y = 0; y < this.height; y++) {
+    let [x0,y0]: [number, number] = impactSite;
+    for (let x=x0 - radius; x < x0 + radius; x++) {
+      for(let y = y0 - radius; y < y0 + radius; y++) {
         let d = Math.round(distanceToImpact([x,y]))
         if (Math.abs(d - radius) < 1) {
           craterEdge.push([x,y])
@@ -221,11 +227,11 @@ export class Heightmap {
 
   geoform = (hades: boolean, mountains: [number, number][]) => {
     const d100 = randomInteger(0,100)
-    if (d100 < 64) {
+    if (d100 < 48) {
       this.bombard(hades ? this.height/2 : this.height/8);
-    }
-    if (hades && d100 < 48) {
-      this.extrude(mountains)
+      if (hades) {
+        this.extrude(mountains)
+      }
     }
 
     this.evolve(
@@ -244,7 +250,8 @@ export class Heightmap {
     let componentMap: { [component: string]: [number, number][] } = {}
     this.each((val, pos) => {
       let ns = this.neighbors(pos)
-      if (!!consider(val, ns)) {
+      let roundedValue = Math.round(val / this.mu) * this.mu
+      if (!!consider(roundedValue, ns)) {
         // do we belong to an existing region? (adjacency)
         let existingComponentNames = Object.keys(componentMap).filter(component => {
           // are any of the points in r adjacent to this one?

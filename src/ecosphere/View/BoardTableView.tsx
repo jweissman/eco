@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ReactTooltip from "react-tooltip";
 
-export const BoardView = ({
+export const BoardTableView = ({
   tiles,
   tileColors,
   tileInspect,
