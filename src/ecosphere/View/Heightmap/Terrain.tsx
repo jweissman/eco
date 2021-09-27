@@ -173,7 +173,7 @@ const Terrain = ({ tileColors, evolving, tiles }: { evolving: boolean, tiles: st
   var tileWidth = tiles[0].length;
       // tileHeight = tiles.length;
   
-  const interpolationRate = evolving ? 1 : 16; //8;
+  const interpolationRate = evolving ? 1 : 8;
   const imgSize = tileWidth * interpolationRate;
   const width = imgSize, height = imgSize;
 
@@ -192,14 +192,15 @@ const Terrain = ({ tileColors, evolving, tiles }: { evolving: boolean, tiles: st
   const geometry = 
       <planeBufferGeometry attach="geometry" args={[
         // width, height,
-        // 16, 16,
+        // 8, 8,
+        16, 16,
         // 32, 32,
         // 64, 64,
         // 128, 128,
-        256, 256,
         // 512, 512,
-        // 1024, 1024
+        // 1024, 1024,
         2048, 2048
+        // 4096, 4096,
       ]} />
   
   return <>
@@ -212,21 +213,12 @@ const Terrain = ({ tileColors, evolving, tiles }: { evolving: boolean, tiles: st
        
       <meshPhongMaterial
         attach="material"
-        // color={"hotpink"}
         color={"navajowhite"}
-        // color={"ghostwhite"}
-        // color={"forestgreen"}
-        // color={"mediumblue"}
-        // bumpMap={greenTexture}
-        // map={grayscaleTexture}
         map={rgbTexture}
-        
         displacementMap={grayscaleTexture}
-      displacementScale={10}
-
+        displacementScale={3}
         shininess={2}
         flatShading
-        // onMouseEnter={() => {}}
       />
     </mesh>
   </>;

@@ -21,14 +21,12 @@ class WorldMap extends Model {
     return eon;
   }
 
-  size = 256
-  // size = 128 //256
+  // size = 128
+  size = 128
   width = this.size
   height = this.size
-  // width = 92 //20
-  // height = 92 //35
 
-  private mapgenTicks = 300
+  private mapgenTicks = 64
   elevation: Heightmap = new Heightmap(this.width, this.height)
   private terrain: Board = new Board(this.width, this.height)
   // private vegetation: Board = new Board(this.width, this.height)
@@ -111,12 +109,12 @@ class WorldMap extends Model {
     '0': 'navy',
     '1': 'navy',
     '2': 'midnightblue',
-    '3': 'mediumblue',
+    '3': 'midnightblue',
     '4': 'mediumblue',
-    '5': 'lightgreen',
+    '5': 'moccasin',
     '6': 'forestgreen',
-    '7': 'darkgreen',
-    '8': 'darkslategray',
+    '7': 'green',
+    '8': 'darkgreen',
     '9': 'darkslategray',
   }
 
@@ -159,7 +157,7 @@ class WorldMap extends Model {
 
   get volcanoes() {
     if (this.mountainSpots.length === 0) {
-      let targetSpotCount = Math.floor(10 * this.areaPercent)
+      let targetSpotCount = Math.floor(1.6 * this.areaPercent)
       let [a,b] = [ this.randomPosition(), this.randomPosition() ]
       let spots = construct(() => this.randomPositionAlongLine(a,b), targetSpotCount, false)
       this.mountainSpots = spots

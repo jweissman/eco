@@ -1,5 +1,4 @@
-import React, { Suspense } from "react";
-import { Canvas } from "@react-three/fiber";
+import React from "react";
 // import ReactTooltip from 'react-tooltip';
 
 import { Machine, Moiety, Person } from "../types";
@@ -12,8 +11,8 @@ import { Community } from "../Community";
 import { capitalize } from '../utils/capitalize';
 
 // import './View.css';
-import { Scene } from "./Heightmap/Scene";
 import { BoardView } from "./BoardView";
+import { HeightmapCanvas } from "./Heightmap/Canvas";
 
 export type ModelViewProps = {
   modelName: string;
@@ -27,20 +26,7 @@ export type ModelViewProps = {
   board: IBoard
 }
 
-const ViewHeightmapThree = ({ tileColors, isBoardEvolving, tiles }: { tileColors: { [tile: string]: string }, isBoardEvolving: boolean, tiles: string[][] }) => {
-return <>
-  <Canvas
-     camera={{ zoom: 1, position: [0,100,0], rotation: [Math.PI,Math.PI,Math.PI], near: 0.05 }}
-  >
-    <Suspense
-      fallback={<div className="loading">Loading</div>}
-    >
-    </Suspense>
-    <Scene tiles={tiles} evolving={isBoardEvolving} tileColors={tileColors} />
-    
-  </Canvas>
-</>
-}
+
  
 
 interface IBoard { evolving: boolean, tiles: string[][], tileColors: { [tile: string]: string }, tileInspect: (x: number, y: number) => string}
@@ -50,10 +36,14 @@ const BoardTable = ({ tiles, tileColors, tileInspect, evolving }: IBoard) => {
   // if (message) console.log(message)
 
   const showThreeScene = !(process.env.NODE_ENV === 'test');
-  const showCartogram = false // !evolving || tiles.length-1 <= 64; //false; //!(process.env.NODE_ENV === 'test');
-  const isMapCondensed = false
+  const showCartogram = tiles.length-1 <= 64 && !evolving; //false; //!(process.env.NODE_ENV === 'test');
+  const isMapCondensed = true //false
   return <div style={{ width: '100vw', height: '70vh', display: 'flex' }}>
-    {showThreeScene && <ViewHeightmapThree isBoardEvolving={evolving} tiles={tiles} tileColors={tileColors} />}
+    {showThreeScene && <HeightmapCanvas
+      isBoardEvolving={evolving}
+      tiles={tiles}
+      tileColors={tileColors}
+    />}
     {showCartogram && <BoardView
       tileColors={tileColors}
       tileInspect={tileInspect}

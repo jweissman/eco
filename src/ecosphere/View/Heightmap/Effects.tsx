@@ -3,7 +3,7 @@ import "@react-three/fiber";
 import {
   EffectComposer,
   DotScreen,
-  Pixelation,
+  // Pixelation,
   Noise,
   Bloom, 
   // Outline,
@@ -15,17 +15,18 @@ import {
 
 
 export default function Effects() {
-  return (
-    <EffectComposer>
-      {/* <Glitch dtSize={20} /> */}
-        {/* <Vignette eskil={false} offset={0.1} darkness={1.01} /> */}
-        {/* <DepthOfField focusDistance={0} focalLength={0.55} bokehScale={2} height={600} />  */}
+  const fxStack = <>
         <Bloom luminanceThreshold={0} luminanceSmoothing={0.9} height={300} />
         <DotScreen scale={2} />
-        <Pixelation granularity={2} />
         <Noise opacity={0.52} />
         <DotScreen scale={0.6} />
-        {/* <Outline pulseSpeed={2} edgeStrength={5} visibleEdgeColor={0x0a0a0a} /> */}
+        </>
+  const fx = false
+  return (
+    <EffectComposer>
+        {/* <DotScreen scale={2} /> */}
+        {/* <Pixelation granularity={2.5} /> */}
+      {fx ? fxStack : <></>}
 
     </EffectComposer>
   )

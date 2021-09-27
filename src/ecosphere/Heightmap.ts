@@ -4,8 +4,7 @@ import { any } from "./utils/any";
 import { clamp } from "./utils/clamp";
 import { distance } from "./utils/distance";
 import { randomInteger } from "./utils/randomInteger";
-import { choose, sample } from "./utils/sample";
-import { times } from "./utils/times";
+import { sample } from "./utils/sample";
 
 const first = <T>(arr: T[], pred: (x: T) => boolean): T => {
   return arr.filter(pred)[0]
@@ -20,11 +19,37 @@ function neighborPositions([x,y]: Position): Position[] { // [x: number, y: numb
     [x-1,y+1], [x,y+1], [x+1,y+1],
   ]
 }
+
+type Cell = {
+  value: number,
+  neighbors: number[],
+  position: Position,
+  localAverage: number
+}
+type HeightmapOperation = (cell: Cell) => number
+
 export class Heightmap {
+  get evolution() { return {
+    //  (# of steps to erode on height unit)
+    // faster values erode more slowly
+    erosionSlowness: 32, //1024,
+
+    smoothSlowness: 16,
+    extrudeIntensity: 3.5,
+  }}
+
+
+  matrix: number[][] = []
+  maxHeight = 1000
+  heightUnit = (this.maxHeight / 10)
+  seaLevel = (this.maxHeight / 2) - this.heightUnit
+
+  constructor(public width: number, public height: number) { }
+
   view({ overlays }: { overlays: Board[] } = { overlays: []}): Tiles {
     let viewTiles: Tiles = []
-    for (let x = 0; x <= this.width; x++) {
-      for (let y = 0; y <= this.height; y++) {
+    for (let x = 0; x < this.width-1; x++) {
+      for (let y = 0; y < this.height-1; y++) {
         viewTiles[y] = viewTiles[y] || []
         let overlay = overlays.length > 0 && first(overlays, o => {
           let v = o.at(x,y); return v !== '' && v !== undefined
@@ -38,12 +63,31 @@ export class Heightmap {
     return viewTiles;
   }
 
-  matrix: number[][] = []
-  seaLevel = 5000
-  maxHeight = 10000
-  heightUnit = (this.maxHeight / 10)
+  evolve(...operations: HeightmapOperation[]) {
+    const adapt = () => this.step((value: number, neighbors: number[], position: Position) => {
+      let neighborSum = neighbors.reduce((a, b) => a + b, 0)
+      let localAverage = //Math.round(
+        (neighborSum + value) / (neighbors.length + 1)
+      // );
 
-  constructor(public width: number, public height: number) { }
+      // times(10, () => {
+      operations.forEach((operate: HeightmapOperation) => {
+        value = operate({
+          value,
+          position,
+          neighbors,
+          localAverage
+        })
+      // })
+       })
+
+      return clamp(value, 0, this.maxHeight)
+    })
+    adapt()
+    // times(1, )
+    // times(4, adapt)
+  }
+  // (ie run through map once and compute all per-cell things simultaneously...)
 
   viewHeightAtPos = ([x,y]: Position) => {
     return Math.round(clamp(this.valueAtPosition([x,y]) * (1.0/this.heightUnit), 0, 9))
@@ -62,7 +106,7 @@ export class Heightmap {
   write = (value: number, [x,y]: Position) => {
     // throw new Error("Method not implemented.");
     this.matrix[y] = this.matrix[y] || []
-    this.matrix[y][x] = Math.round(clamp(0, value, this.maxHeight))
+    this.matrix[y][x] = Math.round(clamp(value, 0, this.maxHeight))
   }
 
   // @boundMethod
@@ -76,117 +120,64 @@ export class Heightmap {
     }
   }
 
-  // @boundMethod
-  neighbors = ([x,y]: Position): number[] => { 
-    return neighborPositions([x,y]).map(this.valueAtPosition)
-  }
+  neighbors = ([x,y]: Position): number[] =>
+    neighborPositions([x,y]).map(this.valueAtPosition)
 
-  // @boundMethod
   step = (
     cb: (val: number, neighbors: number[], position: Position) => number,
-    defaultValue: number = 0
   ): number[][] => {
-    // console.log("STEP", { dims: [ this.width, this.height ] })
     let newValues: number[][] = []
-    // this.matrix = this.matrix || []
-    // const at = (x: number, y: number) => this.at(x,y) || defaultValue
-
     for (let y = 0; y <= this.height; y++) {
-      newValues[y] = [] // newValues[y] || []
+      newValues[y] = []
       for (let x = 0; x <= this.width; x++) {
-        let currentValue = this.valueAtPosition([x,y]) //.at(x,y) //at(x,y)
-        let newValue = null // currentValue
-        // if (currentValue !== undefined) {
+        let currentValue = this.valueAtPosition([x,y])
+        let newValue = null
         let neighbors: number[] = this.neighbors([x,y])
         newValue = cb(currentValue, neighbors, [x,y])
-        // }
-
-        // this.write(newValue, [x,y])
-        // newValue = newValue === null ? defaultValue : newValue
-        // newValue = clamp(newValue, 0, this.maxHeight)
-
         newValues[y][x] = newValue
-
-        // if (newValue > 0) { console.log("NEW VAL", { newValue }) }
       }
     }
-
-    // keep thinking we should stack all the transforms and do this exactly once???
-    // console.log("STEP", { newValues })
-    this.matrix = newValues //tiles = newValues
-
+    this.matrix = newValues
     return newValues
   }
 
-  // @boundMethod
-  at = (x: number, y: number): number => {
-    return this.valueAtPosition([x,y])
-    // return this.matrix[y] && this.matrix[y][x];
-  } //parseInt(this.matrixp.at(x,y) || '0', 10) }
+  at = (x: number, y: number): number => this.valueAtPosition([x,y])
 
-  // @boundMethod
-  apply = (
-    fn: (val: number, neighbors: number[], average: number, position: Position) => number[],
-    rate: number = 1000
-  ) => {
-    this.step((val, neighbors, position) => {
-      if (randomInteger(0, 1000) <= rate) {
-        let value = val //parseInt(val || '0', 10);
-        let neighborValues = neighbors //.map(neighbor => parseInt(neighbor || '0', 10));
-        let neighborSum = neighborValues.reduce((a, b) => a + b, 0)
-        // let neighborAverage = Math.round(
-        //   (neighborSum) / (neighbors.length)
-        // );
-        let localAverage = Math.round(
-          (neighborSum + value) / (neighbors.length + 1)
-        );
-
-        let average = localAverage;
-        let values = fn(value, neighborValues, average, position);
-        let newVal = clamp(sample(values), 0, this.maxHeight) //clamp(sample(values), 0, 9);
-        return newVal //String(newVal);
-      } else { return val; }
-    });
-  }
-
-  smooth = () => {
-    this.apply((value, ns, average) => {
-      // cleanup coastlines
-      let above = ns.filter(n => n >= this.seaLevel).length;
-      if (above >= 5 && value < this.seaLevel) { return [value + 1] }
-      else if (above < 4 && value >= this.seaLevel) { return [value - 1] }
-      if (value < average - 1) { return [ value, value + 1, Math.floor((value + average) / 2) ]}
-      if (value > average + 1) { return [ value, value - 1, Math.floor((value + average) / 2) ]}
-      return [ value ]
-    })
+  smooth: HeightmapOperation = ({ value, neighbors: ns, localAverage: average }: Cell) => { // = () => {
+    let u = this.mu / this.evolution.smoothSlowness
+  //   // cleanup coastlines
+  //   // let above = ns.filter(n => n > this.seaLevel).length;
+  //   // if (above <= 4 && value > this.seaLevel) { return value - u }
+    if (value < average - this.mu) { return value + u }
+    if (value > average + this.mu) { return value - u }
+    return value
   };
 
-  flow = () => {
-    this.apply((value, ns, average) => {
-      if (value > average) { return [value] }
-      let immediate = [ns[1], ns[3], ns[5], ns[7]]
-      let maxImmediate = Math.max(...immediate)
-      let maxNeighbor = Math.max(...ns)
-      return [
-        Math.max(
-          value,
-          maxImmediate - this.heightUnit*1.6,
-          maxNeighbor - this.heightUnit*1.3,
-          average - this.heightUnit,
-        ),
-      ]
-    });
-  };
-
-  erode = (rate = 1000) => {
-    this.apply((value, ns, average) => {
-      if (value < average) { return [value] }
-      return [
+  mu = this.heightUnit
+  flow: HeightmapOperation = ({ value, neighbors: ns, localAverage: average }: Cell) => {
+    if (value > 0.85 * this.maxHeight) { return value }
+    let tallestNeighbor = Math.max(...ns)
+    if (value >= average || value >= tallestNeighbor) { return value }
+    let u = this.mu * 1.85
+    if (tallestNeighbor < 0.8 * this.maxHeight) {
+      // return average - this.mu/2
+    // }
+    //     // tallestNeighbor > 0.5 * this.seaLevel) {
+          u = this.mu * 0.5 
+        }
+    return sample([
+      value,
+      // tallestNeighbor,
+      Math.max(
         value,
-        value - this.heightUnit / 16,
-      ]
-    }, rate)
+        tallestNeighbor - u, //this.mu, 
+        // Math.max(ns[1], ns[3], ns[5], ns[7]) - u,
+      )
+    ])
   };
+
+  erode: HeightmapOperation = ({ value }) =>
+    value - this.mu/this.evolution.erosionSlowness
 
   adjuster = (amount: number) => (position: Position) => {
     let value = this.valueAtPosition(position)
@@ -194,20 +185,16 @@ export class Heightmap {
   }
 
   extrude = (positions: [number, number][]) => {
-    // console.log("extrude", { positions })
-    const raiseGround = this.adjuster(this.heightUnit*4)
-    choose(positions.length/2, positions).forEach(raiseGround)
-    // positions.forEach(raiseGround)
+    const raiseGround = this.adjuster(
+      this.heightUnit * this.evolution.extrudeIntensity
+    )
+    // choose(positions.length/2, positions).forEach(raiseGround)
+    positions.forEach(pos => raiseGround(pos))
   };
 
   intrude = (positions: [number, number][]) => {
-    const lowerGround = this.adjuster(-this.heightUnit*3)
+    const lowerGround = this.adjuster(-this.evolution.extrudeIntensity) //heightUnit)
     positions.forEach(lowerGround)
-    // positions.forEach(pos => {
-    //   let h = this.valueAtPosition(pos) //parseInt(this.valueA(...pos)map.at(...pos) || '9', 10)
-    //   let val = h - randomInteger(1, this.heightUnit*2) //clamp(h-randomInteger(-1,7),0,9);
-    //   if (pos) { this.write(val, pos); }
-    // })
   };
 
   bombard = (intensity: number = 1) => {
@@ -230,31 +217,22 @@ export class Heightmap {
     this.extrude(craterEdge);
   }
 
-  orogeny = (mountains: [number, number][]) => {
-    // console.log('orogeny')
-    // const d100 = randomInteger(0,100)
-    // if (d100 < 15)
-    this.extrude(mountains)
-    this.flow()
-    // times(5, this.flow)
-    // this.step(val => val + this.heightUnit)
-  }
+  orogeny = (mountains: [number, number][]) => this.extrude(mountains)
 
   geoform = (hades: boolean, mountains: [number, number][]) => {
-    // this.step(val => val + this.heightUnit)
-    // this.orogeny(mountains)
-
-    this.erode()
     const d100 = randomInteger(0,100)
-    if (hades) {
-      this.orogeny(mountains)
-      this.erode()
-      if (d100 < 32) { this.bombard(this.height * 0.5); }
-    } else {
-      this.smooth()
-      if (d100 < 16) times(2, () => this.bombard(7) )
-      this.flow()
+    if (d100 < 64) {
+      this.bombard(hades ? this.height/2 : this.height/8);
     }
+    if (hades && d100 < 48) {
+      this.extrude(mountains)
+    }
+
+    this.evolve(
+      this.flow,
+      this.erode,
+      this.smooth
+    )
   };
 
   componentNames = new NameSequence()
