@@ -26,7 +26,7 @@ class WorldMap extends Model {
   width = this.size
   height = this.size
 
-  private mapgenTicks = 64
+  private mapgenTicks = 200
   elevation: Heightmap = new Heightmap(this.width, this.height)
   private terrain: Board = new Board(this.width, this.height)
   // private vegetation: Board = new Board(this.width, this.height)
@@ -107,14 +107,14 @@ class WorldMap extends Model {
     // '8': 'darkgreen',
     // '9': 'darkgreen',
     '0': 'navy',
-    '1': 'navy',
-    '2': 'midnightblue',
-    '3': 'midnightblue',
-    '4': 'moccasin', //mediumblue',
-    '5': 'forestgreen',
-    '6': 'green',
-    '7': 'green',
-    '8': 'darkgreen',
+    '1': 'midnightblue',
+    '2': 'moccasin',
+    '3': 'forestgreen',
+    '4': 'green', //mediumblue',
+    '5': 'darkgreen',
+    '6': 'darkgreen',
+    '7': 'darkgreen',
+    '8': 'darkslategray',
     '9': 'darkslategray',
   }
 

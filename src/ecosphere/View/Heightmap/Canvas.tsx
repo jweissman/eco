@@ -7,7 +7,7 @@ const ViewHeightmap = ({ tileColors, isBoardEvolving, tiles }: { tileColors: { [
   return <>
     <Canvas
       frameloop={'demand'} 
-      camera={{ zoom: 1, position: [0,10,0], near: 0.01 }}
+      camera={{ zoom: 1, position: [0,200,0], near: 0.01, far: 4096 }}
     >
       <Suspense fallback={<div className="loading">Loading</div>}>
 

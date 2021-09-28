@@ -1,6 +1,8 @@
-import React from 'react';
+import { useFrame } from '@react-three/fiber';
+import { Text } from '@react-three/drei';
+import React, { useState } from 'react';
 // import { Water } from '@react-three/drei'
-import { DataTexture, LuminanceFormat, RGBAFormat, UnsignedByteType, } from "three";
+import { DataTexture, LuminanceFormat, Mesh, RGBAFormat, UnsignedByteType, } from "three";
 // import { SkyBox } from './Scene';
 // import { useFrame } from '@react-three/fiber';
     var colors: { [color: string]: string } = {"aliceblue":"#f0f8ff","antiquewhite":"#faebd7","aqua":"#00ffff","aquamarine":"#7fffd4","azure":"#f0ffff",
@@ -116,79 +118,53 @@ const makeImageData = (
   })
 
   
-   for(var y = 0; y < height-1; y++) {
-     for(var x = 0; x < width-1; x++) {
-         var pos = (y * width + x)// * 4; // position in buffer based on x and y
-        //  let value = hover[0] === x && hover[1] === y
-        //  ? 0
-           let x0 = tileWidth - ((x/(width)) * (tileWidth)),  //+ 0.1,
-           y0 = (y/(height)) * (tileHeight); // + 0.1,
+  for (var y = 0; y < height - 1; y++) {
+    for (var x = 0; x < width - 1; x++) {
+      let pos = (y * width + x);
+      let x0 = tileWidth - ((x / (width)) * (tileWidth)),
+        y0 = (y / (height)) * (tileHeight);
 
-         let value = interpolate(
-           x0, y0
-          //  tileWidth - ((x/(width)) * (tileWidth)),  //+ 0.1,
-          //  (y/(height)) * (tileHeight), // + 0.1,
-          //  tiles
-           ) //parseInt(tiles[y][x] || '0', 10)
-        //  if (value < 4) { grayscaleData[pos] = 100 } else
-        //  else if (value >= 9) { data[pos] = 225 }
-         grayscaleData[pos] = value * 25 //> 0 ? (Math.log(value*8) * 25) : 0 //Math.floor(value * 25)
+      let value = interpolate(x0, y0)
+      grayscaleData[pos] = value * 25
 
-
-        //  var rgbPos = ()
-         var rgbPos = (y * width + x) * 4; // position in buffer based on x and y
-        //  let color = tileColors[Math.round(value)]
-        //  let hex: string = colorNameToHex(color) //tileColors[Math.round(value)])
-        //  var red = parseInt(hex[1]+hex[2],16);
-        //  var green = parseInt(hex[3]+hex[4],16);
-        //  var blue = parseInt(hex[5]+hex[6],16);
-
-        //  let factor = 25
-         rgbData[rgbPos    ] = interpolateRed(x0,y0) //* 25 //value * 25
-         rgbData[rgbPos + 1] = interpolateGreen(x0,y0) //value * 25
-         rgbData[rgbPos + 2] = interpolateBlue(x0,y0) // value * 25
-         rgbData[rgbPos + 3] = 255
-
-         // would love to interpolate these colors!!!
-
-        //  var rgbPos = (y * width + x) * 4; // position in buffer based on x and y
-        //  greenData[rgbPos    ] = 0 //value * 25
-        //  greenData[rgbPos + 1] = value * 25
-        //  greenData[rgbPos + 2] = 0 //value * 25
-        //  greenData[rgbPos + 3] = 255
-     }
+      var rgbPos = (y * width + x) * 4;
+      rgbData[rgbPos] = interpolateRed(x0, y0)
+      rgbData[rgbPos + 1] = interpolateGreen(x0, y0)
+      rgbData[rgbPos + 2] = interpolateBlue(x0, y0)
+      rgbData[rgbPos + 3] = 255
     }
-    return { rgb: rgbData, grayscale: grayscaleData }
+  }
+  return { rgb: rgbData, grayscale: grayscaleData }
 }
 
 let cachedImageData: { grayscale: Uint8Array, rgb: Uint8Array } | null = null // {} // grayscale, rgb }
 
 const Terrain = ({ tileColors, evolving, tiles }: { evolving: boolean, tiles: string[][], tileColors: { [tile: string]: string } }) => {
-  // const [hover, setHover] = useState([0,0])
-  // const [_mesh, set] = useState()
-  // useFrame(() => {
-    // if (mesh) { (mesh as any).rotation.z += 0.005; }
-  // });
+  const [oceanMesh, setOcean] = useState()
+  useFrame(({ clock }) => {
+    if (oceanMesh) {
+      let mesh: Mesh = oceanMesh
+      mesh.position.y = 13.25
+                      + 0.5 * Math.sin(clock.elapsedTime)
+                      // + 0.5 * Math.sin(clock.elapsedTime*2)
+                      + 0.25 * Math.cos(clock.elapsedTime*3)
+    }
+  })
   tiles = tiles || []
-
   var tileWidth = tiles[0].length;
-      // tileHeight = tiles.length;
   
-  const interpolationRate = evolving ? 1 : 8;
+  const interpolationRate = evolving ? 1 : 4;
   const imgSize = tileWidth * interpolationRate;
   const width = imgSize, height = imgSize;
 
   const { grayscale, rgb }: { grayscale: Uint8Array, rgb: Uint8Array } = cachedImageData
-    || makeImageData(tiles, tileColors, imgSize) //, evolving)
+    || makeImageData(tiles, tileColors, imgSize)
   if (!evolving) { cachedImageData = { grayscale, rgb }}
   else { cachedImageData = null }
   
   
   const grayscaleTexture = new DataTexture(grayscale, width, height, LuminanceFormat, UnsignedByteType);
   const rgbTexture = new DataTexture(rgb, width, height, RGBAFormat, UnsignedByteType);
-  // const greenTexture = new DataTexture(greenData, width, height, LuminanceFormat, UnsignedByteType) //UnsignedByteType);
-  
-  // texture.depthTest
 
   const geometry = 
       <planeBufferGeometry attach="geometry" args={[
@@ -197,19 +173,20 @@ const Terrain = ({ tileColors, evolving, tiles }: { evolving: boolean, tiles: st
         // 16, 16,
         // 32, 32,
         // 64, 64,
-        128, 128,
+        // 128, 128,
+        // 256, 256,
         // 512, 512,
         // 1024, 1024,
-        2048, 2048
+        2048, 2048,
+        1024, 1024,
+        // 2048, 2048
         // 4096, 4096,
       ]} />
 
   const showOcean = true
   
   return <>
-  {/* <mesh><boxGeometry /></mesh> */}
     <mesh
-      // ref={set}
       rotation={[-Math.PI/2,0,0]}
     >
       {geometry}
@@ -219,16 +196,20 @@ const Terrain = ({ tileColors, evolving, tiles }: { evolving: boolean, tiles: st
         color={"navajowhite"}
         map={rgbTexture}
         displacementMap={grayscaleTexture}
-        displacementScale={10}
+        displacementScale={100}
         shininess={2}
         flatShading
       />
     </mesh>
 
+    <Text position={[0,172,0]} font='Fira Code' fontSize={180} color="white" anchorX="center" anchorY="middle">
+      Welcome, traveler.
+    </Text>
+
     {showOcean && <mesh
-      // ref={set}
+      ref={setOcean}
       rotation={[-Math.PI/2,0,0]}
-      position={[0,4,0]}
+      position={[0,3.5,0]}
     >
       {geometry}
        
@@ -241,7 +222,7 @@ const Terrain = ({ tileColors, evolving, tiles }: { evolving: boolean, tiles: st
         // opacity={0} //0.8}
         // map={rgbTexture}
         // displacementMap={grayscaleTexture}
-        displacementScale={0.5}
+        displacementScale={128}
         shininess={1}
         flatShading
       />
