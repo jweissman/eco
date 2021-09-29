@@ -144,10 +144,10 @@ const Terrain = ({ tileColors, evolving, tiles }: { evolving: boolean, tiles: st
   useFrame(({ clock }) => {
     if (oceanMesh) {
       let mesh: Mesh = oceanMesh
-      mesh.position.y = 13.25
-                      + 0.5 * Math.sin(clock.elapsedTime)
+      mesh.position.z = 4
+                      + 0.125 * Math.sin(clock.elapsedTime*2)
                       // + 0.5 * Math.sin(clock.elapsedTime*2)
-                      + 0.25 * Math.cos(clock.elapsedTime*3)
+                      + 0.05 * Math.cos(clock.elapsedTime/2)
     }
   })
   tiles = tiles || []
@@ -187,7 +187,7 @@ const Terrain = ({ tileColors, evolving, tiles }: { evolving: boolean, tiles: st
   
   return <>
     <mesh
-      rotation={[-Math.PI/2,0,0]}
+      // rotation={[-Math.PI/2,0,0]}
     >
       {geometry}
        
@@ -196,20 +196,27 @@ const Terrain = ({ tileColors, evolving, tiles }: { evolving: boolean, tiles: st
         color={"navajowhite"}
         map={rgbTexture}
         displacementMap={grayscaleTexture}
-        displacementScale={100}
+        displacementScale={50}
         shininess={2}
         flatShading
       />
     </mesh>
 
-    <Text position={[0,172,0]} font='Fira Code' fontSize={180} color="white" anchorX="center" anchorY="middle">
-      Welcome, traveler.
+    <Text
+      position={[0,50,40]}
+      rotation={[Math.PI/2,0,0]}
+      font='Fira Code'
+      fontSize={18}
+      color="white"
+      anchorX="center" anchorY="middle"
+    >
+      Welcome, traveler!
     </Text>
 
     {showOcean && <mesh
       ref={setOcean}
-      rotation={[-Math.PI/2,0,0]}
-      position={[0,3.5,0]}
+      // rotation={[-Math.PI/2,0,0]}
+      // position={[0,0,0]}
     >
       {geometry}
        
@@ -222,7 +229,7 @@ const Terrain = ({ tileColors, evolving, tiles }: { evolving: boolean, tiles: st
         // opacity={0} //0.8}
         // map={rgbTexture}
         // displacementMap={grayscaleTexture}
-        displacementScale={128}
+        displacementScale={64}
         shininess={1}
         flatShading
       />
