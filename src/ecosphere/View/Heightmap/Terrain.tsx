@@ -144,7 +144,7 @@ const Terrain = ({ tileColors, evolving, tiles }: { evolving: boolean, tiles: st
   useFrame(({ clock }) => {
     if (oceanMesh) {
       let mesh: Mesh = oceanMesh
-      mesh.position.z = 4
+      mesh.position.z =12 
                       + 0.125 * Math.sin(clock.elapsedTime*2)
                       // + 0.5 * Math.sin(clock.elapsedTime*2)
                       + 0.05 * Math.cos(clock.elapsedTime/2)
@@ -196,7 +196,7 @@ const Terrain = ({ tileColors, evolving, tiles }: { evolving: boolean, tiles: st
         color={"navajowhite"}
         map={rgbTexture}
         displacementMap={grayscaleTexture}
-        displacementScale={50}
+        displacementScale={64}
         shininess={2}
         flatShading
       />
@@ -206,7 +206,7 @@ const Terrain = ({ tileColors, evolving, tiles }: { evolving: boolean, tiles: st
       position={[0,50,40]}
       rotation={[Math.PI/2,0,0]}
       font='Fira Code'
-      fontSize={18}
+      fontSize={8}
       color="white"
       anchorX="center" anchorY="middle"
     >
@@ -225,10 +225,6 @@ const Terrain = ({ tileColors, evolving, tiles }: { evolving: boolean, tiles: st
         color={"darkblue"}
         transparent
         opacity={0.85}
-        // alp
-        // opacity={0} //0.8}
-        // map={rgbTexture}
-        // displacementMap={grayscaleTexture}
         displacementScale={64}
         shininess={1}
         flatShading
