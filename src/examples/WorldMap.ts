@@ -22,14 +22,15 @@ class WorldMap extends Model {
   }
 
   // size = 64
-  size = 92
+  // size = 92
+  size = 256
   width = this.size
   height = this.size
 
   private mapgenTicks = 64
   elevation: Heightmap = new Heightmap(this.width, this.height)
   private terrain: Board = new Board(this.width, this.height)
-  // private vegetation: Board = new Board(this.width, this.height)
+  private vegetation: Board = new Board(this.width, this.height)
   private mountainSpots: [number, number][] = []
   private areaPercent = Math.floor(this.area / 100);
 
@@ -46,7 +47,7 @@ class WorldMap extends Model {
   }
 
   get tiles() { return this.elevation.view({ overlays: [
-    // this.vegetation,
+    this.vegetation,
     // this.terrain,
     // this.elevation.binaryImage(),
     // this.elevation.transform(),
@@ -161,11 +162,11 @@ class WorldMap extends Model {
     '6': 'darkgreen',
     '7': 'darkgreen',
     '8': 'darkslategray',
-    '9': 'darkslategray',
+    '9': 'white', //darkslategray',
   }
 
-  // todo profiles? islands/continents/ocean/grasslands/mountains
-
+  // todo profiles? islands/continents/ocean/grasslands/mountains...
+  // (ie configuration sets for the heightmap options...)
 
   @boundMethod
   randomPosition(): [number, number] {
@@ -218,7 +219,7 @@ class WorldMap extends Model {
 
   genHeightmap() {
     const hades = this.aeon === 'Hadean'
-    this.elevation.geoform(hades, this.volcanoes)
+    this.elevation.geoform(hades, this.ticks < 3 ? this.volcanoes : [])
   }
 
   buildTerrain() {
