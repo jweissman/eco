@@ -10,31 +10,19 @@ import { Tiles } from "../Board";
 
 export interface IModel extends ISimulation {
   currentPolicy?: Policy;
-  // todo move into sim??
   choose(policyName: string, args: any): void;
   send(actionName: string, args: any): void;
   policies: Collection<Policy>;
   actions: Collection<Action>;
-
   resources: Stocks<Substance>;
   machines: Stocks<Machine>;
   animals: Registry<Species, Animal, Population<Species, Animal>>;
   people: Registry<Moiety, Person, Community>;
-  // people: Registry<Moiety, Person>
-  // people: Registry<Moiety, Population<Moiety, Person>>;
   metrics: { [key: string]: () => number };
   notes: { [key: string]: () => string };
-
   tiles: Tiles //string[][]
-  tileColors?: { [tile: string]: string } //string[][]
-
-  // todo inspect tile to see feature names.. (name of island/continent/body of water/mountain peak)
+  tileColors?: { [tile: string]: string }
   tileInspect?(x: number, y: number): string;
   tilesEvolving?: boolean
-
-  // tileRegions?: { [regionName: string]: [number,number][] }
-
-  // recipes: IList<Recipe>;
-  // tasks: IList<Task>;
-  // jobs: IMap<Person, Task>;
+  pointsOfInterest?: { [name: string]: [number, number] }
 }

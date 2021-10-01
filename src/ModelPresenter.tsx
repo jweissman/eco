@@ -37,7 +37,8 @@ const view = (model: IModel, lastChanges: LastDelta) => {
       tiles: tiles || [],
       tileColors: tileColors || {},
       tileInspect: (model.tileInspect || (() => '--')),
-      evolving: model.tilesEvolving || false
+      evolving: model.tilesEvolving || false,
+      pointsOfInterest: model.pointsOfInterest || {}
     }
   }
 

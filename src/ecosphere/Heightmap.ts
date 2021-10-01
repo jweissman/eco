@@ -33,7 +33,7 @@ export class Heightmap {
   get evolution() { return {
     //  (# of steps to erode on height unit)
     // faster values erode more slowly
-    erosionSlowness: 4,
+    erosionSlowness: 24,
     smoothSlowness: 8,
     extrudeIntensity: 6,
 
@@ -46,7 +46,7 @@ export class Heightmap {
 
 
   matrix: number[][] = []
-  maxHeight = 10000
+  maxHeight = 128
   heightUnit = (this.maxHeight / 10)
   seaLevel = 2 * (this.maxHeight / 10) // - this.heightUnit
 
@@ -173,108 +173,29 @@ export class Heightmap {
     if (value >= 1) { return value }
     const immediate = [ns[1], ns[3], ns[5], ns[7]]
     let { viscosity } = this.evolution
-    // let u = (3*this.mu) / (2+viscosity) // / (3*this.evolution.viscosity)
-
     let u = this.mu / (1+viscosity)
-    
-
-    // let sameHeightNeighbors = immediate.filter(neighbor =>
-    //   Math.abs(value - neighbor) < this.mu*2
-    // )
-    // if (value > 0 && (
-    //   sameHeightNeighbors.length === 1
-    //  || sameHeightNeighbors.length === 2
-    // )) {
-    //   return value //sample(sameHeightNeighbors) //value, same
-    // }
-
-    // let u = this.mu / 8
     let tallest = Math.max(...ns)
-    // if (tallest > this.maxHeight * 0.55) { u *= 5 } //value - this.mu }
-    // if (tallest < this.maxHeight * 0.65) { u *= 3 } //value - this.mu }
     return sample([
-      // value,
-      // value - u,
-      // tallest - 2*u,
-      tallest,
-      sample(immediate) - u, // u //sameHeightNeighbors.length*u //this.mu*2
-      sample(ns) - 3*u, // u //sameHeightNeighbors.length*u //this.mu*2
-      // sample(ns) - 2*u, // u //sameHeightNeighbors.length*u //this.mu*2
-      // tallest - 5*u,
-      // (value + average)/2 + u,
+      // tallest,
+      tallest - 1,
+      sample(immediate) - sample([0.5,2,3]) * u,
+      sample(ns) - sample([3,5,7])*u,
       Math.max(
         value,
-        // Math.max(...immediate) - u, //this.mu*2
-        // average - u
-        sample(ns) - u, // u //sameHeightNeighbors.length*u //this.mu*2
-        
+        sample(ns) - u,
       )
-      // ...immediate.map(neighbor => Math.max(value, neighbor - u)),
-      // ...ns.map(neighbor => Math.max(value, neighbor - u)),
-      // value > 0 ? Math.max(value, sample(immediate) + u) : 1
-      // Math.max(value, average)
     ])
-    // let tallestImmediate = Math.max(...immediate)
-    // if (value > average || value > tallestImmediate) { return value } //u = this.mu}
-
-    // let tallestNeighbor = Math.max(...ns)
-    // // u *= ((value)/this.maxHeight)
-    // if (tallestNeighbor >= 0.6 * this.maxHeight) { u = this.mu * 1.5 }
-    // if (Math.abs(tallestNeighbor - this.seaLevel) < this.mu/4) {
-    //   u = this.mu * 3
-    // }
-    // // else { u = this.mu / 64 }
-    // return sample([
-    //   value,
-    //   // value,
-    //   // value,
-    //   // value,
-    //   // Math.round((value+average)/2),
-    //   // Math.round((value + tallestNeighbor - u) / 2),
-    //   // ((tallestNeighbor <= 0.65 * this.maxHeight &&
-    //   // tallestNeighbor >= 0.45 * this.maxHeight)
-    //   //   ? Math.max(value, tallestImmediate - u)
-    //   //   : value), //this.mu),
-    //   // ((tallestNeighbor <= 0.85 * this.maxHeight &&
-    //   // tallestNeighbor >= 0.35 * this.maxHeight)
-    //   //   ? Math.max(value, tallestImmediate)
-    //   //   : value), //this.mu),
-    //   // value > this.seaLevel ? Math.max(value, sample(immediate) - u) : value, //this.mu),
-    //   Math.max(value, tallestImmediate - u), //this.mu),
-
-    //   // Math.max(value, sample(ns) - 3*u),
-    // ]);
   };
 
   erode: HeightmapOperation = ({ value, neighbors: ns, localAverage }) => {
-    // if (value <= this.seaLevel + this.mu) { return value }
-    // const immediate = [ns[1], ns[3], ns[5], ns[7]]
-    // // let { viscosity } = this.evolution
-    // // let u = (5*this.mu) / (2+viscosity) // / (3*this.evolution.viscosity)
-    // let sameHeightNeighbors = immediate.filter(neighbor =>
-    //   Math.abs(value - neighbor) < this.mu // 2
-    // )
-    // if ((sameHeightNeighbors.length === 1
-    //  || sameHeightNeighbors.length === 2)) {
-    //   //  return sample([value])
-    //   return value
-    // }
-
-    // return value
-    let u = (this.mu)/64 //(1+8*this.evolution.erosionSlowness)
-    // // if (Math.abs(value - this.seaLevel) < this.mu*2) { u = -1 } //value - this.mu }
+    let u = (this.mu)/(1+2*this.evolution.erosionSlowness)
     let eroded = value - u
-    // if (value > localAverage + 2*this.mu) return eroded - this.mu
-    if (value > localAverage + this.mu) return eroded
-    return value > localAverage ? sample([eroded, value]) : value //sample([eroded, value]) //Math.min(eroded, sample(sameHeightNeighbors));
-    //sample([ value, eroded ])
-
-    // return value > 0.85 * this.maxHeight
-    //   ? value - this.mu
-    //   : eroded
+    // if (value > localAverage + this.mu) return localAverage
+    if (value > localAverage) return sample([eroded, value])
+    return value
   }
 
-  adjuster = (amount: number) => (position: Position) => {
+  private adjuster = (amount: number) => (position: Position) => {
     let value = this.valueAtPosition(position)
     this.write(value + amount, position)
   }
@@ -313,15 +234,15 @@ export class Heightmap {
     this.extrude(craterEdge);
   }
 
-  orogeny = (mountains: [number, number][]) => this.extrude(
-    choose(2, mountains)
-  )
+  // orogeny = (mountains: [number, number][]) => this.extrude(
+  //   choose(2, mountains)
+  // )
 
   geoform = (hades: boolean, mountains: [number, number][]) => {
-    // const d100 = randomInteger(0,100)
-    // if (d100 < this.evolution.bombardmentRate) {
-    //   this.bombard(hades ? this.height/2 : this.height/8);
-    // }
+    const d100 = randomInteger(0,100)
+    if (d100 < this.evolution.bombardmentRate) {
+      this.bombard(hades ? this.height/2 : this.height/8);
+    }
 
     if (hades) {
       this.extrude(mountains)
@@ -382,7 +303,15 @@ export class Heightmap {
     return componentMap
   }
 
-  regions = () => this.components(val => val >= this.seaLevel)
+  _regions: { [name: string]: [number, number][] } = {}
+
+  regions = () => {
+    if (Object.entries(this._regions).length === 0) {
+     this._regions = this.components(val => val >= this.seaLevel)
+    }
+    return this._regions
+  }
+
   waterways = () => this.components(val => val < this.seaLevel)
   ranges = () => this.components(val => val >= 0.8 * this.maxHeight)
 

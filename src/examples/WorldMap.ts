@@ -22,8 +22,7 @@ class WorldMap extends Model {
   }
 
   // size = 64
-  size = 128
-  // size = 64
+  size = 128 //92
   width = this.size
   height = this.size
 
@@ -53,8 +52,52 @@ class WorldMap extends Model {
     // this.elevation.transform(),
   ] }) }
 
+  // ie "are the tiles currently changing"
   get tilesEvolving() { return this.aeon === 'Hadean' || this.aeon === 'Archean' }
-  
+
+  get pointsOfInterest(): { [name: string]: [number, number] } {
+    if (this.aeon === 'Hadean' || this.aeon === 'Archean') {
+      return { '*Please wait...': [50,50]}
+    }
+    // } else {
+      let { regions: getRegions } = this.elevation
+      const regions = getRegions()
+      // return { [`The ${Object.entries(regions).length} regions`]: [50,50]}
+
+    // }
+    // let { regions: getRegions } = this.elevation
+    // const regions = getRegions()
+    let pois: { [name: string]: [number, number] } = Object.fromEntries(
+      Object.entries(regions).map(([_rawRegionName, positions]: [string, [number, number][]]) => {
+        const regionName = this.cartographer.identifyRegion(...positions[0])
+        let xsum = 0, ysum = 0;
+        positions.forEach(([x, y]) => { xsum += x; ysum += y });
+        let len = positions.length
+        let x = xsum/len, y=ysum/len
+        // const region = this.cartographer.identifyRegionOrWaterway(x,y)
+        let theName: string = (len > 80 ? '*' : '') + regionName
+        return [theName, [
+          (x / this.size) * 100,
+          (y / this.size) * 100,
+          // this.size-x,
+          // this.size-y,
+        ]]
+      })
+    )
+    // // console.log({ regions, pois })
+    return pois
+
+    // for now just islands + bodies of water
+    // return {
+    //   '(0,0)': [0,0],
+    //   '(25,25)': [25,25],
+    //   '(25,75)': [25,75],
+    //   '(75,25)': [75,25],
+    //   '(75,75)': [75,75],
+    //   '(50,50)': [50,50],
+    //   '(100,100)': [100,100],
+    // }
+  }
 
   @boundMethod
   tileInspect(x: number, y: number) {

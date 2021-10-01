@@ -1,8 +1,8 @@
+import React, { useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Text } from '@react-three/drei';
-import React, { useState } from 'react';
 // import { Water } from '@react-three/drei'
-import { DataTexture, LuminanceFormat, Mesh, RGBAFormat, UnsignedByteType, } from "three";
+import { DataTexture, LuminanceFormat, Mesh, RGBAFormat, UnsignedByteType } from "three";
 // import { SkyBox } from './Scene';
 // import { useFrame } from '@react-three/fiber';
     var colors: { [color: string]: string } = {"aliceblue":"#f0f8ff","antiquewhite":"#faebd7","aqua":"#00ffff","aquamarine":"#7fffd4","azure":"#f0ffff",
@@ -125,6 +125,15 @@ const makeImageData = (
         y0 = (y / (height)) * (tileHeight);
 
       let value = interpolate(x0, y0)
+      // if ((x0 === 25) && (y0 === 25)) {
+      //   value = 10
+      // } else if ((x0 === 25 || x0 === 75) && (y0 === 25 || y0 === 75)) {
+      //   value = 5
+      // } else {
+      //   value = 0
+      // }
+
+
       grayscaleData[pos] = value * 25
 
       var rgbPos = (y * width + x) * 4;
@@ -137,17 +146,99 @@ const makeImageData = (
   return { rgb: rgbData, grayscale: grayscaleData }
 }
 
+const PointOfInterest = ({ x, y, str, meshSize }: {
+  x: number, y: number, str: string, meshSize: number
+}) => {
+  const [text, setText] = useState()
+  const [subtext, setSubtext] = useState()
+  useFrame(({camera}) => {
+    if (text) { (text as Mesh).lookAt(camera.position) }
+    if (subtext) { (subtext as Mesh).lookAt(camera.position) }
+  })
+  let large = str.startsWith('*')
+  let title = str.substring(0, str.indexOf('('))
+  let subtitle = str.substring(str.indexOf('(')+1, str.indexOf(')'))
+  let x0 = meshSize/2 - (1.3*(x) * meshSize/128); // - meshSize/2,
+  let y0 = 1.3*(y) * meshSize/128 - meshSize/2;
+  let z0 = 14.0 + (large ? 4.5 : -4)
+
+  // const { camera } = useThree()
+  // let angle = camera.getWorldDirection(new Vector3(x0,y0,0)).normalize().negate()
+  let fontSize=large ? 8 : 4
+  return <>
+    <Text
+      ref={setText}
+      position={[x0,y0,z0]}
+      // rotation={[Math.PI/2,0,0]}
+      // rotation={[Math.PI/2, angle.y, 0]} //angle.z]}
+      rotation={[Math.PI/2, 0, 0]} //angle.z]}
+      font='Fira Code'
+      fontSize={fontSize}
+      color="white"
+      anchorX="center" anchorY="middle"
+      key={str+'-'+title}
+    >
+      {title.replaceAll('*', '')}
+      {/* ({subtitle}) */}
+    </Text>
+    {subtitle && <Text
+      ref={setSubtext}
+      position={[x0,y0, z0 - (large ? 5.35 : 2.75)]}
+      // rotation={[Math.PI/2,0,0]}
+      rotation={[Math.PI/2, 0,0]} // angle.x, 0]} //angle.z]}
+      font='Fira Code'
+      // camera.worldToLocal()
+      // font='Fira Code'
+      fontSize={fontSize / 2}
+      color="white"
+      anchorX="center" anchorY="middle"
+      key={str+'-'+subtitle}
+    >
+      {/* {title.replaceAll('*', '')} */}
+      {subtitle}
+    </Text>}
+  </>
+    // })}
+}
+
+
 let cachedImageData: { grayscale: Uint8Array, rgb: Uint8Array } | null = null // {} // grayscale, rgb }
 
-const Terrain = ({ tileColors, evolving, tiles }: { evolving: boolean, tiles: string[][], tileColors: { [tile: string]: string } }) => {
+
+
+const Terrain = ({
+  tileColors,
+  evolving,
+  tiles,
+  pointsOfInterest,
+}: {
+  evolving: boolean, tiles: string[][],
+  tileColors: { [tile: string]: string },
+  pointsOfInterest: { [name: string]: [number,number]},
+ }) => {
+  //  tiles = [['0','0']]
+  // const { camera } = useThree()
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_terrainMesh, setTerrain] = useState()
   const [oceanMesh, setOcean] = useState()
   useFrame(({ clock }) => {
     if (oceanMesh) {
       let mesh: Mesh = oceanMesh
-      mesh.position.z =12 
-                      + 0.125 * Math.sin(clock.elapsedTime*2)
-                      // + 0.5 * Math.sin(clock.elapsedTime*2)
-                      + 0.05 * Math.cos(clock.elapsedTime/2)
+      let z = 0
+      // if (terrainMesh) {
+      //   let land: Mesh = terrainMesh
+      //   z = land.position.z + 25
+      // }
+        // y = land.position.y + 25
+                      //  + 15 * Math.sin(clock.elapsedTime/2)
+        // console.log({ z })
+                      // + 5 * Math.sin(clock.elapsedTime*2)
+      // }
+      // console.log({ z })
+      mesh.position.z = z
+                      + 250.05 * Math.cos(clock.elapsedTime/2)
+      // console.log({ 'z\'': mesh.position.z })
     }
   })
   tiles = tiles || []
@@ -166,28 +257,21 @@ const Terrain = ({ tileColors, evolving, tiles }: { evolving: boolean, tiles: st
   const grayscaleTexture = new DataTexture(grayscale, width, height, LuminanceFormat, UnsignedByteType);
   const rgbTexture = new DataTexture(rgb, width, height, RGBAFormat, UnsignedByteType);
 
+  const meshSize = 1024;
+  const meshGrain = 1024;
   const geometry = 
       <planeBufferGeometry attach="geometry" args={[
-        // width, height,
-        // 8, 8,
-        // 16, 16,
-        // 32, 32,
-        // 64, 64,
-        // 128, 128,
-        // 256, 256,
-        // 512, 512,
-        // 1024, 1024,
-        2048, 2048,
-        1024, 1024,
-        // 2048, 2048
-        // 4096, 4096,
+        meshSize, meshSize,
+        meshGrain, meshGrain
       ]} />
 
-  const showOcean = true
+  const showTerrain = true, showOcean = true
   
   return <>
-    <mesh
-      // rotation={[-Math.PI/2,0,0]}
+    {showTerrain && <mesh
+      ref={setTerrain}
+      position={[0,-1,0]}
+      rotation={[-Math.PI/2,0,0]}
     >
       {geometry}
        
@@ -196,40 +280,33 @@ const Terrain = ({ tileColors, evolving, tiles }: { evolving: boolean, tiles: st
         color={"navajowhite"}
         map={rgbTexture}
         displacementMap={grayscaleTexture}
-        displacementScale={64}
+        displacementScale={8}
         shininess={2}
         flatShading
       />
-    </mesh>
 
-    <Text
-      position={[0,50,40]}
-      rotation={[Math.PI/2,0,0]}
-      font='Fira Code'
-      fontSize={8}
-      color="white"
-      anchorX="center" anchorY="middle"
-    >
-      Welcome, traveler!
-    </Text>
+    {Object.entries(pointsOfInterest).map(([str, [x,y]], i) =>
+    <PointOfInterest str={str} x={x} y={y} meshSize={meshSize} />)}
 
-    {showOcean && <mesh
+    </mesh>}
+{showOcean && <mesh
       ref={setOcean}
       // rotation={[-Math.PI/2,0,0]}
-      // position={[0,0,0]}
+      // rotation={[0,0,0]}
+      rotation={[-Math.PI/2,0,0]}
     >
       {geometry}
-       
       <meshPhongMaterial
         attach="material"
         color={"darkblue"}
         transparent
-        opacity={0.85}
+        opacity={0.95}
         displacementScale={64}
         shininess={1}
         flatShading
       />
     </mesh>}
+    
 
   </>;
 };  

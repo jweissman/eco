@@ -1,6 +1,5 @@
 import React from "react";
 import {useThree} from "@react-three/fiber";
-// import { useThree } from "@react-three/fiber";
 import { Lights } from "./Lights";
 import Controls from "./Controls";
 import Terrain from "./Terrain";
@@ -30,25 +29,30 @@ export function skyboxTexture() {
 }
 
 // export default Controls;
-const Scene = ({ tileColors, tiles, evolving }: { evolving: boolean, tiles: string[][], tileColors: { [tile: string]: string } }) => {
+const Scene = ({
+  tileColors, tiles, evolving,
+  pointsOfInterest
+}: {
+  evolving: boolean, tiles: string[][], tileColors: { [tile: string]: string },
+  pointsOfInterest: { [name: string]: [number,number] }
+}) => {
   const { scene } = useThree();
   if (scene.background === null) {
     scene.background = skyboxTexture()
   }
+  const Fog = () => <fog attach="fog" args={['#eaeaea', 5, 1000]} />
   return (
   <>
-        {/* <material attach="background" args={[skyboxTexture()]} /> */}
-         {/* <fog attach="fog" args={['#eaeaea', 5, 500]} /> */}
-        {/* <color attach="background" args={['midnightblue']} /> */}
- 
-    {/* <SkyBox /> */}
-    <Lights />
+   
+<Lights />
     <Controls />
-    {/* <mesh>
-      <boxGeometry args={[20,20,20]} />
-      <meshPhongMaterial attach="material" color={'hotpink'} />
-    </mesh> */}
-    <Terrain tiles={tiles} evolving={evolving} tileColors={tileColors} />
+    <Terrain
+      tiles={tiles}
+      evolving={evolving}
+      tileColors={tileColors}
+      pointsOfInterest={pointsOfInterest}
+    />
+    <Fog />
     <Effects />
   </>
 )
