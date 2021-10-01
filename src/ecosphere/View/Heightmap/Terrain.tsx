@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { Text } from '@react-three/drei';
 // import { Water } from '@react-three/drei'
 import { DataTexture, LuminanceFormat, Mesh, RGBAFormat, UnsignedByteType } from "three";
@@ -165,6 +165,7 @@ const PointOfInterest = ({ x, y, str, meshSize }: {
   // const { camera } = useThree()
   // let angle = camera.getWorldDirection(new Vector3(x0,y0,0)).normalize().negate()
   let fontSize=large ? 8 : 4
+  // const withinRange = camera.position.distanceTo(new Vector3(x0,y0,z0)) < 160;
   return <>
     <Text
       ref={setText}
@@ -225,26 +226,16 @@ const Terrain = ({
   useFrame(({ clock }) => {
     if (oceanMesh) {
       let mesh: Mesh = oceanMesh
-      let z = 0
-      // if (terrainMesh) {
-      //   let land: Mesh = terrainMesh
-      //   z = land.position.z + 25
-      // }
-        // y = land.position.y + 25
-                      //  + 15 * Math.sin(clock.elapsedTime/2)
-        // console.log({ z })
-                      // + 5 * Math.sin(clock.elapsedTime*2)
-      // }
-      // console.log({ z })
-      mesh.position.z = z
-                      + 250.05 * Math.cos(clock.elapsedTime/2)
-      // console.log({ 'z\'': mesh.position.z })
+     mesh.position.y = -0.15
+                     + 0.0125 * Math.cos(clock.elapsedTime/8)
+                     + 0.0125 * Math.cos(clock.elapsedTime/2)
+                     + 0.0125 * Math.cos(clock.elapsedTime*5)
     }
   })
   tiles = tiles || []
   var tileWidth = tiles[0].length;
   
-  const interpolationRate = evolving ? 1 : 4;
+  const interpolationRate = evolving ? 1 : 16;
   const imgSize = tileWidth * interpolationRate;
   const width = imgSize, height = imgSize;
 

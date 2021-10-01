@@ -33,15 +33,15 @@ export class Heightmap {
   get evolution() { return {
     //  (# of steps to erode on height unit)
     // faster values erode more slowly
-    erosionSlowness: 24,
-    smoothSlowness: 8,
-    extrudeIntensity: 6,
+    erosionSlowness: 64,
+    smoothSlowness: 16,
+    extrudeIntensity: 4,
 
     // flow slowness (for every 1 unit rise/fall, how many (10s of) cells to run?)
-    viscosity: 0.4,
+    viscosity: 0.5,
 
     // 100 = constant
-    bombardmentRate: 50,
+  bombardmentRate: 50,
   }}
 
 

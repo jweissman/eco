@@ -22,7 +22,7 @@ class WorldMap extends Model {
   }
 
   // size = 64
-  size = 128 //92
+  size = 92
   width = this.size
   height = this.size
 
