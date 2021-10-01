@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useFrame, useThree } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber';
 import { Text } from '@react-three/drei';
 // import { Water } from '@react-three/drei'
 import { DataTexture, LuminanceFormat, Mesh, RGBAFormat, UnsignedByteType } from "three";
