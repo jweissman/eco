@@ -8,6 +8,7 @@ import { Population } from "../Population";
 import { Community } from "../Community";
 import { capitalize } from '../utils/capitalize';
 import { BoardPresenter, IBoard } from "./BoardPresenter";
+import './View.css'
 
 export type ModelViewProps = {
   modelName: string;

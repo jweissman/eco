@@ -61,7 +61,7 @@ export class Community extends Population<Moiety, Person> {
           resources.remove(amount, resource);
         });
       }
-      Object.entries(recipe.produces).forEach(([resource, amount]) => {
+      Object.entries(recipe.produces || {}).forEach(([resource, amount]) => {
         resources.add(amount, resource);
       });
     }

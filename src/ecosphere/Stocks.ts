@@ -63,7 +63,10 @@ export class Stocks<T extends BasicEntity> {
 
   @boundMethod
   remove(amount: number, name: string): void {
-    this.setAmount(name, this.count(name) - amount);
+    // if ()
+    let result = this.count(name) - amount
+    // if (result < 0) console.warn("Removal results in less than zero " + name)
+    this.setAmount(name, result) // this.count(name) - amount);
   }
 
   @boundMethod
