@@ -8,7 +8,7 @@ import Khuzdul from "../ecosphere/Languages/Khuzdul";
 import { Sindarin } from "../ecosphere/Languages/Sindarin";
 import Westron from "../ecosphere/Languages/Westron";
 import Common from "../ecosphere/Languages/Common";
-import { clamp } from "three/src/math/MathUtils";
+import { clamp } from "../ecosphere/utils/clamp";
 
 // todo behavior model for citizens...
 // class Citizenship { }
