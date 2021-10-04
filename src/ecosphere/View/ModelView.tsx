@@ -35,7 +35,7 @@ export function ModelView({
 }: ModelViewProps) {
   const folks = (communities as Community[]).map(presentCommunity)
   // console.log({ community: communities[0].list() })
-  return <div className='Model'>
+  return <div className='Model' style={{ display: !!board.tiles.length ? 'block' : 'flex' }}>
     {/* <ViewHeightmap /> */}
     <h4 aria-label='Model Title' style={{display: 'none'}}>{modelName}</h4>
     {board.tiles.length > 0 && <BoardPresenter {...board} />}
@@ -67,7 +67,8 @@ export function ModelView({
     {Object.keys(notes).length > 0 && <div title='Notes'
       style={{
         overflow: 'scroll',
-        maxHeight: '640px'
+        height: '560px',
+        // maxHeight: '340px'
       }}
     >
     <table>

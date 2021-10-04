@@ -22,12 +22,15 @@ class WorldMap extends Model {
   }
 
   // size = 64
-  // size = 92
+  // size = 96
+  // size = 128
+  // size = 192
   size = 256
+  // size = 512
   width = this.size
   height = this.size
 
-  private mapgenTicks = 64
+  private mapgenTicks = this.size / 2
   elevation: Heightmap = new Heightmap(this.width, this.height)
   private terrain: Board = new Board(this.width, this.height)
   private vegetation: Board = new Board(this.width, this.height)
@@ -152,17 +155,17 @@ class WorldMap extends Model {
     // '8': 'darkgreen',
     // '9': 'darkgreen',
     '0': 'navy',
-    // '1': 'moccasin',
     // '2': 'forestgreen',
-    '1': 'midnightblue',
-    '2': 'moccasin',
-    '3': 'forestgreen',
-    '4': 'green', //mediumblue',
-    '5': 'green',
+    '1': 'royalblue',
+    // '2': 'cornsilk',
+    '2': 'gold',
+    '3': 'limegreen',
+    '4': 'forestgreen',
+    '5': 'green', //mediumblue',
     '6': 'darkgreen',
-    '7': 'darkgreen',
-    '8': 'darkslategray',
-    '9': 'white', //darkslategray',
+    '7': 'darkslategray',
+    '8': 'slategray', //tan',
+    '9': 'lightslategray', //darkslategray',
   }
 
   // todo profiles? islands/continents/ocean/grasslands/mountains...

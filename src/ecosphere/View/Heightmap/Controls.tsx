@@ -16,7 +16,7 @@ const Controls = () => {
   let isMobile: boolean = (width <= 768);
   
   return isMobile
-    ? <OrbitControls /> : <FlyControls movementSpeed={35} rollSpeed={1} dragToLook />
+  ? <OrbitControls /> : <FlyControls movementSpeed={100} rollSpeed={0.5} dragToLook />
 }
 
 export default Controls;

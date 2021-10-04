@@ -18,7 +18,7 @@ export function PointOfInterest({ x, y, str, meshSize, baseHeight }: {
   let subtitle = str.substring(str.indexOf('(') + 1, str.indexOf(')'));
   let x0 = meshSize / 2 - (1.3 * (x) * meshSize / 128); // - meshSize/2,
   let y0 = 1.3 * (y) * meshSize / 128 - meshSize / 2;
-  let z0 = baseHeight*2.5 + (large ? 2.5 : -3);
+  let z0 = baseHeight*2 + (large ? 15 : -20);
   let fontSize = large ? 8 : 3;
   let color = 'white'; //large ? "white" : "gray"
   return <>

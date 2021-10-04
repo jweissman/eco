@@ -96,28 +96,30 @@ const Terrain = ({
  }) => {
 
   tiles = tiles || []
-  var tileWidth = tiles[0].length;
+  var tilemapWidth = tiles[0].length;
 
-  const meshSize = 1024;
-  const maxLandHeight = 96 //128 //meshSize / tileWidth
+  const scale = 32
+  const meshSize = 128 * scale // 1024 * scale //8192 //4096; //1024;
+  const maxLandHeight = 6 * scale // / tilemapWidth //1024 * 2  //256 //128 //meshSize / tileWidth
 
   const [oceanMesh, setOcean] = useState()
   useFrame(({ clock }) => {
     let { elapsedTime: t } = clock
     if (oceanMesh) {
       let mesh: Mesh = oceanMesh
-     mesh.position.y = (maxLandHeight / 10) * 1.75
+     mesh.position.y = (maxLandHeight / 10) * 1.5
                      - 1
-                     + 0.0125 * Math.cos(t/8)
-                     + 0.0125 * Math.cos(t/2)
-                     + 0.025  * Math.cos(t*5)
+                     + 1.25 * Math.cos(t/8)
+                     + 1.25 * Math.cos(t/2)
+                    //  + 0.00125  * Math.cos(t*5)
     }
   })
   
-  // const baseInterpolationRate = 8
-  const baseInterpolationRate = 4
+  // const baseInterpolationRate = 16
+  const baseInterpolationRate = 8
+  // const baseInterpolationRate = 4
   const interpolationRate = evolving ? 1 : baseInterpolationRate;
-  const imgSize = tileWidth * interpolationRate;
+  const imgSize = tilemapWidth * interpolationRate;
   const width = imgSize, height = imgSize;
 
   const { grayscale, rgb }: { grayscale: Uint8Array, rgb: Uint8Array } = cachedImageData

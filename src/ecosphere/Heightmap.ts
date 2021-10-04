@@ -3,12 +3,10 @@ import { Board, Tiles } from "./Board";
 import { any } from "./utils/any";
 import { clamp } from "./utils/clamp";
 import { distance } from "./utils/distance";
+import { first } from "./utils/first";
 import { randomInteger } from "./utils/randomInteger";
 import { choose, sample } from "./utils/sample";
 
-const first = <T>(arr: T[], pred: (x: T) => boolean): T => {
-  return arr.filter(pred)[0]
-}
 
 type Position = [number, number]
 
@@ -32,12 +30,12 @@ export class Heightmap {
   get evolution() { return {
     //  (# of steps to erode on height unit)
     // faster values erode more slowly
-    erosionSlowness: 2,
+    erosionSlowness: 4,
     smoothSlowness: 16,
     extrudeIntensity: 10,
 
     // flow slowness (for every 1 unit rise/fall, how many (10s of) cells to run?)
-    viscosity: 4,
+    viscosity: 1,
 
     // 100 = constant
   bombardmentRate: 50,
@@ -169,27 +167,55 @@ export class Heightmap {
 
   mu = this.heightUnit
   flow: HeightmapOperation = ({ value, neighbors: ns, localAverage: average }: Cell) => {
-    if (value > this.seaLevel) { return value }
+    if (value > 0) { return value }
     // const immediate = [ns[1], ns[3], ns[5], ns[7]]
     let tallest = Math.max(...ns)
     let { viscosity } = this.evolution
     // if (value >= tallest) return tallest
     
     let u = sample([
-      0.1,0.2,
-      0.25,
-      // 0.5,
-      0.9,
-      1,
-      1.1,
-      2,3,
-      5,7,
-    ])*this.mu/viscosity
-    if (tallest > 0.7* this.maxHeight) { u*=10}
+      0.001,
+      0.002,
+      // 0.0025,
+      // 0.005,
+      // 0.0075,
+      0.01,0.1,1,2, //,5,10,20
+      3,5,8,13,21,34,
+      // 0.5,1,2,3
+      // 0.01,
+      // 0.02,
+      // 0.025,
+      // 0.05,
+      // 0.1,0.2,
+      // 0.25,
+      // // // // 0.5,
+      // 0.5,0.6,
+      // 0.75,
+      // 0.8,
+      // 0.9,
+      // 1,
+      // 1.1,
+      // 1.2,
+      // 1.5,
+      // // 2,3,
+      // // 5,7,
+      // 2,3,5,7,9,13,21,36
+    ])*this.mu/(1+2*viscosity)
+    if (tallest < 0.55 * this.maxHeight) { u/=3}
+    if (tallest < 0.65 * this.maxHeight
+     && value > this.seaLevel) {
+       if (randomInteger(0,100) < 3) { u*=-1 }
+    }
+    if (tallest > 0.75 * this.maxHeight) { u*=1.25 }
+    if (tallest > 0.8  * this.maxHeight) { u*=1.5 }
+    if (tallest > 0.85 * this.maxHeight) { u*=2 }
+    if (tallest > 0.9  * this.maxHeight) { u*=3 }
+    if (tallest > 0.95* this.maxHeight) { u*=5}
+    // if (tallest > 0.98* this.maxHeight) { u*=5}
     return Math.max(
       value,
       tallest-u,
-      // Math.max(...immediate) - u,
+      // Math.max(ns[1], ns[3], ns[5], ns[7])-u,
     ) //sample([tallest,tallest-u]) //-(this.mu/viscosity)
     // return value //tallest //- sample([1,2])*this.mu //sample([0.25,0.5,1,2,3])*this.mu)
     // return value >= tallest ? value : tallest-1 // sample([tallest - 1
@@ -213,10 +239,26 @@ export class Heightmap {
     // return (value + value + localAverage + Math.max(...ns)) / 4
     // return Math.min(localAverage + this.mu/2, value)
     // if (localAverage > this.maxHeight/2 && value > localAverage + this.mu) return localAverage
-    let d100 = randomInteger(0,100)
-    let { erosionSlowness } = this.evolution
-    if (d100 > erosionSlowness) { return value }
-    return localAverage
+    if (value > localAverage + this.mu) { return sample([value, value-2, value+1]) }
+    if (value > Math.max(...ns)) { return value }
+
+    // let d100 = randomInteger(0,100)
+    // let { erosionSlowness } = this.evolution
+    // if (d100 >= erosionSlowness) { return value }
+    let smoothed = (value + Math.max(ns[1], ns[3], ns[5], ns[7]) + localAverage + Math.max(...ns) + Math.min(...ns)) / 5
+    return sample([
+      value, value, value, value,
+      value, value, value, value,
+      value, value, value, value,
+      value, value, value, value,
+      value, value, value, value,
+      // value - this.mu,
+      smoothed,
+      (smoothed + value) / 2,
+      // Math.max(...ns)
+
+    ])
+    // return Math.floor(value + localAverage + sample([...ns])) / 3 //, localAverage])
 
     // return sample([
     //   // value, value, value, value,
@@ -242,7 +284,7 @@ export class Heightmap {
     const raiseGround = this.adjuster(
       this.heightUnit * this.evolution.extrudeIntensity
     )
-    choose(3, positions).forEach(raiseGround)
+    choose(8, positions).forEach(raiseGround)
     // positions.forEach(raiseGround) //pos => raiseGround(pos))
   };
 

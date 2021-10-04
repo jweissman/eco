@@ -246,6 +246,8 @@ class Citizen extends Model {
   notes = {
     // 'current date': () => this.date.description,
     '*name': () => this.subject.name,
+    // todo find best+worst attributes...
+    // 'bio': () => capitalize(this.subject.soul.temperament),
     'role': () => capitalize(this.subject.role),
     // ...
 

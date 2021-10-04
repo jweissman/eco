@@ -120,7 +120,7 @@ const commonVocabulary: Vocabulary = {
   narrow: 'narrowe',//narrow-',
   needle: 'nedle', //needle',
   night: 'nyght',
-  nightingales: 'thrust', //stærlinc', //thrush',
+  nightingales: 'thrush', //stærlinc', //thrush',
   noon: 'noon',
 
   oak: 'oak',

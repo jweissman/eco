@@ -2,7 +2,7 @@ import React, { Suspense } from "react"
 import { Canvas } from "@react-three/fiber"
 import { Scene } from "./Scene"
 
-const ViewHeightmap = ({
+const HeightmapCanvas = ({
   tileColors, isBoardEvolving, tiles, pointsOfInterest
 }: {
   pointsOfInterest: { [name: string]: [number,number] }
@@ -14,7 +14,7 @@ const ViewHeightmap = ({
     <Canvas
       frameloop={'demand'} 
       camera={{ zoom: 4, position: [0,20,128], 
-       near: 0.1 }}
+       near: 0.1, far: 15000 }}
        onCreated={({camera}) => {
         //  camera.rotateX(Math.PI/2)
         // camera.rotateY(Math.PI/2)
@@ -28,4 +28,4 @@ const ViewHeightmap = ({
   </>
 }
 
-export { ViewHeightmap as HeightmapCanvas }
+export { HeightmapCanvas }
