@@ -30,7 +30,7 @@ class WorldMap extends Model {
   width = this.size
   height = this.size
 
-  private mapgenTicks = this.size / 2
+  private mapgenTicks = 3 * this.size / 2
   elevation: Heightmap = new Heightmap(this.width, this.height)
   private terrain: Board = new Board(this.width, this.height)
   private vegetation: Board = new Board(this.width, this.height)
@@ -165,7 +165,7 @@ class WorldMap extends Model {
     '6': 'darkgreen',
     '7': 'darkslategray',
     '8': 'slategray', //tan',
-    '9': 'lightslategray', //darkslategray',
+    '9': 'white' //lightslategray', //darkslategray',
   }
 
   // todo profiles? islands/continents/ocean/grasslands/mountains...
