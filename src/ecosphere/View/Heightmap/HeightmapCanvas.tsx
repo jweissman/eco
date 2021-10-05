@@ -22,7 +22,13 @@ const HeightmapCanvas = ({
        }}
     >
       <Suspense fallback={<div className="loading">Loading</div>}>
-        <Scene tiles={tiles} evolving={isBoardEvolving} tileColors={tileColors} pointsOfInterest={pointsOfInterest} />
+        <Scene
+          tiles={tiles}
+
+          evolving={isBoardEvolving}
+          tileColors={tileColors}
+          pointsOfInterest={pointsOfInterest}
+        />
       </Suspense>
     </Canvas>
   </>

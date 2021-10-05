@@ -21,16 +21,16 @@ class WorldMap extends Model {
     return eon;
   }
 
-  // size = 64
+  size = 64
   // size = 96
   // size = 128
   // size = 192
-  size = 256
+  // size = 256
   // size = 512
   width = this.size
   height = this.size
 
-  private mapgenTicks = 3 * this.size / 2
+  private mapgenTicks = 128 //3 * this.size / 2
   elevation: Heightmap = new Heightmap(this.width, this.height)
   private terrain: Board = new Board(this.width, this.height)
   private vegetation: Board = new Board(this.width, this.height)
@@ -63,14 +63,8 @@ class WorldMap extends Model {
     if (this.aeon === 'Hadean' || this.aeon === 'Archean') {
       return { '*Please wait...': [50,50]}
     }
-    // } else {
-      let { regions: getRegions } = this.elevation
-      const regions = getRegions()
-      // return { [`The ${Object.entries(regions).length} regions`]: [50,50]}
-
-    // }
-    // let { regions: getRegions } = this.elevation
-    // const regions = getRegions()
+    let { regions: getRegions } = this.elevation
+    const regions = getRegions()
     let pois: { [name: string]: [number, number] } = Object.fromEntries(
       Object.entries(regions).map(([_rawRegionName, positions]: [string, [number, number][]]) => {
         const regionName = this.cartographer.identifyRegion(...positions[0])
@@ -78,29 +72,14 @@ class WorldMap extends Model {
         positions.forEach(([x, y]) => { xsum += x; ysum += y });
         let len = positions.length
         let x = xsum/len, y=ysum/len
-        // const region = this.cartographer.identifyRegionOrWaterway(x,y)
         let theName: string = (len > 80 ? '*' : '') + regionName
         return [theName, [
           (x / this.size) * 100,
           (y / this.size) * 100,
-          // this.size-x,
-          // this.size-y,
         ]]
       })
     )
-    // // console.log({ regions, pois })
     return pois
-
-    // for now just islands + bodies of water
-    // return {
-    //   '(0,0)': [0,0],
-    //   '(25,25)': [25,25],
-    //   '(25,75)': [25,75],
-    //   '(75,25)': [75,25],
-    //   '(75,75)': [75,75],
-    //   '(50,50)': [50,50],
-    //   '(100,100)': [100,100],
-    // }
   }
 
   @boundMethod
@@ -129,14 +108,17 @@ class WorldMap extends Model {
   tileColors = {
     // terrain
     // land
-    '.':  'lightgreen',
+    // '.':  'lightgreen',
 
     // sea
     '~': 'midnightblue',
     ',': 'navy',
 
     // vegetation...
-    '\'': 'darkgreen',
+    '\'': 'darkgreen', // tree
+    '"': 'green', // grove
+    '.': 'lightgreen', // grass
+    // '^': 'mediumaquamarine', // grass / old forest
 
     // elevation map
     // '0': 'black',
@@ -159,10 +141,14 @@ class WorldMap extends Model {
     '1': 'royalblue',
     // '2': 'cornsilk',
     '2': 'gold',
-    '3': 'limegreen',
-    '4': 'forestgreen',
-    '5': 'green', //mediumblue',
-    '6': 'darkgreen',
+    '3': 'lightgray',
+    '4': 'silver',
+    '5': 'darkgray',
+    '6': 'gray',
+    // '3': 'limegreen',
+    // '4': 'forestgreen',
+    // '5': 'green', //mediumblue',
+    // '6': 'darkgreen',
     '7': 'darkslategray',
     '8': 'slategray', //tan',
     '9': 'white' //lightslategray', //darkslategray',
@@ -238,30 +224,31 @@ class WorldMap extends Model {
     })
   }
 
-  // growVegetation() {
-  //   this.vegetation.step((val, _neighbors) => {
-  //     if (val === "'") {
-  //       if (_neighbors.length >= 2) { //} || _neighbors.length <= 6) {
-  //         return "'"
-  //       }
-  //     } else {
-  //       if (_neighbors.length === 3) {
-  //         return "'"
-  //       }
-  //     }
-  //     return ''
-  //   })
-  //   this.vegetation.each((x,y,value) => {
-  //     let h = parseInt(this.elevation.map.at(x,y) || '0')
-  //     // autogenesis
-  //     if (h <= 4 || h >= 8) { this.vegetation.erase(x, y) }
-  //     else if (value === '' && randomInteger(0,100) > 98) {
-  //       if (h >= 4 && h < 8) {
-  //         this.vegetation.write("'", x, y)
-  //       }
-  //     }
-  //   })
-  // }
+  growVegetation() {
+    let tree = "'"
+    let grove = "\""
+    let grass = "."
+    let plants = [tree,grove,grass]
+    let sea = this.elevation.seaLevel
+    let treeline = this.elevation.maxHeight / 2
+
+    this.vegetation.step((val, neighbors, position) => {
+      if (val === tree || val === grove) { return val }
+      let alive = (plants.includes(val))
+      let h = this.elevation.at(...position)
+      if (h > treeline || h < sea) { return ''}
+      let ns = neighbors.filter(n => plants.includes(n)).length
+      if (alive) {
+        if (ns === 2 || ns === 3) return grass
+        else if (ns === 6) return tree
+        else if (ns === 7) return grove
+      } else {
+        if (ns === 2) return grass
+        if (randomInteger(0,10000) < 32) return grass
+      }
+      return ''
+    })
+  }
 
   get area() { return this.width * this.height }
 
@@ -269,8 +256,12 @@ class WorldMap extends Model {
   evolution({ resources }: EvolvingStocks, t: number) {
     if (t > 0) {
       if (t % 100 === 0) { console.log("The world is " + (t / 100) + " million years old") }
-      if (t <= this.mapgenTicks) { this.genHeightmap() }
+      if (t <= this.mapgenTicks) {
+        this.genHeightmap()
+        this.growVegetation()
+      }
     }
+
   }
 }
 const worldMapMaker = new WorldMap()

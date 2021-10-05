@@ -40,7 +40,7 @@ const Scene = ({
   if (scene.background === null) {
     scene.background = skyboxTexture()
   }
-  const Fog = () => <fog attach="fog" args={['#eaeaea', 2, 2048]} />
+  const Fog = () => <fog attach="fog" args={['#eaeaea', 1, 4096]} />
   return (
   <>
    

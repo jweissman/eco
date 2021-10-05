@@ -7,9 +7,10 @@ export interface IBoard {
   tileColors: { [tile: string]: string };
   tileInspect: (x: number, y: number) => string;
   pointsOfInterest: { [name: string]: [number, number] };
+  heightmap?: number[][];
 }
 
-export const BoardPresenter = ({ tiles, tileColors, tileInspect, evolving, pointsOfInterest }: IBoard) => {
+export const BoardPresenter = ({ tiles, tileColors, tileInspect, evolving, pointsOfInterest, heightmap }: IBoard) => {
   let largeMap = tiles.length-1 > 64
   const showThreeScene = !!largeMap //!(process.env.NODE_ENV === 'test');
   const showCartogram = !showThreeScene //|| (!evolving); //false; //!(process.env.NODE_ENV === 'test');
@@ -18,6 +19,7 @@ export const BoardPresenter = ({ tiles, tileColors, tileInspect, evolving, point
     {showThreeScene && <HeightmapCanvas
       isBoardEvolving={evolving}
       tiles={tiles}
+      // todo ... heightmap={heightmap}
       tileColors={tileColors}
       pointsOfInterest={pointsOfInterest}
     />}

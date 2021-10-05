@@ -98,7 +98,7 @@ const Terrain = ({
   tiles = tiles || []
   var tilemapWidth = tiles[0].length;
 
-  const scale = 32
+  const scale = 2 //32
   const meshSize = 128 * scale // 1024 * scale //8192 //4096; //1024;
   const maxLandHeight = 6 * scale // / tilemapWidth //1024 * 2  //256 //128 //meshSize / tileWidth
 
@@ -107,11 +107,12 @@ const Terrain = ({
     let { elapsedTime: t } = clock
     if (oceanMesh) {
       let mesh: Mesh = oceanMesh
-     mesh.position.y = (maxLandHeight / 10) * 1.5
-                     - 1
-                     + 1.25 * Math.cos(t/8)
-                     + 1.25 * Math.cos(t/2)
-                    //  + 0.00125  * Math.cos(t*5)
+     mesh.position.y = (maxLandHeight / 10) * 0.64 // * 1.5
+                    //  - 1
+                     + 0.08 * scale * Math.sin(t/64)
+                     + 0.07 * scale * Math.cos(t/8)
+                    //  + 1.25 * Math.cos(t/2)
+                     + 0.06 * scale  * Math.cos(t*5)
     }
   })
   
