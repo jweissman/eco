@@ -162,7 +162,7 @@ export class Heightmap {
     if (value > this.seaLevel - this.mu) return value //this.seaLevel - this.mu) { return value }
     let tallest = Math.max(...ns)
     // let { viscosity } = this.evolution
-    let u = this.mu * Math.pow(2, randomInteger(-4, 3))
+    let u = this.mu * Math.pow(2, randomInteger(-5, 3))
     if (Math.abs(tallest - this.maxHeight) < this.mu) {
       return tallest - 2*this.mu
     }
@@ -228,10 +228,10 @@ export class Heightmap {
   // )
 
   geoform = (hades: boolean, mountains: [number, number][]) => {
-    // const d100 = randomInteger(0,100)
-    // if (d100 < this.evolution.bombardmentRate) {
-    //   this.bombard(hades ? this.height/2 : this.height/8);
-    // }
+    const d100 = randomInteger(0,100)
+    if (d100 < this.evolution.bombardmentRate) {
+      this.bombard(hades ? this.height/2 : this.height/8);
+    }
 
     if (hades) { this.extrude(mountains) }
 

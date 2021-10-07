@@ -21,6 +21,7 @@ export interface IModel extends ISimulation {
   metrics: { [key: string]: () => number };
   notes: { [key: string]: () => string };
   tiles: Tiles //string[][]
+  tokens: { [name: string]: [number,number][] };
   tileColors?: { [tile: string]: string }
   tileInspect?(x: number, y: number): string;
   tilesEvolving?: boolean

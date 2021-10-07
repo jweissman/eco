@@ -56,6 +56,8 @@ class WorldMap extends Model {
     // this.elevation.transform(),
   ] }) }
 
+  get tokens() { return { trees: this.trees }}
+
   // ie "are the tiles currently changing"
   get tilesEvolving() { return this.aeon === 'Hadean' || this.aeon === 'Archean' }
 
@@ -249,6 +251,19 @@ class WorldMap extends Model {
       }
       return ''
     })
+  }
+
+  get trees(): [number, number][] {
+    let tree = "'"
+    let grove = "\""
+    // let grass = "."
+    let treeSigns = [tree,grove] //,grass]
+    const trees: [number, number][] = []
+
+    this.vegetation.each((x,y,val) => {
+      if (treeSigns.includes(val)) trees.push([x,y]) 
+    })
+    return trees
   }
 
   get area() { return this.width * this.height }

@@ -12,6 +12,7 @@ type Fauna = Population<Species, Animal>
 export class Model extends Simulation implements IModel  {
   tracking = [ 'animals', 'resources' ]
   get tiles(): Tiles { return [] }
+  get tokens() { return {} }
 
   public people = new Registry<Moiety, Person, Community>('people', Community)
   public resources = new Stocks<Substance>('resources')

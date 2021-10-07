@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { DataTexture, LuminanceFormat, Mesh, RGBAFormat, UnsignedByteType } from "three";
+import { Billboard } from '@react-three/drei';
+import { DataTexture, LuminanceFormat, Mesh, RGBAFormat, Texture, TextureLoader, UnsignedByteType } from "three";
 import { PointOfInterest } from './PointOfInterest';
 import { colorNameToHex } from '../../utils/colors';
 import { bilinearInterpolator } from '../../utils/interpolate';
@@ -84,6 +85,9 @@ const makeImageData = (
 
 let cachedImageData: { grayscale: Uint8Array, rgb: Uint8Array } | null = null // {} // grayscale, rgb }
 
+// handle just major landform
+// const Landmass = () => { }
+
 const Terrain = ({
   tokens,
   tileColors,
@@ -91,7 +95,8 @@ const Terrain = ({
   tiles,
   pointsOfInterest,
 }: {
-  evolving: boolean, tiles: string[][],
+  evolving: boolean,
+  tiles: string[][],
   tileColors: { [tile: string]: string },
   pointsOfInterest: { [name: string]: [number,number]},
   tokens: { [name: string]: [number,number][] }
@@ -119,8 +124,8 @@ const Terrain = ({
   })
   
   // const baseInterpolationRate = 16
-  const baseInterpolationRate = 8
-  // const baseInterpolationRate = 4
+  // const baseInterpolationRate = 8
+  const baseInterpolationRate = 4
   const interpolationRate = evolving ? 1 : baseInterpolationRate;
   const imgSize = tilemapWidth * interpolationRate;
   const width = imgSize, height = imgSize;
@@ -130,11 +135,17 @@ const Terrain = ({
   if (!evolving) { cachedImageData = { grayscale, rgb }}
   else { cachedImageData = null }
   
-  
   const grayscaleTexture = new DataTexture(grayscale, width, height, LuminanceFormat, UnsignedByteType);
   const rgbTexture = new DataTexture(rgb, width, height, RGBAFormat, UnsignedByteType);
 
-  const meshGrain = 1024;
+  // const treeTexture = new ()
+  const loader = new TextureLoader()
+  const treeTexture: Texture = loader.load( 
+    `${process.env.PUBLIC_URL}/tree.png`
+  );
+
+
+  const meshGrain = 256; //1024;
   const terrainGeometry = 
       <planeBufferGeometry attach="geometry" args={[
         meshSize, meshSize,
@@ -142,6 +153,24 @@ const Terrain = ({
       ]} />
 
   const showTerrain = true, showOcean = true
+
+  const toScenePosition = (worldPos: [ number, number ]): [number,number,number] => {
+    const [x,y] = worldPos;
+    let x0 = meshSize / 2 - x // (1.3 * (x) * meshSize / 128); // - meshSize/2,
+    let y0 =  y - meshSize / 2 //1.3 * (y) * meshSize / 128 - meshSize / 2 
+    let z0 = parseInt((tiles && tiles[y] && tiles[y][x]) || '0') * maxLandHeight/10 //.5 //10
+    return [x0,y0,z0]
+  }
+
+  const Treebox = ({ position }: { position: [number,number]}) => 
+    <mesh position={toScenePosition(position)}>
+      <boxGeometry args={[0.5, 0.5, 4]} />
+      <meshStandardMaterial color="green" />
+    </mesh>
+
+  const Tree = Treebox
+
+  const showGuide = false
   
   return <>
     {showTerrain && <mesh
@@ -160,11 +189,18 @@ const Terrain = ({
         flatShading
       />
 
-    {Object.entries(pointsOfInterest).map(([str, [x,y]], i) =>
+    {showGuide && Object.entries(pointsOfInterest).map(([str, [x,y]], i) =>
     <PointOfInterest baseHeight={maxLandHeight/3} str={str} x={x} y={y} meshSize={meshSize} />)}
 
+{/* really we want to spawn a grove ... a bunch of trees around this location... */}
+    {tokens.trees.map((tree, i) => <Tree position={tree} />)}
+    <Billboard position={[0,-1,0]}>
+        <meshBasicMaterial attach="material" map={treeTexture}/>
+
+    </Billboard>
+
     </mesh>}
-{showOcean && <mesh
+    {showOcean && <mesh
       ref={setOcean}
       // rotation={[-Math.PI/2,0,0]}
       // rotation={[0,0,0]}
