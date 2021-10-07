@@ -30,24 +30,30 @@ export function skyboxTexture() {
 
 // export default Controls;
 const Scene = ({
-  tileColors, tiles, evolving,
+  tiles,
+  tokens,
+  tileColors,
+  evolving,
   pointsOfInterest
 }: {
-  evolving: boolean, tiles: string[][], tileColors: { [tile: string]: string },
+  evolving: boolean,
+  tiles: string[][],
+  tileColors: { [tile: string]: string },
   pointsOfInterest: { [name: string]: [number,number] }
+  tokens: { [name: string]: [number,number][] }
 }) => {
   const { scene } = useThree();
   if (scene.background === null) {
     scene.background = skyboxTexture()
   }
-  const Fog = () => <fog attach="fog" args={['#eaeaea', 1, 4096]} />
+  const Fog = () => <fog attach="fog" args={['#eaeaea', 1, 256]} />
   return (
   <>
-   
-<Lights />
+    <Lights />
     <Controls />
     <Terrain
       tiles={tiles}
+      tokens={tokens}
       evolving={evolving}
       tileColors={tileColors}
       pointsOfInterest={pointsOfInterest}

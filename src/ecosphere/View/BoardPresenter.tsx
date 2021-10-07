@@ -4,13 +4,16 @@ import { HeightmapCanvas } from "./Heightmap/HeightmapCanvas";
 export interface IBoard {
   evolving: boolean;
   tiles: string[][];
+  tokens: { [token: string]: [number,number][] }; // the idea is tokens have a name + position..
   tileColors: { [tile: string]: string };
   tileInspect: (x: number, y: number) => string;
   pointsOfInterest: { [name: string]: [number, number] };
-  heightmap?: number[][];
+  // trees: 
+  // entities: 
+  // heightmap?: number[][];
 }
 
-export const BoardPresenter = ({ tiles, tileColors, tileInspect, evolving, pointsOfInterest, heightmap }: IBoard) => {
+export const BoardPresenter = ({ tiles, tileColors, tileInspect, evolving, pointsOfInterest, tokens }: IBoard) => {
   let largeMap = tiles.length-1 > 64
   const showThreeScene = !!largeMap //!(process.env.NODE_ENV === 'test');
   const showCartogram = !showThreeScene //|| (!evolving); //false; //!(process.env.NODE_ENV === 'test');
@@ -20,6 +23,7 @@ export const BoardPresenter = ({ tiles, tileColors, tileInspect, evolving, point
       isBoardEvolving={evolving}
       tiles={tiles}
       // todo ... heightmap={heightmap}
+      tokens={tokens}
       tileColors={tileColors}
       pointsOfInterest={pointsOfInterest}
     />}

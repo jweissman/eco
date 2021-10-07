@@ -29,8 +29,8 @@ export class Heightmap {
   get evolution() { return {
     //  (# of steps to erode on height unit)
     // faster values erode more slowly
-    erosionSlowness: 4,
-    smoothSpeed: 64,
+    erosionSpeed: 512,
+    smoothSpeed: 256,
     extrudeIntensity: 10,
 
     // flow 'intensity'
@@ -40,9 +40,8 @@ export class Heightmap {
   bombardmentRate: 50,
   }}
 
-
   matrix: number[][] = []
-  maxHeight = 1024
+  maxHeight = 256 //1024 * 8
   heightUnit = (this.maxHeight / 10)
   seaLevel = 2 * (this.maxHeight / 10) // - this.heightUnit
 
@@ -151,17 +150,11 @@ export class Heightmap {
     // if (value > average) return value
     if (randomInteger(0,1000) >= this.evolution.smoothSpeed) return value
     return sample([
-      // value, value, value, value, value,
-      // value, value, value, value, value,
-      // value, value, value, value, value,
-      // value, value, value, value, value,
-      // value, value, value, value, value,
-      // ...ns,
-      // average,
-      // (value + average)/2,
-      // average
-      (Math.min(...ns) + Math.max(...ns))/2
+      value,
+      // ...ns.map(n => Math.max(n, value)),
+      Math.max(value, (Math.min(...ns) + Math.max(...ns))/2)
     ])
+    // ])
   };
 
   mu = this.heightUnit
@@ -183,10 +176,11 @@ export class Heightmap {
   erode: HeightmapOperation = ({ value, neighbors: ns, localAverage }) => {
     // return value
     // if (value > localAverage + this.mu) return sample([ value, value - 1 ]) // his.mu //(value + localAverage) / 2
-    if (value > Math.min(...ns) + this.mu) return value-1 //this.mu //sample([ value, value - this.mu ]) // his.mu //(value + localAverage) / 2
+    // if (value > Math.min(...ns) + 2*this.mu) return value-this.mu //this.mu //sample([ value, value - this.mu ]) // his.mu //(value + localAverage) / 2
     // if (value < localAverage - this.mu) return sample([ value, value + 1 ]) // his.mu //(value + localAverage) / 2
     // if (value > this.seaLevel + this.mu) return value - 1
-    return value //- 1 //this.mu
+    if (randomInteger(0,1000) > this.evolution.erosionSpeed) return value
+    return sample([ value, value - 1 ]) //this.mu
   }
 
   private adjuster = (amount: number) => (position: Position) => {
@@ -239,9 +233,7 @@ export class Heightmap {
     //   this.bombard(hades ? this.height/2 : this.height/8);
     // }
 
-    if (hades) {
-      this.extrude(mountains)
-    }
+    if (hades) { this.extrude(mountains) }
 
     this.evolve(
       this.flow,

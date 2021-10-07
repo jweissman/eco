@@ -85,6 +85,7 @@ const makeImageData = (
 let cachedImageData: { grayscale: Uint8Array, rgb: Uint8Array } | null = null // {} // grayscale, rgb }
 
 const Terrain = ({
+  tokens,
   tileColors,
   evolving,
   tiles,
@@ -93,6 +94,7 @@ const Terrain = ({
   evolving: boolean, tiles: string[][],
   tileColors: { [tile: string]: string },
   pointsOfInterest: { [name: string]: [number,number]},
+  tokens: { [name: string]: [number,number][] }
  }) => {
 
   tiles = tiles || []
@@ -133,7 +135,7 @@ const Terrain = ({
   const rgbTexture = new DataTexture(rgb, width, height, RGBAFormat, UnsignedByteType);
 
   const meshGrain = 1024;
-  const geometry = 
+  const terrainGeometry = 
       <planeBufferGeometry attach="geometry" args={[
         meshSize, meshSize,
         meshGrain, meshGrain
@@ -146,7 +148,7 @@ const Terrain = ({
       position={[0,-1,0]}
       rotation={[-Math.PI/2,0,0]}
     >
-      {geometry}
+      {terrainGeometry}
        
       <meshPhongMaterial
         attach="material"
@@ -168,7 +170,7 @@ const Terrain = ({
       // rotation={[0,0,0]}
       rotation={[-Math.PI/2,0,0]}
     >
-      {geometry}
+      {terrainGeometry}
       <meshPhongMaterial
         attach="material"
         color={"darkblue"}

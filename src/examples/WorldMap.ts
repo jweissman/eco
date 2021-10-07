@@ -21,11 +21,11 @@ class WorldMap extends Model {
     return eon;
   }
 
-  size = 64
+  // size = 64
   // size = 96
   // size = 128
   // size = 192
-  // size = 256
+  size = 256
   // size = 512
   width = this.size
   height = this.size
@@ -50,7 +50,7 @@ class WorldMap extends Model {
   }
 
   get tiles() { return this.elevation.view({ overlays: [
-    this.vegetation,
+    // this.vegetation,
     // this.terrain,
     // this.elevation.binaryImage(),
     // this.elevation.transform(),
@@ -141,7 +141,7 @@ class WorldMap extends Model {
     '1': 'royalblue',
     // '2': 'cornsilk',
     '2': 'gold',
-    '3': 'lightgray',
+    '3': 'silver',
     '4': 'silver',
     '5': 'darkgray',
     '6': 'gray',
@@ -233,18 +233,19 @@ class WorldMap extends Model {
     let treeline = this.elevation.maxHeight / 2
 
     this.vegetation.step((val, neighbors, position) => {
-      if (val === tree || val === grove) { return val }
       let alive = (plants.includes(val))
       let h = this.elevation.at(...position)
       if (h > treeline || h < sea) { return ''}
       let ns = neighbors.filter(n => plants.includes(n)).length
       if (alive) {
+        if (ns > 0 && (val === grove)) { return val }
+        if (ns > 1 && (val === tree)) { return val }
         if (ns === 2 || ns === 3) return grass
         else if (ns === 6) return tree
         else if (ns === 7) return grove
       } else {
         if (ns === 2) return grass
-        if (randomInteger(0,10000) < 32) return grass
+        if (randomInteger(0,1000) < 32) return grass
       }
       return ''
     })

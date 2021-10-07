@@ -3,13 +3,15 @@ import { Canvas } from "@react-three/fiber"
 import { Scene } from "./Scene"
 
 const HeightmapCanvas = ({
-  tileColors, isBoardEvolving, tiles, pointsOfInterest
+  tileColors, isBoardEvolving, tiles, pointsOfInterest, tokens
 }: {
   pointsOfInterest: { [name: string]: [number,number] }
   tileColors: { [tile: string]: string },
+  tokens: { [name: string]: [number,number][] },
   isBoardEvolving: boolean,
   tiles: string[][]
 }) => {
+  const scene = { tiles, tokens, tileColors, pointsOfInterest, evolving: isBoardEvolving }
   return <>
     <Canvas
       frameloop={'demand'} 
@@ -22,12 +24,11 @@ const HeightmapCanvas = ({
        }}
     >
       <Suspense fallback={<div className="loading">Loading</div>}>
-        <Scene
-          tiles={tiles}
-
-          evolving={isBoardEvolving}
-          tileColors={tileColors}
-          pointsOfInterest={pointsOfInterest}
+        <Scene {...scene}
+          // tiles={tiles}
+          // evolving={isBoardEvolving}
+          // tileColors={tileColors}
+          // pointsOfInterest={pointsOfInterest}
         />
       </Suspense>
     </Canvas>
