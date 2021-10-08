@@ -14,7 +14,7 @@ export interface IBoard {
 }
 
 export const BoardPresenter = ({ tiles, tileColors, tileInspect, evolving, pointsOfInterest, tokens }: IBoard) => {
-  let largeMap = tiles.length-1 > 64
+  let largeMap = tiles.length-1 > 32
   const showThreeScene = !!largeMap //!(process.env.NODE_ENV === 'test');
   const showCartogram = !showThreeScene //|| (!evolving); //false; //!(process.env.NODE_ENV === 'test');
   const isMapCondensed = false

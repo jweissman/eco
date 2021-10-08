@@ -21,11 +21,12 @@ class WorldMap extends Model {
     return eon;
   }
 
-  // size = 64
+  // size = 32
+  size = 64
   // size = 96
   // size = 128
   // size = 192
-  size = 256
+  // size = 256
   // size = 512
   width = this.size
   height = this.size

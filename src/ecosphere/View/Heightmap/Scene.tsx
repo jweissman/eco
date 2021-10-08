@@ -3,7 +3,7 @@ import {useThree} from "@react-three/fiber";
 import { Lights } from "./Lights";
 import Controls from "./Controls";
 import Terrain from "./Terrain";
-import Effects from "./Effects";
+// import Effects from "./Effects";
 import { CubeTextureLoader } from "three";
 
 export function skyboxTexture() {
@@ -46,7 +46,7 @@ const Scene = ({
   if (scene.background === null) {
     scene.background = skyboxTexture()
   }
-  const Fog = () => <fog attach="fog" args={['#eaeaea', 1, 256]} />
+  // const Fog = () => <fog attach="fog" args={['#eaeaea', 1, 256]} />
   return (
   <>
     <Lights />
@@ -58,8 +58,8 @@ const Scene = ({
       tileColors={tileColors}
       pointsOfInterest={pointsOfInterest}
     />
-    <Fog />
-    <Effects />
+    {/* <Fog /> */}
+    {/* <Effects /> */}
   </>
 )
   };

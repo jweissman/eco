@@ -41,6 +41,7 @@ const view = (model: IModel, lastChanges: LastDelta) => {
       pointsOfInterest: model.pointsOfInterest || {},
       tokens: model.tokens || {} 
       // { trees: [[0,0], [128,128], [256,256], [0,256], [256,0]] as [number,number][] } || {}
+      // { trees: [[0,0], [0,64], [64,0], [64,64]] as [number,number][] } || {}
     }
   }
 

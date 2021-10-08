@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { useFrame } from '@react-three/fiber';
-import { Billboard } from '@react-three/drei';
-import { DataTexture, LuminanceFormat, Mesh, RGBAFormat, Texture, TextureLoader, UnsignedByteType } from "three";
+import { extend, useFrame, useLoader } from '@react-three/fiber';
+import { DataTexture, DoubleSide, LuminanceFormat, Mesh, RGBAFormat, TextureLoader, UnsignedByteType } from "three";
 import { PointOfInterest } from './PointOfInterest';
 import { colorNameToHex } from '../../utils/colors';
 import { bilinearInterpolator } from '../../utils/interpolate';
+// import { Billboard } from '@react-three/drei';
     
+extend({ TextureLoader })
 
 
 const makeImageData = (
@@ -126,6 +127,7 @@ const Terrain = ({
   // const baseInterpolationRate = 16
   // const baseInterpolationRate = 8
   const baseInterpolationRate = 4
+  // const baseInterpolationRate = 2
   const interpolationRate = evolving ? 1 : baseInterpolationRate;
   const imgSize = tilemapWidth * interpolationRate;
   const width = imgSize, height = imgSize;
@@ -139,36 +141,64 @@ const Terrain = ({
   const rgbTexture = new DataTexture(rgb, width, height, RGBAFormat, UnsignedByteType);
 
   // const treeTexture = new ()
-  const loader = new TextureLoader()
-  const treeTexture: Texture = loader.load( 
-    `${process.env.PUBLIC_URL}/tree.png`
-  );
+  const treeUrl = `${process.env.PUBLIC_URL}/tree.png`
+  const treeTexture = useLoader(TextureLoader, treeUrl)
+
+  // const loader = new TextureLoader()
+  // const treeTexture: Texture = loader.load( 
+  //   // `${process.env.PUBLIC_URL}/tree.png`
+  //   `${process.env.PUBLIC_URL}/1.jpg`,
+  // );
 
 
-  const meshGrain = 256; //1024;
+  const meshGrain = 128 * 2; //1024;
   const terrainGeometry = 
       <planeBufferGeometry attach="geometry" args={[
         meshSize, meshSize,
         meshGrain, meshGrain
       ]} />
 
-  const showTerrain = true, showOcean = true
+  const showTerrain = true, showOcean = false
 
   const toScenePosition = (worldPos: [ number, number ]): [number,number,number] => {
     const [x,y] = worldPos;
-    let x0 = meshSize / 2 - x // (1.3 * (x) * meshSize / 128); // - meshSize/2,
-    let y0 =  y - meshSize / 2 //1.3 * (y) * meshSize / 128 - meshSize / 2 
+    const scale = tilemapWidth / 16 
+    let x0 = meshSize/2 - (x * scale) // * (256/meshSize) // (1.3 * (x) * meshSize / 128); // - meshSize/2,
+    let y0 = (y * scale) - meshSize / 2 //1.3 * (y) * meshSize / 128 - meshSize / 2 
     let z0 = parseInt((tiles && tiles[y] && tiles[y][x]) || '0') * maxLandHeight/10 //.5 //10
     return [x0,y0,z0]
   }
 
-  const Treebox = ({ position }: { position: [number,number]}) => 
-    <mesh position={toScenePosition(position)}>
-      <boxGeometry args={[0.5, 0.5, 4]} />
-      <meshStandardMaterial color="green" />
-    </mesh>
+  // const Treebox = ({ position }: { position: [number,number]}) => 
+  //   <mesh position={toScenePosition(position)}>
+  //     <boxGeometry args={[5, 5, 20]} />
+  //     <meshStandardMaterial color="green" />
+  //   </mesh>
 
-  const Tree = Treebox
+  // todo point towards cam?
+  const Treeboard = ({ position }: { position: [number,number]}) => {
+    let [x,y,z] = toScenePosition(position)
+  return <>
+    <mesh position={[x,y,z+1]}
+
+      rotation={[0,-Math.PI/2,-Math.PI/2]}
+    >
+      <planeGeometry args={[2, 2]} />
+      <meshStandardMaterial
+        // color='green'
+        attach='material'
+        transparent
+        // map={grayscaleTexture}
+        // map={rgbTexture}
+        map={treeTexture}
+        side={DoubleSide}
+      />
+    </mesh>
+  </>
+  }
+
+
+  const Tree = Treeboard
 
   const showGuide = false
   
@@ -194,10 +224,9 @@ const Terrain = ({
 
 {/* really we want to spawn a grove ... a bunch of trees around this location... */}
     {tokens.trees.map((tree, i) => <Tree position={tree} />)}
-    <Billboard position={[0,-1,0]}>
-        <meshBasicMaterial attach="material" map={treeTexture}/>
-
-    </Billboard>
+    {/* <Billboard position={[0,-1,0]} args={[50,50] as any}>
+        <meshBasicMaterial attach="material" map={grayscaleTexture}/>
+    </Billboard> */}
 
     </mesh>}
     {showOcean && <mesh
