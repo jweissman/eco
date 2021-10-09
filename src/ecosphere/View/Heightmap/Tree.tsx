@@ -1,6 +1,6 @@
 import React from 'react';
-import { useFrame } from '@react-three/fiber';
-import { Mesh, Texture } from "three";
+// import { useFrame } from '@react-three/fiber';
+import { Texture } from "three";
 
 // todo point towards cam?
 export function Tree({ position, map }: { map: Texture; position: [number, number, number]; }) {
