@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useLoader } from '@react-three/fiber';
 import { DataTexture, LuminanceFormat, RGBAFormat, Texture, TextureLoader, UnsignedByteType } from "three";
 import { PointOfInterest } from './PointOfInterest';
@@ -116,7 +116,7 @@ const Terrain = ({
   } catch (err) { }
 
 
-  const [oceanMesh, setOcean] = useState()
+  // const [oceanMesh, setOcean] = useState()
   // useFrame(({ clock }) => {
   //   let { elapsedTime: t } = clock
   //   if (oceanMesh) {
@@ -175,33 +175,33 @@ const Terrain = ({
   //   </mesh>
 
 
-  const Woods = ({ position }: { position: [number,number,number]}) => {
-    let [x0,y0,z0] = position
-    let repeat = 0
-    let treeOffsets: [number,number][] = []
-    // treeOffsets.pu
-    for (let x=-repeat; x<=repeat; x++) {
-    for (let y=-repeat; y<=repeat; y++) {
-      treeOffsets.push([
-        (x/(1+repeat))+x0+(x%2===0?4*repeat:0),
-        (y/(1+repeat))+y0+(y%2===0?3*repeat:0)
-      ])
-    }
-    }
-    return <>
-      {treeOffsets.map(pos => treeMap && <Tree map={treeMap} position={[pos[0],pos[1],z0]} />)}
-    </>
-    // let [x0,y0]=position
-    // for (let x=-10; x<10; x++) {
-    //   for (let y=-10; y<10; y++) {
-    //     let x1 = x/10+x0
-    //     let y1 = y/10+y0
-    //     treeOffsets.push([x1,y1])
-    //   }
-    // }
-    // return <>{treeOffsets.map(pos => <Treeboard position={pos} />)}</>
+  // const Woods = ({ position }: { position: [number,number,number]}) => {
+  //   let [x0,y0,z0] = position
+  //   let repeat = 0
+  //   let treeOffsets: [number,number][] = []
+  //   // treeOffsets.pu
+  //   for (let x=-repeat; x<=repeat; x++) {
+  //   for (let y=-repeat; y<=repeat; y++) {
+  //     treeOffsets.push([
+  //       (x/(1+repeat))+x0+(x%2===0?4*repeat:0),
+  //       (y/(1+repeat))+y0+(y%2===0?3*repeat:0)
+  //     ])
+  //   }
+  //   }
+  //   return <>
+  //     {treeOffsets.map(pos => treeMap && <Tree map={treeMap} position={[pos[0],pos[1],z0]} />)}
+  //   </>
+  //   // let [x0,y0]=position
+  //   // for (let x=-10; x<10; x++) {
+  //   //   for (let y=-10; y<10; y++) {
+  //   //     let x1 = x/10+x0
+  //   //     let y1 = y/10+y0
+  //   //     treeOffsets.push([x1,y1])
+  //   //   }
+  //   // }
+  //   // return <>{treeOffsets.map(pos => <Treeboard position={pos} />)}</>
     
-  }
+  // }
 
 
   
@@ -232,7 +232,7 @@ const Terrain = ({
     </mesh>}
 
     {showOcean && <mesh
-      ref={setOcean}
+      // ref={setOcean}
       rotation={[-Math.PI/2,0,0]}
     >
       {terrainGeometry}
