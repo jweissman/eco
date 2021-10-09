@@ -77,8 +77,10 @@ class WorldMap extends Model {
         let x = xsum/len, y=ysum/len
         let theName: string = (len > 80 ? '*' : '') + regionName
         return [theName, [
-          (x / this.size) * 100,
-          (y / this.size) * 100,
+          Math.round(x),
+          Math.round(y)
+          // (x / this.size) * 100,
+          // (y / this.size) * 100,
         ]]
       })
     )

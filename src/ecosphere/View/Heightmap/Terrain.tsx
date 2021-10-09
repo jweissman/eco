@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
-import { extend, useFrame, useLoader } from '@react-three/fiber';
-import { DataTexture, DoubleSide, LuminanceFormat, Mesh, RGBAFormat, TextureLoader, UnsignedByteType } from "three";
+import { useLoader } from '@react-three/fiber';
+import { DataTexture, LuminanceFormat, RGBAFormat, Texture, TextureLoader, UnsignedByteType } from "three";
 import { PointOfInterest } from './PointOfInterest';
 import { colorNameToHex } from '../../utils/colors';
 import { bilinearInterpolator } from '../../utils/interpolate';
-// import { Billboard } from '@react-three/drei';
-    
-extend({ TextureLoader })
+import { Tree } from './Tree';
 
 
 const makeImageData = (
@@ -109,22 +107,29 @@ const Terrain = ({
   const scale = 2 //32
   const meshSize = 128 * scale // 1024 * scale //8192 //4096; //1024;
   const maxLandHeight = 6 * scale // / tilemapWidth //1024 * 2  //256 //128 //meshSize / tileWidth
+  const treeUrl = `${process.env.PUBLIC_URL}/tree.png`
+  
+  let treeMap: Texture | null = null;
+  try {
+   // eslint-disable-next-line react-hooks/rules-of-hooks
+   treeMap = useLoader(TextureLoader, treeUrl)
+  } catch (err) { }
+
 
   const [oceanMesh, setOcean] = useState()
-  useFrame(({ clock }) => {
-    let { elapsedTime: t } = clock
-    if (oceanMesh) {
-      let mesh: Mesh = oceanMesh
-     mesh.position.y = (maxLandHeight / 10) * 0.64 // * 1.5
-                    //  - 1
-                     + 0.08 * scale * Math.sin(t/64)
-                     + 0.07 * scale * Math.cos(t/8)
-                    //  + 1.25 * Math.cos(t/2)
-                     + 0.06 * scale  * Math.cos(t*5)
-    }
-  })
+  // useFrame(({ clock }) => {
+  //   let { elapsedTime: t } = clock
+  //   if (oceanMesh) {
+  //     let mesh: Mesh = oceanMesh
+  //    mesh.position.y = (maxLandHeight / 10) * 0.64 // * 1.5
+  //                   //  - 1
+  //                    + 0.08 * scale * Math.sin(t/64)
+  //                    + 0.07 * scale * Math.cos(t/8)
+  //                   //  + 1.25 * Math.cos(t/2)
+  //                    + 0.06 * scale  * Math.cos(t*5)
+  //   }
+  // })
   
-  // const baseInterpolationRate = 16
   // const baseInterpolationRate = 8
   const baseInterpolationRate = 4
   // const baseInterpolationRate = 2
@@ -140,17 +145,6 @@ const Terrain = ({
   const grayscaleTexture = new DataTexture(grayscale, width, height, LuminanceFormat, UnsignedByteType);
   const rgbTexture = new DataTexture(rgb, width, height, RGBAFormat, UnsignedByteType);
 
-  // const treeTexture = new ()
-  const treeUrl = `${process.env.PUBLIC_URL}/tree.png`
-  const treeTexture = useLoader(TextureLoader, treeUrl)
-
-  // const loader = new TextureLoader()
-  // const treeTexture: Texture = loader.load( 
-  //   // `${process.env.PUBLIC_URL}/tree.png`
-  //   `${process.env.PUBLIC_URL}/1.jpg`,
-  // );
-
-
   const meshGrain = 128 * 2; //1024;
   const terrainGeometry = 
       <planeBufferGeometry attach="geometry" args={[
@@ -158,14 +152,19 @@ const Terrain = ({
         meshGrain, meshGrain
       ]} />
 
-  const showTerrain = true, showOcean = false
+  const showTerrain = true, showOcean = true
+  const showGuide = true
 
   const toScenePosition = (worldPos: [ number, number ]): [number,number,number] => {
     const [x,y] = worldPos;
     const scale = tilemapWidth / 16 
-    let x0 = meshSize/2 - (x * scale) // * (256/meshSize) // (1.3 * (x) * meshSize / 128); // - meshSize/2,
-    let y0 = (y * scale) - meshSize / 2 //1.3 * (y) * meshSize / 128 - meshSize / 2 
-    let z0 = parseInt((tiles && tiles[y] && tiles[y][x]) || '0') * maxLandHeight/10 //.5 //10
+    let x0 = meshSize/2 - (x * scale)
+    let y0 = (y * scale) - meshSize / 2
+    
+    let xRound = Math.round(x)
+    let yRound = Math.round(y)
+    let z0 = parseInt((tiles && tiles[yRound] && tiles[yRound][xRound]) || '0')
+           * maxLandHeight/10
     return [x0,y0,z0]
   }
 
@@ -175,32 +174,36 @@ const Terrain = ({
   //     <meshStandardMaterial color="green" />
   //   </mesh>
 
-  // todo point towards cam?
-  const Treeboard = ({ position }: { position: [number,number]}) => {
-    let [x,y,z] = toScenePosition(position)
-  return <>
-    <mesh position={[x,y,z+1]}
 
-      rotation={[0,-Math.PI/2,-Math.PI/2]}
-    >
-      <planeGeometry args={[2, 2]} />
-      <meshStandardMaterial
-        // color='green'
-        attach='material'
-        transparent
-        // map={grayscaleTexture}
-        // map={rgbTexture}
-        map={treeTexture}
-        side={DoubleSide}
-      />
-    </mesh>
-  </>
+  const Woods = ({ position }: { position: [number,number,number]}) => {
+    let [x0,y0,z0] = position
+    let repeat = 0
+    let treeOffsets: [number,number][] = []
+    // treeOffsets.pu
+    for (let x=-repeat; x<=repeat; x++) {
+    for (let y=-repeat; y<=repeat; y++) {
+      treeOffsets.push([
+        (x/(1+repeat))+x0+(x%2===0?4*repeat:0),
+        (y/(1+repeat))+y0+(y%2===0?3*repeat:0)
+      ])
+    }
+    }
+    return <>
+      {treeOffsets.map(pos => treeMap && <Tree map={treeMap} position={[pos[0],pos[1],z0]} />)}
+    </>
+    // let [x0,y0]=position
+    // for (let x=-10; x<10; x++) {
+    //   for (let y=-10; y<10; y++) {
+    //     let x1 = x/10+x0
+    //     let y1 = y/10+y0
+    //     treeOffsets.push([x1,y1])
+    //   }
+    // }
+    // return <>{treeOffsets.map(pos => <Treeboard position={pos} />)}</>
+    
   }
 
 
-  const Tree = Treeboard
-
-  const showGuide = false
   
   return <>
     {showTerrain && <mesh
@@ -220,19 +223,16 @@ const Terrain = ({
       />
 
     {showGuide && Object.entries(pointsOfInterest).map(([str, [x,y]], i) =>
-    <PointOfInterest baseHeight={maxLandHeight/3} str={str} x={x} y={y} meshSize={meshSize} />)}
+    <PointOfInterest
+      position={toScenePosition([x,y])}
+      title={str}
+    />)}
 
-{/* really we want to spawn a grove ... a bunch of trees around this location... */}
-    {tokens.trees.map((tree, i) => <Tree position={tree} />)}
-    {/* <Billboard position={[0,-1,0]} args={[50,50] as any}>
-        <meshBasicMaterial attach="material" map={grayscaleTexture}/>
-    </Billboard> */}
-
+      {tokens.trees.map(tree => treeMap && <Tree map={treeMap} position={toScenePosition(tree)} />)}
     </mesh>}
+
     {showOcean && <mesh
       ref={setOcean}
-      // rotation={[-Math.PI/2,0,0]}
-      // rotation={[0,0,0]}
       rotation={[-Math.PI/2,0,0]}
     >
       {terrainGeometry}
