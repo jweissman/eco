@@ -10,6 +10,8 @@
 // now just thinking making a beautiful language
 // for its own sake is an intersting exercise
 // (would be good to tease apart [kernels + conjugation]...)
+// want this to be "latinate" now?? (eg augustus, julius?) --
+// pseudolatin translations would be nice for 'structural' world elements (ordinal month names...? 'fifth of septilis'])
 
 import { assembleDictionary, Dictionary, Roots } from "../Dictionary";
 const celestialRoots: Roots = {

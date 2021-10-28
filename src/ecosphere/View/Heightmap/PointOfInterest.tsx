@@ -1,19 +1,25 @@
-import React, { useState } from 'react';
-import { useFrame } from '@react-three/fiber';
+import React from 'react';
+import { extend } from "@react-three/fiber";
+import { Billboard } from '@react-three/drei/core/Billboard';
 import { Text } from '@react-three/drei';
-import { Mesh } from "three";
+// import { Texture } from 'three';
+// import { Mesh } from "three";
+extend({ Billboard })
+
+// import React, { useState } from 'react';
+// import { useFrame } from '@react-three/fiber';
 
 export function PointOfInterest({ title: str, position }: { //}, x, y, str, meshSize, baseHeight }: {
   title: string, position: [number, number, number]
   // x: number; y: number; str: string; meshSize: number;
   // baseHeight: number;
 }) {
-  const [text, setText] = useState();
-  const [subtext, setSubtext] = useState();
-  useFrame(({ camera }) => {
-    if (text) { (text as Mesh).lookAt(camera.position); }
-    if (subtext) { (subtext as Mesh).lookAt(camera.position); }
-  });
+  // const [text, setText] = useState();
+  // const [subtext, setSubtext] = useState();
+  // useFrame(({ camera }) => {
+  //   if (text) { (text as Mesh).lookAt(camera.position, y0, z0); }
+  //   if (subtext) { (subtext as Mesh).lookAt(camera.position, y0, z0); }
+  // });
   let large = str.startsWith('*');
   let title = str.substring(0, str.indexOf('('));
   let subtitle = str.substring(str.indexOf('(') + 1, str.indexOf(')'));
@@ -23,10 +29,9 @@ export function PointOfInterest({ title: str, position }: { //}, x, y, str, mesh
   // let z0 = baseHeight*2 + (large ? 15 : -20);
   let fontSize = large ? 8 : 3;
   let color = 'white'; //large ? "white" : "gray"
-  return <>
+  return <Billboard position={[x0, y0, z0 + 20]}>
     <Text
-      ref={setText}
-      position={[x0, y0, z0 + 20]}
+      // ref={setText}
       // rotation={[Math.PI / 2, 0, 0]}
       font='Fira Code'
       fontSize={fontSize}
@@ -38,8 +43,9 @@ export function PointOfInterest({ title: str, position }: { //}, x, y, str, mesh
       {title.replaceAll('*', '')}
     </Text>
     {subtitle && <Text
-      ref={setSubtext}
-      position={[x0, y0, z0 + 15]}
+      // ref={setSubtext}
+      // position={[x0, y0, z0 + 15]}
+      position={[0, -5, 0]}
       // rotation={[Math.PI / 2, 0, 0]}
       font='Fira Code'
       color={color}
@@ -49,5 +55,5 @@ export function PointOfInterest({ title: str, position }: { //}, x, y, str, mesh
     >
       {subtitle}
     </Text>}
-  </>;
+  </Billboard>;
 }

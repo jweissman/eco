@@ -42,6 +42,12 @@ const view = (model: IModel, lastChanges: LastDelta) => {
       tokens: model.tokens || {} 
       // { trees: [[0,0], [128,128], [256,256], [0,256], [256,0]] as [number,number][] } || {}
       // { trees: [[0,0], [0,64], [64,0], [64,64]] as [number,number][] } || {}
+      // { trees: [[0,0], [0,32], [32,0], [32, 32]] as [number,number][] } || {}
+      // { trees: [[0,0], [0,128], [128,0], [128,128], [64,64]] as [number,number][] } || {}
+      // { trees: [[0,0], [0,1], [1,0], [1,1]] as [number,number][] } || {}
+      // { trees: [[0,0], [0,2], [2,0], [2,2]] as [number,number][] } || {}
+      // { trees: [[0,0], [0,4], [4,0], [4,4], //] as [number,number][] } || {}
+      //           [0,0], [0,8], [8,0], [8,8]] as [number,number][] } || {}
     }
   }
 

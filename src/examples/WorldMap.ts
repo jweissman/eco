@@ -21,10 +21,14 @@ class WorldMap extends Model {
     return eon;
   }
 
+  // size = 2
+  // size = 4
+  // size = 8
+  // size = 16
   // size = 32
-  size = 64
+  // size = 64
   // size = 96
-  // size = 128
+  size = 128
   // size = 192
   // size = 256
   // size = 512
@@ -238,13 +242,14 @@ class WorldMap extends Model {
     let treeline = this.elevation.maxHeight / 2
 
     this.vegetation.step((val, neighbors, position) => {
+      if (tree === val) return tree
       let alive = (plants.includes(val))
       let h = this.elevation.at(...position)
       if (h > treeline || h < sea) { return ''}
       let ns = neighbors.filter(n => plants.includes(n)).length
       if (alive) {
         if (ns > 0 && (val === grove)) { return val }
-        if (ns > 1 && (val === tree)) { return val }
+        // if (ns > 1 && (val === tree)) { return val }
         if (ns === 2 || ns === 3) return grass
         else if (ns === 6) return tree
         else if (ns === 7) return grove
@@ -274,7 +279,7 @@ class WorldMap extends Model {
   @boundMethod
   evolution({ resources }: EvolvingStocks, t: number) {
     if (t > 0) {
-      if (t % 100 === 0) { console.log("The world is " + (t / 100) + " million years old") }
+      // if (t % 100 === 0) { console.log("The world is " + (t / 100) + " million years old") }
       if (t <= this.mapgenTicks) {
         this.genHeightmap()
         this.growVegetation()

@@ -15,12 +15,12 @@ const HeightmapCanvas = ({
   return <>
     <Canvas
       frameloop={'demand'} 
-      camera={{ zoom: 4, position: [0,20,128], 
+      camera={{ zoom: 4, position: [0,0,24], //20,128], 
        near: 0.1, far: 15000 }}
        onCreated={({camera}) => {
-        //  camera.rotateX(Math.PI/2)
-        // camera.rotateY(Math.PI/2)
-        // camera.rotateZ(Math.PI/2)
+         camera.rotateX(Math.PI/2)
+        // camera.rotateY(-Math.PI/2)
+        // camera.rotateZ(-Math.PI/2)
        }}
     >
       <Suspense fallback={<div className="loading">Loading</div>}>

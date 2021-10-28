@@ -9,8 +9,8 @@ export class Board {
 
   view({ overlays }: { overlays: Board[] } = { overlays: []}): Tiles {
     let viewTiles: Tiles = []
-    for (let x = 0; x <= this.width; x++) {
-      for (let y = 0; y <= this.height; y++) {
+    for (let x = -1; x <= this.width; x++) {
+      for (let y = -1; y <= this.height; y++) {
         viewTiles[y] = viewTiles[y] || []
         let overlay = overlays.length > 0 && first(overlays, o => {
           let v = o.at(x,y); return v !== '' && v !== undefined

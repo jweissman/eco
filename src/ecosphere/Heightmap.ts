@@ -34,16 +34,16 @@ export class Heightmap {
     extrudeIntensity: 10,
 
     // flow 'intensity'
-    viscosity: 2,
+    viscosity: 0,
 
     // 100 = constant
   bombardmentRate: 50,
   }}
 
   matrix: number[][] = []
-  maxHeight = 256 //1024 * 8
+  maxHeight = 256 // 1024 //* 8
   heightUnit = (this.maxHeight / 10)
-  seaLevel = 2 * (this.maxHeight / 10) // - this.heightUnit
+  seaLevel = 0.3 * this.maxHeight // 2 * (this.maxHeight / 10) // - this.heightUnit
 
   constructor(public width: number, public height: number) {
   }
@@ -146,41 +146,56 @@ export class Heightmap {
   at = (x: number, y: number): number => this.valueAtPosition([x,y])
 
   smooth: HeightmapOperation = ({ value, neighbors: ns, localAverage: average }: Cell) => { // = () => {
-    // if (value > average + this.mu) return sample([value, value-1])
-    // if (value > average) return value
-    if (randomInteger(0,1000) >= this.evolution.smoothSpeed) return value
-    return sample([
-      value,
-      // ...ns.map(n => Math.max(n, value)),
-      Math.max(value, (Math.min(...ns) + Math.max(...ns))/2)
-    ])
+    // return value
+    let aboveWater = ns.filter(n => n > this.seaLevel).length
+    // if (value > 0 && aboveWater <= 1 && value < this.seaLevel + 2*this.mu) { return this.seaLevel - this.mu }
+    // if (aboveWater >= 7 && value < this.seaLevel) { return this.seaLevel + 1 }
+    // if (average > this.seaLevel && aboveWater <= 3 && value > this.seaLevel) { return this.seaLevel - this.mu }
+    // if (value > average + this.mu) return value - 1 //sample([value, value-1])
+    // if (value >= Math.max(...ns) && value >= average && value < this.maxHeight * 0.6) return value - 1 //
+    // if (value > 0 && value <= Math.min(...ns)) return value + 1
+    return value
+    // if (Math.abs(value - average) < this.mu) return value
+    // return sample([ value, average ]) //value - 1 //sample([value, value - 1])
+    // if (randomInteger(0,1000) >= this.evolution.smoothSpeed) return value
+    // return sample([
+    //   value,
+    //   // ...ns.map(n => Math.max(n, value)),
+    //   Math.max(value, (Math.min(...ns) + Math.max(...ns))/2)
+    // ])
     // ])
   };
 
   mu = this.heightUnit
   flow: HeightmapOperation = ({ value, neighbors: ns, localAverage: average }: Cell) => {
-    if (value > this.seaLevel - this.mu) return value //this.seaLevel - this.mu) { return value }
+    if (value > 0) { return value }
+    // if (value > this.seaLevel - this.mu) return value //this.seaLevel - this.mu) { return value }
     let tallest = Math.max(...ns)
-    // let { viscosity } = this.evolution
-    let u = this.mu * Math.pow(2, randomInteger(1, 2))
-    if (Math.abs(tallest - this.maxHeight) < this.mu) {
-      return tallest - 2*this.mu
-    }
+    let { viscosity } = this.evolution
+    let u = this.mu * Math.pow(2, randomInteger(-4, 2 + viscosity))
+    // if (Math.abs(tallest - this.maxHeight) < this.mu) {
+    //   return tallest - 2*this.mu
+    // }
     if (u > this.mu*2) { u = this.mu*2 }
+    if (value > this.seaLevel && randomInteger(0,1000) < 5) { u = -u }
     return Math.max(
       value,
       tallest-u,
+      // average-u,
     )
   };
 
   erode: HeightmapOperation = ({ value, neighbors: ns, localAverage }) => {
+    // if (value <= localAverage - this.mu) return value
+    // if (value >= localAverage + this.mu) return value - 1
+    return value //sample([value, value - 1])
     // return value
     // if (value > localAverage + this.mu) return sample([ value, value - 1 ]) // his.mu //(value + localAverage) / 2
     // if (value > Math.min(...ns) + 2*this.mu) return value-this.mu //this.mu //sample([ value, value - this.mu ]) // his.mu //(value + localAverage) / 2
     // if (value < localAverage - this.mu) return sample([ value, value + 1 ]) // his.mu //(value + localAverage) / 2
     // if (value > this.seaLevel + this.mu) return value - 1
-    if (randomInteger(0,1000) > this.evolution.erosionSpeed) return value
-    return sample([ value, value - 1 ]) //this.mu
+    // if (randomInteger(0,1000) > this.evolution.erosionSpeed) return value
+    // return sample([ value, value - 1 ]) //this.mu
   }
 
   private adjuster = (amount: number) => (position: Position) => {
@@ -193,7 +208,7 @@ export class Heightmap {
     const raiseGround = this.adjuster(
       this.heightUnit * this.evolution.extrudeIntensity
     )
-    choose(8, positions).forEach(raiseGround)
+    choose(3, positions).forEach(raiseGround)
     // positions.forEach(raiseGround) //pos => raiseGround(pos))
   };
 
@@ -228,10 +243,10 @@ export class Heightmap {
   // )
 
   geoform = (hades: boolean, mountains: [number, number][]) => {
-    // const d100 = randomInteger(0,100)
-    // if (d100 < this.evolution.bombardmentRate) {
-    //   this.bombard(hades ? this.height/2 : this.height/8);
-    // }
+    const d100 = randomInteger(0,100)
+    if (d100 < this.evolution.bombardmentRate) {
+      // this.bombard(hades ? this.height/2 : this.height/8);
+    }
 
     if (hades) { this.extrude(mountains) }
 

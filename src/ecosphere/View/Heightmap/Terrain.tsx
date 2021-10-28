@@ -13,8 +13,8 @@ const makeImageData = (
   imageSize: number,
   // evolving: boolean
 ): { rgb: Uint8Array, grayscale: Uint8Array } => {
-  var tileWidth = tiles[0].length,
-      tileHeight = tiles.length;
+  var tileWidth = tiles[0].length + 1,
+      tileHeight = tiles.length + 1;
 
   const width = imageSize, height = imageSize
   
@@ -26,6 +26,8 @@ const makeImageData = (
     if (tiles[y] !== undefined) return parseInt(tiles[y][x], 10)
     return 0
   }
+  const interpolate = bilinearInterpolator(heightAt)
+
   const colorAt = (x: number, y: number) => {
     let h = heightAt(x,y)
     let color = tileColors[Math.round(h)]
@@ -36,7 +38,7 @@ const makeImageData = (
     return hex;
   }
 
-  const interpolate = bilinearInterpolator(heightAt)
+  // const interpolate = bilinearInterpolator(heightAt)
   
   const interpolateRed = bilinearInterpolator((x, y) => {
     let hex: string = hexValueAt(x,y)
@@ -55,8 +57,8 @@ const makeImageData = (
   })
 
   
-  for (var y = 0; y < height - 1; y++) {
-    for (var x = 0; x < width - 1; x++) {
+  for (var y = 0; y <= height+2; y++) {
+    for (var x = 0; x <= width+2; x++) {
       let pos = (y * width + x);
       let x0 = tileWidth - ((x / (width)) * (tileWidth)),
         y0 = (y / (height)) * (tileHeight);
@@ -102,11 +104,11 @@ const Terrain = ({
  }) => {
 
   tiles = tiles || []
-  var tilemapWidth = tiles[0].length;
+  var tilemapWidth = tiles.length // - 1; //[0].length + 1;
 
-  const scale = 2 //32
-  const meshSize = 128 * scale // 1024 * scale //8192 //4096; //1024;
-  const maxLandHeight = 6 * scale // / tilemapWidth //1024 * 2  //256 //128 //meshSize / tileWidth
+  const scale = 1 //32
+  const meshSize = tilemapWidth * scale // 1024 * scale //8192 //4096; //1024;
+  const maxLandHeight = 32 * scale // / tilemapWidth //1024 * 2  //256 //128 //meshSize / tileWidth
   const treeUrl = `${process.env.PUBLIC_URL}/tree.png`
   
   let treeMap: Texture | null = null;
@@ -114,24 +116,9 @@ const Terrain = ({
    // eslint-disable-next-line react-hooks/rules-of-hooks
    treeMap = useLoader(TextureLoader, treeUrl)
   } catch (err) { }
-
-
-  // const [oceanMesh, setOcean] = useState()
-  // useFrame(({ clock }) => {
-  //   let { elapsedTime: t } = clock
-  //   if (oceanMesh) {
-  //     let mesh: Mesh = oceanMesh
-  //    mesh.position.y = (maxLandHeight / 10) * 0.64 // * 1.5
-  //                   //  - 1
-  //                    + 0.08 * scale * Math.sin(t/64)
-  //                    + 0.07 * scale * Math.cos(t/8)
-  //                   //  + 1.25 * Math.cos(t/2)
-  //                    + 0.06 * scale  * Math.cos(t*5)
-  //   }
-  // })
   
   // const baseInterpolationRate = 8
-  const baseInterpolationRate = 4
+  const baseInterpolationRate = 1
   // const baseInterpolationRate = 2
   const interpolationRate = evolving ? 1 : baseInterpolationRate;
   const imgSize = tilemapWidth * interpolationRate;
@@ -145,7 +132,7 @@ const Terrain = ({
   const grayscaleTexture = new DataTexture(grayscale, width, height, LuminanceFormat, UnsignedByteType);
   const rgbTexture = new DataTexture(rgb, width, height, RGBAFormat, UnsignedByteType);
 
-  const meshGrain = 128 * 2; //1024;
+  const meshGrain = 1024; // * 2; //1024;
   const terrainGeometry = 
       <planeBufferGeometry attach="geometry" args={[
         meshSize, meshSize,
@@ -155,60 +142,40 @@ const Terrain = ({
   const showTerrain = true, showOcean = true
   const showGuide = true
 
+  const heightAt = (x: number, y: number) => {
+    if (tiles[y] !== undefined) return parseInt(tiles[y][x] || '0', 10)
+    return 0
+  }
+  const interpolate = bilinearInterpolator(heightAt)
+
+
   const toScenePosition = (worldPos: [ number, number ]): [number,number,number] => {
     const [x,y] = worldPos;
-    const scale = tilemapWidth / 16 
-    let x0 = meshSize/2 - (x * scale)
-    let y0 = (y * scale) - meshSize / 2
+    // const scale = tilemapWidth //(sz)/(tilemapWidth) //tilemapWidth //meshSize / 32 //1 //tilemapWidth * 128 ///512
+    const sz = meshSize/2 // meshSize/2 //1/
+    const sceneScale = (imgSize / sz) / 2
+    // maybe this is constant?? no haha but it's not just dependent on the tilemap width
+    let x0 = sz - x*sceneScale //*scale //- sz/2
+    let y0 = y*sceneScale - sz // sz/2 // + sz/2
     
-    let xRound = Math.round(x)
-    let yRound = Math.round(y)
-    let z0 = parseInt((tiles && tiles[yRound] && tiles[yRound][xRound]) || '0')
-           * maxLandHeight/10
+    let z0 = interpolate(x,y)  * maxLandHeight/10
+
+    // let xRound = Math.round(x)
+    // let yRound = Math.round(y)
+    // z0 = parseInt((tiles && tiles[yRound] && tiles[yRound][xRound]) || '0')
+    //         * maxLandHeight/8 ///10
     return [x0,y0,z0]
   }
 
-  // const Treebox = ({ position }: { position: [number,number]}) => 
-  //   <mesh position={toScenePosition(position)}>
-  //     <boxGeometry args={[5, 5, 20]} />
-  //     <meshStandardMaterial color="green" />
-  //   </mesh>
-
-
-  // const Woods = ({ position }: { position: [number,number,number]}) => {
-  //   let [x0,y0,z0] = position
-  //   let repeat = 0
-  //   let treeOffsets: [number,number][] = []
-  //   // treeOffsets.pu
-  //   for (let x=-repeat; x<=repeat; x++) {
-  //   for (let y=-repeat; y<=repeat; y++) {
-  //     treeOffsets.push([
-  //       (x/(1+repeat))+x0+(x%2===0?4*repeat:0),
-  //       (y/(1+repeat))+y0+(y%2===0?3*repeat:0)
-  //     ])
-  //   }
-  //   }
-  //   return <>
-  //     {treeOffsets.map(pos => treeMap && <Tree map={treeMap} position={[pos[0],pos[1],z0]} />)}
-  //   </>
-  //   // let [x0,y0]=position
-  //   // for (let x=-10; x<10; x++) {
-  //   //   for (let y=-10; y<10; y++) {
-  //   //     let x1 = x/10+x0
-  //   //     let y1 = y/10+y0
-  //   //     treeOffsets.push([x1,y1])
-  //   //   }
-  //   // }
-  //   // return <>{treeOffsets.map(pos => <Treeboard position={pos} />)}</>
-    
-  // }
-
-
+  const Forest = ({ at }: { at: [number,number] }) => {
+    return <>
+      {treeMap && <Tree map={treeMap} position={toScenePosition(at)} />}
+    </>
+  }
   
   return <>
     {showTerrain && <mesh
-      position={[0,-1,0]}
-      rotation={[-Math.PI/2,0,0]}
+      position={[0,0,0]}
     >
       {terrainGeometry}
        
@@ -233,7 +200,8 @@ const Terrain = ({
 
     {showOcean && <mesh
       // ref={setOcean}
-      rotation={[-Math.PI/2,0,0]}
+      position={[0,0,5]}
+      // rotation={[-Math.PI/2,0,0]}
     >
       {terrainGeometry}
       <meshPhongMaterial
