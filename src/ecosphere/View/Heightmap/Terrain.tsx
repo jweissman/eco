@@ -148,22 +148,13 @@ const Terrain = ({
   }
   const interpolate = bilinearInterpolator(heightAt)
 
-
   const toScenePosition = (worldPos: [ number, number ]): [number,number,number] => {
     const [x,y] = worldPos;
-    // const scale = tilemapWidth //(sz)/(tilemapWidth) //tilemapWidth //meshSize / 32 //1 //tilemapWidth * 128 ///512
-    const sz = meshSize/2 // meshSize/2 //1/
+    const sz = meshSize/2
     const sceneScale = (tilemapWidth / sz) / 2
-    // maybe this is constant?? no haha but it's not just dependent on the tilemap width
-    let x0 = sz - x*sceneScale //*scale //- sz/2
-    let y0 = y*sceneScale - sz // sz/2 // + sz/2
-    
-    let z0 = interpolate(x,y)/10 * maxLandHeight //4 //10
-
-    // let xRound = Math.round(x)
-    // let yRound = Math.round(y)
-    // z0 = parseInt((tiles && tiles[yRound] && tiles[yRound][xRound]) || '0')
-    //         * maxLandHeight/8 ///10
+    let x0 = sz - x*sceneScale
+    let y0 = y*sceneScale - sz
+    let z0 = interpolate(x,y)/10 * maxLandHeight
     return [x0,y0,z0]
   }
 
