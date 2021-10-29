@@ -106,9 +106,9 @@ const Terrain = ({
   tiles = tiles || []
   var tilemapWidth = tiles.length // - 1; //[0].length + 1;
 
-  const scale = 1 //32
-  const meshSize = tilemapWidth * scale // 1024 * scale //8192 //4096; //1024;
-  const maxLandHeight = 32 * scale // / tilemapWidth //1024 * 2  //256 //128 //meshSize / tileWidth
+  // const scale = 1 //32
+  const meshSize = tilemapWidth // * scale // 1024 * scale //8192 //4096; //1024;
+  const maxLandHeight = 16 // * scale // / tilemapWidth //1024 * 2  //256 //128 //meshSize / tileWidth
   const treeUrl = `${process.env.PUBLIC_URL}/tree.png`
   
   let treeMap: Texture | null = null;
@@ -117,8 +117,8 @@ const Terrain = ({
    treeMap = useLoader(TextureLoader, treeUrl)
   } catch (err) { }
   
-  // const baseInterpolationRate = 8
-  const baseInterpolationRate = 1
+  const baseInterpolationRate = 8
+  // const baseInterpolationRate = 2
   // const baseInterpolationRate = 2
   const interpolationRate = evolving ? 1 : baseInterpolationRate;
   const imgSize = tilemapWidth * interpolationRate;
@@ -132,7 +132,7 @@ const Terrain = ({
   const grayscaleTexture = new DataTexture(grayscale, width, height, LuminanceFormat, UnsignedByteType);
   const rgbTexture = new DataTexture(rgb, width, height, RGBAFormat, UnsignedByteType);
 
-  const meshGrain = 1024; // * 2; //1024;
+  const meshGrain = 256; // 1024; // * 2; //1024;
   const terrainGeometry = 
       <planeBufferGeometry attach="geometry" args={[
         meshSize, meshSize,
@@ -153,12 +153,12 @@ const Terrain = ({
     const [x,y] = worldPos;
     // const scale = tilemapWidth //(sz)/(tilemapWidth) //tilemapWidth //meshSize / 32 //1 //tilemapWidth * 128 ///512
     const sz = meshSize/2 // meshSize/2 //1/
-    const sceneScale = (imgSize / sz) / 2
+    const sceneScale = (tilemapWidth / sz) / 2
     // maybe this is constant?? no haha but it's not just dependent on the tilemap width
     let x0 = sz - x*sceneScale //*scale //- sz/2
     let y0 = y*sceneScale - sz // sz/2 // + sz/2
     
-    let z0 = interpolate(x,y)  * maxLandHeight/10
+    let z0 = interpolate(x,y)/10 * maxLandHeight //4 //10
 
     // let xRound = Math.round(x)
     // let yRound = Math.round(y)
@@ -167,11 +167,11 @@ const Terrain = ({
     return [x0,y0,z0]
   }
 
-  const Forest = ({ at }: { at: [number,number] }) => {
-    return <>
-      {treeMap && <Tree map={treeMap} position={toScenePosition(at)} />}
-    </>
-  }
+  // const Forest = ({ at }: { at: [number,number] }) => {
+  //   return <>
+  //     {treeMap && <Tree map={treeMap} position={toScenePosition(at)} />}
+  //   </>
+  // }
   
   return <>
     {showTerrain && <mesh
@@ -200,7 +200,7 @@ const Terrain = ({
 
     {showOcean && <mesh
       // ref={setOcean}
-      position={[0,0,5]}
+      position={[0,0,4.75]}
       // rotation={[-Math.PI/2,0,0]}
     >
       {terrainGeometry}

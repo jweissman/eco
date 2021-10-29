@@ -15,17 +15,19 @@ export function Tree({ position, map }: { map: Texture; position: [number, numbe
   //  useFrame(({ camera }) => {
   //   tree && tree.lookAt(camera.position)
   //  })
+  const scale = 1.2
+  let zOff = scale * 0.875
   return <Billboard
   // follow={false}
       // lockX lockY
     // lockX
     // lockZ
       // scale={16}
-    position={[x, y, z-0.6]} // z + 32]}
-      rotation={[0, -Math.PI / 2, -Math.PI / 2]}
+    position={[x, y, z + zOff]} // z + 32]}
+      // rotation={[0, -Math.PI / 2, -Math.PI / 2]}
   >
     <mesh
-      scale={0.2}
+      scale={scale}
       // ref={set}
 
     >

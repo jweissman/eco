@@ -5,11 +5,11 @@ import { clamp } from "./utils/clamp";
 import { distance } from "./utils/distance";
 import { first } from "./utils/first";
 import { randomInteger } from "./utils/randomInteger";
-import { choose, sample } from "./utils/sample";
+import { choose } from "./utils/sample";
 
 type Position = [number, number]
 
-function neighborPositions([x,y]: Position): Position[] { // [x: number, y: number): [number, number][] {
+function neighborPositions([x,y]: Position): Position[] {
   return [
     [x-1,y-1], [x,y-1], [x+1,y-1],
     [x-1,y  ], [x+1,y],
@@ -147,7 +147,7 @@ export class Heightmap {
 
   smooth: HeightmapOperation = ({ value, neighbors: ns, localAverage: average }: Cell) => { // = () => {
     // return value
-    let aboveWater = ns.filter(n => n > this.seaLevel).length
+    // let aboveWater = ns.filter(n => n > this.seaLevel).length
     // if (value > 0 && aboveWater <= 1 && value < this.seaLevel + 2*this.mu) { return this.seaLevel - this.mu }
     // if (aboveWater >= 7 && value < this.seaLevel) { return this.seaLevel + 1 }
     // if (average > this.seaLevel && aboveWater <= 3 && value > this.seaLevel) { return this.seaLevel - this.mu }
