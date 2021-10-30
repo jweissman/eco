@@ -1,10 +1,10 @@
 import React from 'react';
-import { extend } from "@react-three/fiber";
-import { Billboard } from '@react-three/drei/core/Billboard';
+// import { extend } from "@react-three/fiber";
+// import { Billboard } from '@react-three/drei/core/Billboard';
 import { Text } from '@react-three/drei';
 // import { Texture } from 'three';
 // import { Mesh } from "three";
-extend({ Billboard })
+// extend({ Billboard })
 
 // import React, { useState } from 'react';
 // import { useFrame } from '@react-three/fiber';
@@ -23,13 +23,14 @@ export function PointOfInterest({ title: str, position }: { //}, x, y, str, mesh
   let large = str.startsWith('*');
   let title = str.substring(0, str.indexOf('('));
   let subtitle = str.substring(str.indexOf('(') + 1, str.indexOf(')'));
-  let [x0,y0,z0] = position
+  // todo fix position of these things? use billboard?
+  // let [x0,y0,z0] = position
   // let x0 = meshSize / 2 - (1.3 * (x) * meshSize / 128); // - meshSize/2,
   // let y0 = 1.3 * (y) * meshSize / 128 - meshSize / 2;
   // let z0 = baseHeight*2 + (large ? 15 : -20);
   let fontSize = large ? 8 : 3;
   let color = 'white'; //large ? "white" : "gray"
-  return <Billboard position={[x0, y0, z0 + 20]}>
+  return <>
     <Text
       // ref={setText}
       // rotation={[Math.PI / 2, 0, 0]}
@@ -55,5 +56,5 @@ export function PointOfInterest({ title: str, position }: { //}, x, y, str, mesh
     >
       {subtitle}
     </Text>}
-  </Billboard>;
+  </>;
 }

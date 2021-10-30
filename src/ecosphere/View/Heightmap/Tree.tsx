@@ -1,8 +1,13 @@
 import React from 'react';
-import { extend } from "@react-three/fiber";
-import { Billboard } from '@react-three/drei/core/Billboard';
 import { Texture } from 'three';
-extend({ Billboard })
+import { Billboard } from '@react-three/drei'; ///core/Billboard';
+
+// okay jest *hates* this, presumably b/c of `extend` keyword
+import { extend } from "@react-three/fiber";
+
+// if (process.env.NODE_ENV !== 'test') {
+  extend({ Billboard })
+// }
 
 // todo point towards cam?
 export function Tree({ position, map }: { map: Texture; position: [number, number, number]; }) {
