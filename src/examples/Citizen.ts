@@ -63,15 +63,20 @@ class Citizen extends Model {
       'Joy': () => { return {
         value: this.resources.count('Joy'),
         max: this.resources.count('Max Joy'),
-      }}
+      }},
+      // '': () => { return { }}
     }
     // this.subject = person
     // this.nameMeaning = nameMeaning;
     const fish = self.recipes.create({ name: 'Fish' })
     const hunt = self.recipes.create({ name: 'Hunt' })
     const rest = self.recipes.create({ name: 'Rest' })
-    const eat = self.recipes.create({ name: 'Eat' })
+    const eat  = self.recipes.create({ name: 'Eat' })
     const idle = self.recipes.create({ name: 'Vibe' })
+
+    // const sleep = 
+
+    // const create = self.recipes.create({ name: 'Create' }) // create art?? improve joy + produce a thing
     
     return {
       person: individual,
@@ -119,14 +124,8 @@ class Citizen extends Model {
     }})
   }
 
-  // @boundMethod
   evolution: TimeEvolution = ({ resources }, t) => {
-    // this.subject.body
-
-    
-    if (t % 25 === 0) {
-      this.evolveIndividual(resources, t%250 === 0)
-      }
+    if (t % 25 === 0) { this.evolveIndividual(resources, t%250 === 0) }
   }
 
   evolveIndividual = (resources: ManageStocks, switchJobs: boolean) => {
