@@ -32,7 +32,9 @@ export class Factory extends Model {
 
   metricGrain = 100
   get deliveryRate() {
-    return this.recentEvents.filter(where('kind', 'order:fulfilled')).length / this.metricGrain
+    return this.recentEvents.filter(
+      where('kind', 'order:fulfilled')
+    ).length / this.metricGrain
   }
 
   get recentEvents() {
