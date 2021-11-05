@@ -42,8 +42,8 @@ const build: () => Model = () => {
   // const mainThrusters = atlantis.people.tasks.create({ name: 'Accelerate', recipe: drive })
   // const makeXenocite = atlantis.people.tasks.create({ name: 'Make Xenocite', recipe: synthXenocite })
 
-  atlantis.crew.jobs.set(captain, xenocite)
-  atlantis.crew.jobs.set(firstOfficer, drive)
+  atlantis.crew.jobs.set(captain, { recipe: xenocite })
+  atlantis.crew.jobs.set(firstOfficer, { recipe: drive })
 
   atlantis.evolve((e: EvolvingStocks, t: number) => {
     e.resources.remove(1, 'Air')
@@ -243,7 +243,7 @@ it('tracks resources over time', async () => {
   ).toEqual(999)
   fireEvent.click(stepButton);
   expect(await Eco.items.count('Air')).toEqual(98)
-  expect(await Eco.items.count('Power')).toEqual(-1)
+  expect(await Eco.items.count('Power')).toEqual(-1) // -1)
   fireEvent.click(stepButton);
   expect(await Eco.items.count('Air')).toEqual(97)
   expect(await Eco.items.count('Power')).toEqual(-1)

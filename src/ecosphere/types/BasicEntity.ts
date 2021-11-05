@@ -1,8 +1,8 @@
-type Rarity = 'mundane'         // common (species) - Orc
-            | 'infrequent'      // uncommon (type/job) - Orcish Healer
-            | 'unusual'         // rare (perk) - Skillful Orcish Healer
-            | 'amazing'         // epic (heroic perk + backstory) - Mork of Ogira, Warm-hearted Skillful Orcish Healer
-            | 'extraordinary'   // legendary (unique aspect + mechanic) - eg:
+// type Rarity = 'mundane'         // common (species) - Orc
+//             | 'infrequent'      // uncommon (type/job) - Orcish Healer
+//             | 'unusual'         // rare (perk) - Skillful Orcish Healer
+//             | 'amazing'         // epic (heroic perk + backstory) - Mork of Ogira, Warm-hearted Skillful Orcish Healer
+//             | 'extraordinary'   // legendary (unique aspect + mechanic) - eg:
                                 //
                                 // Mork the Kind Teacher, Warm-hearted Skillful Orcish Healer of Ogira:
                                 //

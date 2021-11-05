@@ -292,7 +292,7 @@ export type Person = Individual<Moiety> & {
   traits: ManageStocks // IList<Trait>
 
   // things to draw meters for..
-  meters: { [meterName: string]: Function }
+  meters: () => { [meterName: string]: Function }
   memory: Collection<Memory>
   // philosophy?: Ideology
   // destiny: 'doomed' | 'commonplace' | 'exceptional' | 'free'
@@ -331,7 +331,7 @@ export const createPerson = (name: string, moiety: Moiety): Person => {
     traits: traits.manageAll(),
     // stats: state.manageAll()
     // things: new M
-    meters: {},
+    meters: () => { return {}},
     memory: new Collection<Memory>(),
   }
 
@@ -344,8 +344,13 @@ export const createPerson = (name: string, moiety: Moiety): Person => {
 //   return newPerson
 // }
 
+
 export type Recipe = BasicEntity & {
-  produces: { [resourceName: string]: number }
+  // description?: string
+  time?: number
+  probability?: number
+
+  produces?: { [resourceName: string]: number }
   consumes?: { [resourceName: string]: number }
   requiresMachine?: string
 }

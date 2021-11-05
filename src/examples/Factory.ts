@@ -108,7 +108,7 @@ export class Factory extends Model {
 
   produce = (worker: Person, recipe: Recipe) => {
     if (this.canProduce(recipe)) {
-      this.workers.jobs.set(worker, recipe)
+      this.workers.jobs.set(worker, { recipe, startedAt: this.ticks })
     } else {
       if (recipe.consumes) {
         const required: string[] = []
@@ -123,7 +123,7 @@ export class Factory extends Model {
         // need to find a recipe that produces requirement
         let producingRequirement: Recipe | null =  null
         this.workers.recipes.each(recipe => {
-          if (recipe.produces[requirement]) {
+          if (recipe.produces !== undefined && recipe.produces[requirement]) {
             producingRequirement = recipe
           }
         })

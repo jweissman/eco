@@ -7,12 +7,12 @@ export function presentIndividual(work: { [key: number]: string; }) {
     name: string;
     things: ManageStocks;
     traits: ManageStocks;
-    meters: { [key: string]: Function }
+    meters: () => { [key: string]: Function }
   }) => {
     const itemNames = things.list().map(thing => thing.name);
     return <li key={id} title={name} className='Item'>
       <div className='Title' data-testid='Name'>{name}</div>
-      {Object.entries(meters).map(([meterName, measure]) => {
+      {Object.entries(meters()).map(([meterName, measure]) => {
         const { value, max } = measure()
         return <div className='Meter' data-testid={meterName}>
           <label htmlFor={meterName} style={{paddingRight: 10}}>{meterName}:</label>
@@ -25,13 +25,13 @@ export function presentIndividual(work: { [key: number]: string; }) {
           </meter>
         </div>
       })}
-      {work[id] && work[id] !== '?' && <span data-testid='Status'>{work[id]}</span>}
+      {work[id] && <span data-testid='Status'>{work[id]}</span>}
       {itemNames.length > 0 && <div className='Subitems' data-testid='Inventory'>
         <ul>
           {itemNames.sort((a,b) => a > b ? 1 : -1).map(it => <li key={it} style={{
               ...(things.count(it) === 0 ? { display: 'none' } : {})
             }}>
-            {it} <span data-testid={it}  className='Count'>{things.count(it)}</span>
+            {it} <span data-testid={it}  className='Count'>{Math.floor(things.count(it))}</span>
           </li>)}
         </ul>
       </div>}

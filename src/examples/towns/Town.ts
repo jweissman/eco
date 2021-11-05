@@ -1,7 +1,10 @@
 // An empty world!!!
 
-import Model from "../ecosphere/Model";
-import { Person } from "../ecosphere/types";
+import Model from "../../ecosphere/Model";
+import { Person } from "../../ecosphere/types";
+
+// import Model from "../ecosphere/Model";
+// import { Person } from "../ecosphere/types";
 
 // ideas: calendar, tracking time it takes to do things
 

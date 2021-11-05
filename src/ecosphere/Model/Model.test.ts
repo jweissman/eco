@@ -175,8 +175,8 @@ describe('Model', () => {
     expect(recipes.first.name).toEqual(Milling)
     const harry = folks.create('Harry');
     // const mill = model.people.tasks.create({ recipe: Milling })
-    folks.jobs.set(harry, mill)
-    expect(folks.jobs.report).toEqual({ Harry: { ...mill } })
+    folks.jobs.set(harry, { recipe: mill })
+    expect(folks.jobs.report).toEqual({ Harry: { recipe: { ...mill }} })
     model.evolve((e) => folks.work({ resources: e.resources }))
     expect(model.resources.count('Grain')).toEqual(10)
     expect(model.resources.count('Flour')).toEqual(0)

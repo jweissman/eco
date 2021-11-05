@@ -4,16 +4,19 @@ import { Population } from "./Population";
 import { Collection } from "./Collection";
 import { boundMethod } from 'autobind-decorator';
 
+type Job = { recipe: Recipe, startedAt?: number }
+
 export class Community extends Population<Moiety, Person> {
   moieties: List<Moiety> = new List<Moiety>();
   obscured: boolean = false // don't display details
    
   public recipes = new Collection<Recipe>();
-  public jobs = new Map<Person, Recipe>(
+  public jobs = new Map<Person, Job>(
     worker => worker.id,
     worker => worker.name,
     this.lookupById
   );
+
 
   public inventories = new Map<Person, ManageStocks>(
     worker => worker.id,
@@ -23,7 +26,10 @@ export class Community extends Population<Moiety, Person> {
 
   get report(): { [personName: string]: string; } {
     const entries = this.list()
-      .map(person => [person.id, (this.jobs.get(person) || {name: '?'}).name]);
+      .map(person => {
+        let job =this.jobs.get(person)
+        return [person.id, (job !== undefined && job.recipe !== undefined) ? job.recipe.name : '?'];
+      });
     return Object.fromEntries(entries);
   }
 
@@ -40,17 +46,10 @@ export class Community extends Population<Moiety, Person> {
     return person
   }
 
-  // people have inventories...
-  // and maybe they've declared what they want
-
-  // measureTime(time: number): HumanCalendar {}
-
-  // trade({ resources })
-
   work({ resources }: { resources: { add: Function; remove: Function; count: Function; }; }): void {
     const { report } = this.jobs;
-    Object.entries(report).forEach(([_workerName, recipe]: [string, Recipe]) => {
-      this.produce(recipe, resources);
+    Object.entries(report).forEach(([_workerName, job]: [string, Job]) => {
+      if (job && job.recipe) { this.produce(job.recipe, resources) };
     });
   }
   

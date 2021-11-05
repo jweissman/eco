@@ -25,7 +25,7 @@ const Windmill = 'Windmill';
 const world = new Model('Township of Writ-upon-Water')
 const { resources, animals, people, machines } = world
 const townsfolk = people.create('Rippenwaterans')
-const { recipes, jobs } = townsfolk
+// const { recipes } = townsfolk
 
 resources.create(Fish)
 resources.create(Wheat)
@@ -44,12 +44,12 @@ zed.things.add(10, 'Apples')
 
 machines.create(Windmill);
 
-const bread = recipes.create({
-  name: 'Bread',
-  produces: { [Bread]: 1 },
-  consumes: { [Wheat]: 5 }
-})
-jobs.set(zed, bread)
+// const bread = recipes.create({
+//   name: 'Bread',
+//   produces: { [Bread]: 1 },
+//   consumes: { [Wheat]: 5 }
+// })
+// jobs.set(zed, bread)
 
 // how could we model a simple merchant??
 // const bread = recipes.create({

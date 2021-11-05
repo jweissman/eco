@@ -1,7 +1,10 @@
 // import Model from "../ecosphere/Model"
 
-import Model from "../ecosphere/Model"
-import { Assembly } from "../ecosphere/Model/Assembly"
+import Model from "../../ecosphere/Model"
+import { Assembly } from "../../ecosphere/Model/Assembly"
+
+// import Model from "../ecosphere/Model"
+// import { Assembly } from "../ecosphere/Model/Assembly"
 
 
 const town = new Model('Town')

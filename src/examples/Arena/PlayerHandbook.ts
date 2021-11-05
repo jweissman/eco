@@ -183,12 +183,12 @@ export class PlayerHandbook {
       this.levelUp(hero)
     }
 
-    hero.meters = {
+    hero.meters = () => { return {
       'health': () => { return { value: hero.things.count('hp'), max: hero.things.count('max hp')}},
       // 'next level': () =>  {
       //   return { value: hero.things.count('xp'), max: this.levelCost(hero.things.count('level')) }
       // }
-    }
+    }}
   }
 
   static levelUp(pc: Person) {

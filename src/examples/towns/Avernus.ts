@@ -1,7 +1,7 @@
 // import Model from "../ecosphere/Model"
 
-import Model from "../ecosphere/Model"
-import { Person } from "../ecosphere/types"
+import Model from "../../ecosphere/Model"
+import { Person } from "../../ecosphere/types"
 
 const give = (recipient: Person, supplier: Person, n: number, item: string) => {
   supplier.things.remove(n, item)
@@ -11,7 +11,7 @@ const give = (recipient: Person, supplier: Person, n: number, item: string) => {
 const world = new Model('Avernus')
 const { resources, animals, people } = world
 const folks = people.create('Townspeople')
-const { recipes, jobs } = folks
+// const { recipes } = folks
 
 animals.create('Fish')
 // resources.create('Fish')
@@ -56,23 +56,23 @@ resources.add(100000000, 'Gold Deposit')
 //   consumes: { 'Gold Coin': 1 },
 // })
 
-const mineGold = recipes.create({
-  name: 'Mining Gold',
-  produces: { 'Gold Ore': 1 },
-  consumes: { 'Gold Deposit': 10 },
-})
+// const mineGold = recipes.create({
+//   name: 'Mining Gold',
+//   produces: { 'Gold Ore': 1 },
+//   consumes: { 'Gold Deposit': 10 },
+// })
 
-const smeltGold = recipes.create({
-  name: 'Smelt Gold',
-  produces: { 'Gold Bar': 1 },
-  consumes: { 'Gold Ore': 10 }
-})
+// const smeltGold = recipes.create({
+//   name: 'Smelt Gold',
+//   produces: { 'Gold Bar': 1 },
+//   consumes: { 'Gold Ore': 10 }
+// })
 
-const mintCoin = recipes.create({
-  name: 'Minting Gold Coins',
-  produces: { 'Gold Coin': 10 },
-  consumes: { 'Gold Bar': 1 },
-})
+// const mintCoin = recipes.create({
+//   name: 'Minting Gold Coins',
+//   produces: { 'Gold Coin': 10 },
+//   consumes: { 'Gold Bar': 1 },
+// })
 
 // const digClay = recipes.create({
 //   name: 'Digging Clay',
@@ -99,9 +99,9 @@ const mintCoin = recipes.create({
 // })
 
 //Set Jobs
-jobs.set(miner, mineGold)
-jobs.set(minter, mintCoin)
-jobs.set(smelter, smeltGold)
+// jobs.set(miner, mineGold)
+// jobs.set(minter, mintCoin)
+// jobs.set(smelter, smeltGold)
 // jobs.set(claydigger, digClay)
 // jobs.set(artist, castPot)
 // jobs.set(fisherman, cookFish)

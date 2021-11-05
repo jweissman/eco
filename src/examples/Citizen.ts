@@ -51,7 +51,7 @@ class Citizen extends Model {
     let self = this.people.lookup('Self')
     self.remove(self.count)
     const individual = self.create(person)
-    individual.meters = {
+    individual.meters = () => { return {
       'Energy': () => { return {
         value: this.resources.count('Energy'),
         max: this.resources.count('Max Energy'),
@@ -65,7 +65,7 @@ class Citizen extends Model {
         max: this.resources.count('Max Joy'),
       }},
       // '': () => { return { }}
-    }
+    }}
     // this.subject = person
     // this.nameMeaning = nameMeaning;
     const fish = self.recipes.create({ name: 'Fish' })
@@ -150,74 +150,76 @@ class Citizen extends Model {
       resources.remove(1, 'Joy')
     }
 
-
-    
     const self = this.people.lookup('Self')
     const { eat, rest, idle, hunt, fish } = this.recipes
     const assign = (task: Recipe) =>
-      self.jobs.set(this.subject, task)
+      self.jobs.set(this.subject, { recipe: task, startedAt: this.ticks })
 
-    const currentTask = self.jobs.get(this.subject)
-    if (currentTask === hunt || currentTask === fish) {
-      // special tasks...
-      if (randomInteger(0,100) <= 24) {
-        if (currentTask === hunt) {
-          resources.add(1 + randomInteger(2,5), 'Meat')
-        } else if (currentTask === fish) {
-          resources.add(randomInteger(0,2) + randomInteger(0,2), 'Fish')
+    const job = self.jobs.get(this.subject)
+    if (job) {
+      const { recipe: currentTask } = job
+      // const currentTask = self.jobs.get(this.subject)
+      if (currentTask === hunt || currentTask === fish) {
+        // special tasks...
+        if (randomInteger(0,100) <= 24) {
+          if (currentTask === hunt) {
+            resources.add(1 + randomInteger(2,5), 'Meat')
+          } else if (currentTask === fish) {
+            resources.add(randomInteger(0,2) + randomInteger(0,2), 'Fish')
+          }
         }
-      }
-    } else if (currentTask === rest) {
-      if (energy < maxEnergy) {
-        resources.add(clamp(randomInteger(4,18),0,maxEnergy-energy), 'Energy')
-      } else {
-        assign(idle)
-      }
-    } else if (currentTask === idle) {
-      if (joy < maxJoy) {
-        resources.add(clamp(2+randomInteger(2,7),0,maxEnergy-energy), 'Joy')
-      }
-    } else if (currentTask === eat) {
-      const fishCount = this.resources.count('Fish')
-      const meatCount = this.resources.count('Meat')
-      if (satiety < maxSatiety && fishCount > 0 && fishCount > meatCount) {
-        resources.remove(1, 'Fish')
-        resources.add(25, 'Satiety')
-      } else if (satiety < maxSatiety && meatCount > 0) {
-        resources.remove(1, 'Meat')
-        resources.add(randomInteger(5,20), 'Satiety')
-      } else {
-        assign(idle)
-      }
-    // } else {
-      // try { self.work({ resources }) } catch (err) { console.warn(err)}
-    }
-
-    if (switchJobs || currentTask === idle) {
-      const food = resources.count('Fish')
-        + resources.count('Meat')
-
-      // if (this.subject.jobs)
-      // this.subject.
-      // this.subject.work({ resources })
-
-      if (energy > 0 && satiety > 0 && food < 2) {
-        assign(sample([hunt, fish]))
-      } else if (energy < 10) {
-        assign(rest)
-      } else if (satiety < 10) {
-        assign(eat)
-      } else if (joy < 10) {
-        assign(idle)
-      } else {
-        if (energy < 68) {
-          assign(rest)
-        } else if (satiety < 75) {
-          assign(eat)
+      } else if (currentTask === rest) {
+        if (energy < maxEnergy) {
+          resources.add(clamp(randomInteger(4,18),0,maxEnergy-energy), 'Energy')
         } else {
           assign(idle)
         }
+      } else if (currentTask === idle) {
+        if (joy < maxJoy) {
+          resources.add(clamp(2+randomInteger(2,7),0,maxEnergy-energy), 'Joy')
+        }
+      } else if (currentTask === eat) {
+        const fishCount = this.resources.count('Fish')
+        const meatCount = this.resources.count('Meat')
+        if (satiety < maxSatiety && fishCount > 0 && fishCount > meatCount) {
+          resources.remove(1, 'Fish')
+          resources.add(25, 'Satiety')
+        } else if (satiety < maxSatiety && meatCount > 0) {
+          resources.remove(1, 'Meat')
+          resources.add(randomInteger(5,20), 'Satiety')
+        } else {
+          assign(idle)
+        }
+      // } else {
+        // try { self.work({ resources }) } catch (err) { console.warn(err)}
+      }
 
+      if (switchJobs || currentTask === idle) {
+        const food = resources.count('Fish')
+          + resources.count('Meat')
+
+        // if (this.subject.jobs)
+        // this.subject.
+        // this.subject.work({ resources })
+
+        if (energy > 0 && satiety > 0 && food < 2) {
+          assign(sample([hunt, fish]))
+        } else if (energy < 10) {
+          assign(rest)
+        } else if (satiety < 10) {
+          assign(eat)
+        } else if (joy < 10) {
+          assign(idle)
+        } else {
+          if (energy < 68) {
+            assign(rest)
+          } else if (satiety < 75) {
+            assign(eat)
+          } else {
+            assign(idle)
+          }
+
+        }
       }
     }
 
