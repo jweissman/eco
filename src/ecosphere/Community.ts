@@ -40,7 +40,7 @@ export class Community extends Population<Moiety, Person> {
   public create(attrs: any) {
     const personAttrs = super.build(attrs);
     const { name, age } = personAttrs;
-    const person: Person = createPerson(name, createMoiety(`${name}'s Gens`)) //, this.species)
+    const person: Person = createPerson(name, createMoiety(`${name}'s Gens`), attrs) //, this.species)
     person.age = age
     this.individuals.add(person)
     return person

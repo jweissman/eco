@@ -22,7 +22,9 @@
   /* border: 1px solid #4d6543; */
   margin: 20px 1px;
   padding: 2px 4px;
-  background: #101010
+  /* background: #101010 */
+  /* background: darken; */
+  border: 1px solid #101010;
 }
 
 .Model .Tile .Title {
@@ -39,7 +41,7 @@
   color: #309a6e;
 }
 
-.Item .Subitems {
+.Item .Things {
   font-size: 8px;
   padding: 1px;
   border-radius: 8px;
@@ -52,3 +54,6 @@
   margin: 14px auto;
   padding: 4px;
 }
+
+
+ul li.Item { padding-bottom: 24px; }

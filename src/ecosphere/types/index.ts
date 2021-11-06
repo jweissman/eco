@@ -1,5 +1,6 @@
 import { Sequence } from "../../collections"
 import { Collection } from "../Collection"
+import { Concept } from "../Dictionary"
 import { Stocks } from "../Stocks"
 import { randomInteger } from "../utils/randomInteger"
 import { sample } from "../utils/sample"
@@ -10,10 +11,28 @@ export type Entity<T> = BasicEntity & { kind: T }
 
 export type Quality = 'terrible' | 'adequate' | 'good' | 'excellent'
 type Size = 'fine' | 'small' | 'medium' | 'large' | 'huge'
+
+// kinds of objects...
+type Kind = 'sculpture' // 'art'
+
+// substances objects can be made of...
+type Material = 'clay' | 'wood' | 'stone' | 'iron' | 'gold' | 'silver' | 'crystal'
+
+// instances of objects...
+export type Item = Entity<Kind> & {
+  material?: Material
+  quality?: Quality
+  size?: Size
+  description: string
+  // provenance ...
+  // for artwork: concepts... styles...
+}
+
 export type Species = BasicEntity & {
   name: string
   size?: Size
   fitness?: Quality
+  material?: Substance
 }
 
 export type Individual<T> = Entity<T> & {
@@ -272,7 +291,11 @@ const roles: { [key in Temperament]: SocialRole[] } = {
   guardian: [ 'provider', 'protector', 'supervisor',   'inspector' ],
 }
 
+
+
 export type Person = Individual<Moiety> & {
+  nameConcepts: Concept[]
+
   body: Body
   mind: Mind
   soul: Soul
@@ -288,6 +311,8 @@ export type Person = Individual<Moiety> & {
   things: ManageStocks //Stocks<Item> // hmmm, maybe we really want a map at a higher-level anyway
   // stats: ManageStocks //Stocks<Item> // hmmm, maybe we really want a map at a higher-level anyway
 
+  items: Stocks<Item>
+
   currency: number
   traits: ManageStocks // IList<Trait>
 
@@ -300,10 +325,11 @@ export type Person = Individual<Moiety> & {
 
 const personId = new Sequence()
 const human: Species = { id: -1, name: 'Human Being', size: 'medium' }
-export const createPerson = (name: string, moiety: Moiety): Person => {
+export const createPerson = (name: string, moiety: Moiety, attrs: Partial<Person> = {}): Person => {
 
   const inventory = new Stocks<any>(`${name}'s Things`)
   const traits = new Stocks<any>(`${name}'s Traits`)
+  const items = new Stocks<Item>(`${name}'s Items`)
   // const state = new Stocks<any>(`${name}'s State`)
     // personAttrs.things = inventory.manageAll()
     const soul: Soul = createSoul()
@@ -318,6 +344,7 @@ export const createPerson = (name: string, moiety: Moiety): Person => {
     id: personId.next,
     kind: moiety,
     role: sample(roleOptions),
+    nameConcepts: [],
     // kind: createMoiety()
     name,
     age: 0,
@@ -327,26 +354,19 @@ export const createPerson = (name: string, moiety: Moiety): Person => {
     // rank: 'commoner',
     // reputation: 'unknown',
     currency: 0,
+    items, //.manageAll(),
     things: inventory.manageAll(),
     traits: traits.manageAll(),
+
     // stats: state.manageAll()
     // things: new M
     meters: () => { return {}},
     memory: new Collection<Memory>(),
+    ...attrs,
   }
 
 }
-
-// const person = (): Person => {
-//   const newPerson: Person = {
-//     id: personId.next()
-//   }
-//   return newPerson
-// }
-
-
 export type Recipe = BasicEntity & {
-  // description?: string
   time?: number
   probability?: number
 
@@ -356,13 +376,7 @@ export type Recipe = BasicEntity & {
 }
 
 export type Machine = BasicEntity
-
-// export type Task = BasicEntity & {
-//   machine?: string
-//   recipe: string
-// }
-
-// type ManageList = {}
+// export type Structure ....
 
 export type ManageStocks = {
   add: (amount: number, name: string) => void,

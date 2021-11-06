@@ -3,17 +3,20 @@ import { Concept, theConcepts } from "../../ecosphere/Dictionary"
 import Westron from "../../ecosphere/Languages/Westron"
 import Model from "../../ecosphere/Model"
 import { Recipe, TimeEvolution, Person, ManageStocks } from "../../ecosphere/types"
+import { any } from "../../ecosphere/utils/any"
+import { capitalize } from "../../ecosphere/utils/capitalize"
+// import { capitalize } from "../../ecosphere/utils/capitalize"
 import ordinate from "../../ecosphere/utils/ordinate"
 import { randomInteger } from "../../ecosphere/utils/randomInteger"
 import { choose, sample } from "../../ecosphere/utils/sample"
 
 type Gender = 'male' | 'female'
-const generateName = (gender: Gender) => {
+function generateName(gender: Gender): { name: string, concepts: Concept[] } {
   let suffices: Concept[] = gender === 'male'
     ? ['-person', '-man', '-son']
     : ['-woman', '-maid', '-daughter']
 
-  let concepts: Concept[] = choose(randomInteger(1,2), theConcepts)
+  let concepts: Concept[] = choose(randomInteger(1,3), theConcepts)
   let nameElements: Concept[] = [
     ...concepts,
     ...(randomInteger(0, 12) > 9 ? [sample(suffices)] : []),
@@ -22,7 +25,13 @@ const generateName = (gender: Gender) => {
   let dicts = [ Westron ] //Sindarin, Khuzdul, Westron, Common ]
   let name = sample(dicts).translate(...nameElements).trim()
 
-  return name
+  // const significance = (concepts.map(n => capitalize(n)).reverse().join('-')).trim(); //.replaceAll('-', ''));
+
+  // let nameWithMeaning = (name === significance
+  //   ? name
+  //   : name + ' (' +  significance + ')')
+
+  return { name, concepts } //significance } //nameWithMeaning
 }
   
 type Activity = 'idle'
@@ -44,7 +53,7 @@ class City extends Model {
     date: () => this.date.description,
     time: () => this.date.time,
   }
-  ticksPerMinute = 40
+  ticksPerMinute = 10
 
   constructor() {
     super('Citadel');
@@ -79,8 +88,9 @@ class City extends Model {
 
   createCitizen = (role: CitizenRole) => {
     const gender: Gender = sample([ 'male', 'female' ])
-    const name: string = generateName(gender)
-    const individual = this.folks.create({ name })
+    const { name, concepts }= generateName(gender)
+    const firstName = name.split(' ')[0]
+    const individual = this.folks.create({ name, nameConcepts: concepts })
 
     if (role === 'Artisan') {
       individual.traits.add(1, 'Sculpting')
@@ -100,6 +110,50 @@ class City extends Model {
     individual.things.add(100, 'Max Joy')
 
     individual.things.add(100, 'Shells')
+
+    const spiritAnimals = [
+      'dragon', 'elephant',
+      'bear', 'horse', 'snake', 'hound',
+      'swan', 'eagle', 'nightingale',
+      'wolf',
+      // wolf -> wolves
+      'cherry', 'lily', 'rose', 'apple', 'fish',
+      'moon', 'birch',
+
+      'deer', 'elk', 'bear', 'lizard', 'mouse', 'pig',
+
+      'robot', 'cloud', 'fireball',
+    ]
+    const pluralAnimals: { [name: string]: Concept } = {
+      dragon: 'dragons',
+      elephant: 'elephants',
+      bear: 'bears',
+      horse: 'horses',
+      snake: 'snakes',
+      hound: 'hounds',
+      wolf: 'wolves',
+      swan: 'swans',
+      eagle: 'eagles',
+      nightingale: 'nightingales',
+      // deer: 'deer',
+    }
+
+    // concepts = ['wolf']
+    let spiritCreature = sample(spiritAnimals)
+    // let animalPlurals = spiritAnimals.map(a => a + 's')
+    if (any(concepts, concept => spiritAnimals.includes(concept) || Object.values(pluralAnimals).includes(concept))) {
+      let theConcept = spiritAnimals.find(animal => concepts.includes(animal as Concept) || concepts.includes(pluralAnimals[animal]))
+      if (theConcept) { spiritCreature = theConcept }
+    }
+
+    individual.items.create({
+      name: `Tiny Stone ${capitalize(spiritCreature)}`,
+      description: `${firstName}'s Personal Totem`,
+      kind: 'sculpture',
+      quality: 'excellent',
+      size: 'fine',
+      material: 'stone',
+    })
 
     individual.meters = () => {
       const job = this.folks.jobs.get(individual)
@@ -260,22 +314,23 @@ class City extends Model {
             }
           }
         } else if (currentTask === trade) {
+          console.log("TRADE!!!!!")
           // trade w/ town..
           const shells = resources.count('Shell')
           if (food < 5) {
-            if (shells > 10 && this.resources.count('Meat') > 0) {
+            if (shells > 10 && resources.count('Meat') > 0) {
               let boughtMeat = Math.max(5, Math.floor(shells/price.meat))
               this.resources.remove(boughtMeat, 'Meat')
               resources.add(boughtMeat, 'Meat')
               resources.remove(boughtMeat * price.meat, 'Shells')
             }
-            if (shells > 6 && this.resources.count('Fish') > 0) {
+            if (shells > 6 && resources.count('Fish') > 0) {
               let boughtFish = Math.max(5, Math.floor(shells/6))
               this.resources.remove(boughtFish, 'Fish')
               resources.add(boughtFish, 'Fish')
               resources.remove(price.fish * boughtFish, 'Shells')
             }
-          } else if (food > 20) {
+          } else { //if (food > 5) {
               if (fishCount > 10) {
                 let soldFish = fishCount - 10
                 this.resources.add(soldFish, 'Fish')
