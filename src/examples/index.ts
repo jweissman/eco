@@ -1,4 +1,3 @@
-import Citizen from "./Citizen"
 import worldMapMaker from "./WorldMap"
 import Language from "./Language"
 import City from "./towns/City"
@@ -6,7 +5,7 @@ import City from "./towns/City"
 const models = [
   City,
   worldMapMaker,
-  Citizen,
+  // Citizen,
   Language,
   // Building,
   // arena,

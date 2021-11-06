@@ -25,7 +25,7 @@ export function presentIndividual(work: { [key: number]: string; }) {
           </meter>
         </div>
       })}
-      {work[id] && <span data-testid='Status'>{work[id]}</span>}
+      {work[id] && <span data-testid='Status' style={{ display: 'none' }}>{work[id]}</span>}
       {itemNames.length > 0 && <div className='Subitems' data-testid='Inventory'>
         <ul>
           {itemNames.sort((a,b) => a > b ? 1 : -1).map(it => <li key={it} style={{
