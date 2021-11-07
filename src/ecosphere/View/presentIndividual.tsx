@@ -23,19 +23,22 @@ export function presentIndividual(work: { [key: number]: string; }) {
       return left + ' ' + right;
     }) //.join(' ').trim(); //.replaceAll('-', ''));
 
-    return <li key={id} title={name} className='Item'>
+    const showThings = false, showTraits = false
+
+    return <li key={id} title={name} className='Item' style={{display: 'flex', flexDirection: 'column', width: '300px'}}>
       <div className='Title' data-testid='Name'>
         {name}
       </div>
       {significance && <div className='Subtitle' data-testid='Significance of Name' style={{ fontStyle: 'italic', fontSize:' 10pt' }}>
         {significance}
       </div>}
+      <div className='Meters' style={{ padding: '1px', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
       {Object.entries(meters()).map(([meterName, measure]) => {
         const { value, max } = measure()
-        return <div className='Meter' data-testid={meterName}>
-          <label htmlFor={meterName} style={{paddingRight: 10}}>{meterName}:</label>
+        return <div className='Meter' data-testid={meterName} style={{display: 'flex', width: '100px', flexDirection: 'row', flexWrap: 'wrap', padding: '2px'}}>
+          <label htmlFor={meterName} style={{fontSize: '8.5pt', color: 'white', fontWeight: 'lighter', textTransform: 'uppercase', paddingRight: '8px'}}>{meterName}</label>
           <meter id={meterName}
-                 style={{ width: 130, height: 14 }}
+                 style={{ width:100, height: 14 }}
                  min="0" max={max}
                  low={max * 0.33} high={max * 0.66} optimum={max * 0.8}
                  value={value}>
@@ -43,23 +46,35 @@ export function presentIndividual(work: { [key: number]: string; }) {
           </meter>
         </div>
       })}
+      </div>
       {work[id] && <span data-testid='Status' style={{ display: 'none' }}>{work[id]}</span>}
-
-{/* <Tile title='Traits and Items'> */}
-     {/* <b>Traits</b> */}
-      {traits.list().length > 0 && <div className='Traits' data-testid='Trait Ranks'>
+      {showTraits && traits.list().length > 0 && <div className='Traits' data-testid='Trait Ranks'>
         <ul>
           {traits.list().map(trait => <li key={trait.id} style={{
               ...(traits.count(trait.name) === 0 ? { display: 'none' } : {})
             }}>
-            {trait.name} <span data-testid={trait.name}>{traits.count(trait.name)}</span>
+            <b>{trait.name}</b>
+            <span data-testid={trait.name}>{traits.count(trait.name)}</span>
           </li>)}
         </ul>
       </div>}
-
-{/* <br/>
-     <b>Inventory</b> */}
-      {thingNames.length > 0 && <div className='Things' data-testid='Inventory'>
+      {itemNames.length > 0 && <div className='Items' data-testid='Possessions'>
+        <ul>
+          {itemNames.sort((a,b) => a > b ? 1 : -1).map(it => <li key={it} style={{
+            fontSize: '9pt'
+            }}>
+            {/* <p> */}
+              <span style={{color:'lightgray'}} title={items.lookup(it).description}>- {it}</span>
+              &nbsp;
+              <span style={{fontSize: '6.5pt'}}>
+                {/* {items.lookup(it).description} */}
+                <span style={{color:'darkslategray'}}>({items.lookup(it).quality && items.lookup(it).quality})</span>
+              </span>
+            {/* </p> */}
+          </li>)}
+        </ul>
+      </div>}
+      {showThings && thingNames.length > 0 && <div className='Things' data-testid='Inventory'>
         <ul>
           {thingNames.sort((a,b) => a > b ? 1 : -1).map(it => <li key={it} style={{
               ...(things.count(it) === 0 ? { display: 'none' } : {})
@@ -69,23 +84,6 @@ export function presentIndividual(work: { [key: number]: string; }) {
         </ul>
       </div>}
 
-{/* <br/> */}
-     {/* <b>Possessions</b> */}
-      {itemNames.length > 0 && <div className='Items' data-testid='Possessions'>
-        <ul>
-          {itemNames.sort((a,b) => a > b ? 1 : -1).map(it => <li key={it} style={{
-              // ...(items.count(it) === 0 ? { display: 'none' } : {})
-            }}>
-            {it} ({items.lookup(it).description})
-            {items.lookup(it).quality && <small>&nbsp;<i>- {items.lookup(it).quality}</i></small>}
-            {/* <span data-testid={it}  className='Count'>{Math.floor(things.count(it))}</span> */}
-          </li>)}
-        </ul>
-      </div>}
-
-
-
-{/* </Tile> */}
 
       
     </li>;

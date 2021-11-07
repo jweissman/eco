@@ -74,6 +74,12 @@ export class Stocks<T extends BasicEntity> {
     this.setAmount(name, 0);
   }
 
+  // assume we're trying to remove from elements list...?
+  @boundMethod
+  delete(name: string): void {
+    this.elements = this.elements.filter(it => it.name !== name)
+  }
+
   @boundMethod
   count(name: string): number {
     const element: T = this.lookup(name);

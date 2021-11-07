@@ -10,13 +10,13 @@ export type Substance = BasicEntity
 export type Entity<T> = BasicEntity & { kind: T }
 
 export type Quality = 'terrible' | 'adequate' | 'good' | 'excellent'
-type Size = 'fine' | 'small' | 'medium' | 'large' | 'huge'
+export type Size = 'fine' | 'small' | 'medium' | 'large' | 'huge'
 
 // kinds of objects...
 type Kind = 'sculpture' // 'art'
 
 // substances objects can be made of...
-type Material = 'clay' | 'wood' | 'stone' | 'iron' | 'gold' | 'silver' | 'crystal'
+export type Material = 'clay' | 'wood' | 'stone' | 'iron' //  | 'gold' | 'silver' | 'crystal'
 
 // instances of objects...
 export type Item = Entity<Kind> & {
