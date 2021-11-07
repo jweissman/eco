@@ -12,7 +12,7 @@ import './View.css'
 
 export type ModelViewProps = {
   modelName: string;
-  items: { name: string; amount: number; }[];
+  resources: { name: string; amount: number; }[];
   animals: { name: string; amount: number }[];
   communities: Population<Moiety, Person>[];
   machines: Machine[];
@@ -24,7 +24,7 @@ export type ModelViewProps = {
 
 export function ModelView({
   modelName,
-  items,
+  resources,
   communities,
   machines,
   animals,
@@ -39,10 +39,14 @@ export function ModelView({
     {/* <ViewHeightmap /> */}
     <h4 aria-label='Model Title' style={{display: 'none'}}>{modelName}</h4>
     {board.tiles.length > 0 && <BoardPresenter {...board} />}
-    {items.length > 0 && (<Tile title='Items'>
+    {resources.length > 0 && (<Tile title='Store'>
       <ul aria-label='Resources'>
-        {items.map(presentItem(lastChanges.resources))}
+        {resources.map(presentItem(lastChanges.resources))}
       </ul>
+      
+      {/* <ul aria-label='Resources'>
+        {resources.map(presentItem(lastChanges.resources))}
+      </ul> */}
     </Tile>)}
     {animals.length > 0 && (
       <Tile title='Animals'>

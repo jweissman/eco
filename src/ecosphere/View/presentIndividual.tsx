@@ -23,7 +23,7 @@ export function presentIndividual(work: { [key: number]: string; }) {
       return left + ' ' + right;
     }, '') //.join(' ').trim(); //.replaceAll('-', ''));
 
-    const showThings = false, showTraits = false
+    const showThings = true, showTraits = false
 
     return <li key={id} title={name} className='Item' style={{display: 'flex', flexDirection: 'column', width: '500px'}}>
       <div className='Title' data-testid='Name'>
@@ -67,8 +67,11 @@ export function presentIndividual(work: { [key: number]: string; }) {
               <span style={{color:'lightgray'}} title={items.lookup(it).description}>- {it}</span>
               &nbsp;
               <span style={{fontSize: '6.5pt'}}>
-                {/* {items.lookup(it).description} */}
-                <span style={{color:'darkslategray'}}>({items.lookup(it).quality && items.lookup(it).quality})</span>
+                {items.lookup(it).description}
+                &nbsp;
+                <span style={{color:'darkslategray'}}>
+                  ({items.lookup(it).quality && items.lookup(it).quality})
+                </span>
               </span>
             {/* </p> */}
           </li>)}

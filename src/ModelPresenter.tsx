@@ -1,6 +1,7 @@
 // import { IAssembly } from './ecosphere/Assembly';
 import { ModelView } from './ecosphere/Model';
 import { IModel } from "./ecosphere/Model/IModel";
+import { ModelViewProps } from './ecosphere/View/ModelView';
 
 export type LastDelta = { [group: string]: { [element: string]: number }}
 
@@ -12,18 +13,18 @@ type ModelPresenterProps = {
   lastChanges: LastDelta
 }
 
-const view = (model: IModel, lastChanges: LastDelta) => {
-  const { actions, resources, people, machines, animals, metrics, notes, tiles, tileColors } = model;
+const view = (model: IModel, lastChanges: LastDelta): ModelViewProps => {
+  const { resources, people, machines, animals, metrics, notes, tiles, tileColors } = model;
 
-  const props = {
+  const props: ModelViewProps = {
     modelName: model.name,
-    items: resources.report,
+    resources: resources.report,
     communities: people.populationList, //.populations,
     // individuals: people.list(),
     // work: people.report,
     machines: machines.list(),
     animals: animals.report,
-    actions: actions.list(),
+    // actions: actions.list(),
     metrics: Object.fromEntries(
       Object.entries(metrics).map(
         ([key, value]) => [key, (value as any as Function)()])
