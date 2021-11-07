@@ -21,11 +21,11 @@ export function presentIndividual(work: { [key: number]: string; }) {
       if (right.startsWith('-')) { return left + right }
       if (left.startsWith('-') || right.endsWith('-')) { return right + left }
       return left + ' ' + right;
-    }) //.join(' ').trim(); //.replaceAll('-', ''));
+    }, '') //.join(' ').trim(); //.replaceAll('-', ''));
 
     const showThings = false, showTraits = false
 
-    return <li key={id} title={name} className='Item' style={{display: 'flex', flexDirection: 'column', width: '300px'}}>
+    return <li key={id} title={name} className='Item' style={{display: 'flex', flexDirection: 'column', width: '500px'}}>
       <div className='Title' data-testid='Name'>
         {name}
       </div>
@@ -48,7 +48,7 @@ export function presentIndividual(work: { [key: number]: string; }) {
       })}
       </div>
       {work[id] && <span data-testid='Status' style={{ display: 'none' }}>{work[id]}</span>}
-      {showTraits && traits.list().length > 0 && <div className='Traits' data-testid='Trait Ranks'>
+      {traits.list().length > 0 && <div className='Traits' data-testid='Trait Ranks' style={{ display: showTraits ? 'block' : 'none' }}>
         <ul>
           {traits.list().map(trait => <li key={trait.id} style={{
               ...(traits.count(trait.name) === 0 ? { display: 'none' } : {})
@@ -74,7 +74,7 @@ export function presentIndividual(work: { [key: number]: string; }) {
           </li>)}
         </ul>
       </div>}
-      {showThings && thingNames.length > 0 && <div className='Things' data-testid='Inventory'>
+      {thingNames.length > 0 && <div className='Things' data-testid='Inventory' style={{ display: showThings ? 'block' : 'none' }}>
         <ul>
           {thingNames.sort((a,b) => a > b ? 1 : -1).map(it => <li key={it} style={{
               ...(things.count(it) === 0 ? { display: 'none' } : {})

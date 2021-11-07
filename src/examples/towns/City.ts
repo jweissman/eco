@@ -5,7 +5,6 @@ import Model from "../../ecosphere/Model"
 import { Recipe, TimeEvolution, Person, ManageStocks, Quality, Size, Material } from "../../ecosphere/types"
 import { any } from "../../ecosphere/utils/any"
 import { capitalize } from "../../ecosphere/utils/capitalize"
-// import { capitalize } from "../../ecosphere/utils/capitalize"
 import ordinate from "../../ecosphere/utils/ordinate"
 import { randomInteger } from "../../ecosphere/utils/randomInteger"
 import { choose, sample } from "../../ecosphere/utils/sample"
@@ -247,11 +246,10 @@ evolveIndividual = (individual: Person, resources: ManageStocks) => {
     resources.remove(decay.joy, 'Joy')
   }
 
-  const folks = this.folks //people.lookup('Self')
-  const { eat, rest, idle, vibe, hunt, fish, gather, trade, create } = this.recipes
+  const folks = this.folks
+  const { eat, rest, idle, vibe, hunt, fish, trade, create } = this.recipes
 
   const assign = (task: Recipe) => {
-    // console.log("SET INDIVIDUAL TASK", { individual, task })
     folks.jobs.set(individual, { recipe: task, startedAt: this.ticks })
   }
 
@@ -344,7 +342,7 @@ evolveIndividual = (individual: Person, resources: ManageStocks) => {
       + meatCount //resources.count('Meat')
       + resources.count('Berry')
 
-    const { eat, rest, idle, vibe, hunt, fish, gather, trade, create } = this.recipes
+    const { eat, rest, vibe, fish, gather, trade, create } = this.recipes
     const produce = {
       fish: 2,
       meat: 3,
