@@ -61,9 +61,11 @@ export function presentIndividual(work: { [key: number]: string; }) {
       {itemNames.length > 0 && <div className='Items' data-testid='Possessions'>
         <ul>
           {itemNames.sort((a,b) => a > b ? 1 : -1).map(it => <li key={it} style={{
-            fontSize: '9pt'
+            fontSize: '9pt',
+            display: 'flex',
+            flexDirection: 'column',
             }}>
-            {/* <p> */}
+              <div>
               <span style={{color:'lightgray'}} title={items.lookup(it).description}>- {it}</span>
               &nbsp;
               <span style={{fontSize: '6.5pt'}}>
@@ -73,7 +75,11 @@ export function presentIndividual(work: { [key: number]: string; }) {
                   ({items.lookup(it).quality && items.lookup(it).quality})
                 </span>
               </span>
-            {/* </p> */}
+              </div>
+              {items.lookup(it).longDescription &&
+              <div style={{fontSize: '6pt', color: '#50403c', padding: '4px', marginBottom: '8px', width: '180px', textAlign: 'justify', alignSelf: 'center'}}>
+                {items.lookup(it).longDescription}
+              </div>}
           </li>)}
         </ul>
       </div>}

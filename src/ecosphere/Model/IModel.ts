@@ -1,4 +1,4 @@
-import { Substance, Machine, Animal, Species, Person, Moiety, Action, Policy } from "../types";
+import { Substance, Machine, Animal, Species, Action, Policy } from "../types";
 import { Stocks } from "../Stocks";
 import { Registry } from "../Registry";
 // import { Population } from "../Population";
@@ -7,6 +7,7 @@ import { Collection } from "../Collection";
 import { Community } from "../Community";
 import { Population } from "../Population";
 import { Tiles } from "../Board";
+import { Moiety, Person } from "../types/Person";
 
 export interface IModel extends ISimulation {
   currentPolicy?: Policy;

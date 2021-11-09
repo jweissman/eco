@@ -1,10 +1,8 @@
 import { Sequence } from "../../collections"
-import { Collection } from "../Collection"
-import { Concept } from "../Dictionary"
-import { Stocks } from "../Stocks"
 import { randomInteger } from "../utils/randomInteger"
 import { sample } from "../utils/sample"
 import { BasicEntity } from "./BasicEntity"
+import { Person } from "./Person"
 
 export type Substance = BasicEntity
 export type Entity<T> = BasicEntity & { kind: T }
@@ -24,9 +22,11 @@ export type Item = Entity<Kind> & {
   quality?: Quality
   size?: Size
   description: string
+  longDescription?: string
   // provenance ...
   // for artwork: concepts... styles...
 }
+
 
 export type Species = BasicEntity & {
   name: string
@@ -44,7 +44,7 @@ export type Creature<T> = Individual<T> & {
   health: 'dying' | 'unwell' | 'flourishing' | 'triumphant'
 }
 
-function pick<T>(elements: T[]): T {
+export function pick<T>(elements: T[]): T {
   const d100 = randomInteger(0,100)
   if (d100 > 98) {
     return elements[3]
@@ -62,7 +62,7 @@ type Cunning = 'foolish' | 'sly' | 'crafty' | 'manipulative'
 type Agility = 'clumsy' | 'nimble' | 'spry' | 'balletic'
 type Guile = 'transparent' | 'convincing' | 'beguiling' | 'insidious'
 
-type PhysicalQuality = Spirit | Strength | Cunning | Agility | Guile
+export type PhysicalQuality = Spirit | Strength | Cunning | Agility | Guile
 
 export type Animal = Creature<Species> & {
   spirit: Spirit
@@ -89,283 +89,6 @@ export const createAnimal = (name: string, species: Species): Animal => {
   }
 }
 
-// major demographic groupings -- moieties (maybe *this* should be called a Community??)
-type Wealth = 'impoverished' | 'well-off' | 'luxuriant' | 'decadent'
-type Sophistication = 'unpretentious' | 'savvy' | 'urbane' | 'sleek'
-type Power = 'inconsequential' | 'marginal' | 'influential' | 'sovereign'
-type Knowledge = 'clueless' | 'well-informed' | 'wise' | 'prescient'
-// type Technology = 'lost' | 'primitive' | 'archaic' | 'advanced'
-
-type SocialQuality = Wealth | Sophistication | Power | Knowledge // | Technology
-
-export type Moiety = BasicEntity & {
-  wealth: Wealth
-  sophistication: Sophistication
-  power: Power
-  knowledge: Knowledge
-  // tech: Technology
-}
-
-const moietyIds = new Sequence()
-export const createMoiety = (name: string): Moiety => {
-  const wealth: Wealth = pick([ 'impoverished', 'well-off', 'luxuriant', 'decadent' ])
-  const sophistication: Sophistication = pick([ 'unpretentious', 'savvy', 'urbane', 'sleek' ])
-  const power: Power = pick([ 'inconsequential', 'marginal', 'influential', 'sovereign' ])
-  const knowledge: Knowledge = pick([ 'clueless', 'well-informed', 'wise', 'prescient' ])
-  // const tech: Technology = pick([ 'lost', 'primitive', 'archaic', 'advanced' ])
-  return { id: moietyIds.next, name, wealth, sophistication, power, knowledge } //, tech }
-}
-
-type Body = Animal
-
-type Insight = 'dense' | 'intuitive' | 'incisive' | 'brilliant'
-type Depth = 'superficial' | 'substantial' | 'profound' | 'inscrutable'
-type Education = 'unlettered' | 'literate' | 'tutored' | 'well-read'
-type Disposition = 'dismal' | 'hopeful' | 'propitious' | 'roseate'
-type Valor = 'timid' | 'bold' | 'courageous' | 'fearless'
-
-// a better word for this...
-// presence?
-type Presence = 'bland' | 'charismatic' | 'captivating' | 'magnetic' 
-
-type MentalQuality = Insight | Depth | Education | Disposition | Valor | Presence
-export type MentalAttribute = 'insight' | 'depth' | 'education' | 'disposition' | 'valor' | 'presence'
-
-type Mind = {
-  // [key in MentalAttribute]: MentalQuality,
-  
-  insight: Insight
-  depth: Depth
-  education: Education
-  disposition: Disposition
-  valor: Valor
-  presence: Presence
-}
-
-export const createMind = (): Mind => {
-  const insight: Insight = pick([ 'dense', 'intuitive', 'incisive', 'brilliant' ])
-  const depth: Depth = pick([ 'superficial', 'substantial', 'profound', 'inscrutable' ])
-  const education: Education = pick([ 'unlettered', 'literate', 'tutored', 'well-read' ])
-  const disposition: Disposition = pick([ 'dismal', 'hopeful', 'propitious', 'roseate' ])
-  const valor: Valor = pick([ 'timid', 'bold', 'courageous', 'fearless' ])
-  const presence: Presence = pick([ 'bland', 'magnetic', 'charismatic', 'captivating' ])
-  return { insight, depth, education, disposition, valor, presence }
-}
-
-type Wit = 'slow' | 'clever' | 'biting' | 'savage'
-type Empathy = 'sadistic' | 'generous' | 'benevolent' | 'selfless'
-type Integrity = 'uncertain' | 'sound' | 'solid' | 'incorruptible'
-type Beauty = 'ugly' | 'fair' | 'radiant' | 'resplendent'
-type Charm  = 'repulsive' | 'inoffensive' | 'affable' | 'likeable'
-type Resolve = 'vacillating' | 'steadfast' | 'intrepid' | 'relentless'
-type Temperament = 'guardian' | 'artisan' | 'rational' | 'idealist'
-
-type SpiritualQuality = Wit
-                      | Empathy
-                      | Integrity
-                      | Beauty
-                      | Charm
-                      | Resolve
-                      | Temperament
-
-type Soul = {
-  wit: Wit
-  empathy: Empathy
-  integrity: Integrity
-  beauty: Beauty
-  charm: Charm
-  resolve: Resolve
-  temperament: Temperament
-}
-
-
-export const createSoul = (): Soul => {
-  const wit: Wit = pick([ 'slow', 'clever', 'biting', 'savage' ])
-  const empathy: Empathy = pick([ 'sadistic', 'generous', 'benevolent', 'selfless' ])
-  const integrity: Integrity = pick([ 'uncertain', 'sound', 'solid', 'incorruptible' ])
-  const beauty: Beauty = pick([ 'ugly', 'fair', 'radiant', 'resplendent' ])
-  const charm: Charm = pick([ 'repulsive', 'inoffensive', 'affable', 'likeable' ])
-  const resolve: Resolve = pick([ 'vacillating', 'steadfast', 'intrepid', 'relentless' ])
-  const temperament: Temperament = pick([ 'guardian', 'artisan', 'rational', 'idealist'])
-  
-  return { wit, empathy, integrity, beauty, charm, resolve, temperament }
-}
-
-// type Category = BasicEntity
-// type Item = Entity<Category> & {}
-// type Event = BasicEntity
-// type Incident = Entity<Incident>
-
-// export type Trait = { id: number, name: string, rank: 0 | 1 | 2 | 3 | 4 | 5 }
-export type Memory = { id: number, name: string, description: string }
-
-type IndividualQuality = PhysicalQuality | SocialQuality | MentalQuality | SpiritualQuality
-export type PhysicalAttribute = 'spirit' | 'strength' | 'cunning' | 'agility' | 'guile'
-export type SocialAttribute =  'wealth' | 'sophistication' | 'power' | 'knowledge'
-export type SpiritualAttribute = 'wit' | 'empathy' | 'integrity' | 'beauty' | 'charm' | 'resolve' | 'temperament'
-type AttributeMatrix = {
-  physical: { [key in PhysicalAttribute]: PhysicalQuality[] },
-  social: { [key in SocialAttribute]: SocialQuality[] },
-  mental: { [key in MentalAttribute]: MentalQuality[] },
-  spiritual: { [key in SpiritualAttribute]: SpiritualQuality[] },
-}
-
-export const attributes: AttributeMatrix = {
-  physical: {
-    spirit: [ 'languorous', 'vigorous', 'impetuous', 'ferocious' ],
-    strength: [ 'weak', 'robust', 'mighty', 'indomitable' ],
-    cunning: [ 'foolish', 'sly', 'crafty', 'manipulative' ],
-    agility: [ 'clumsy', 'nimble', 'spry', 'balletic' ],
-    guile: [ 'transparent', 'convincing', 'beguiling', 'insidious' ],
-  },
-
-  social: {
-    wealth: [ 'impoverished', 'well-off', 'luxuriant', 'decadent' ],
-    sophistication: [ 'unpretentious', 'savvy', 'urbane', 'sleek' ],
-    power: [ 'inconsequential', 'marginal', 'influential', 'sovereign' ],
-    knowledge: [ 'clueless', 'well-informed', 'wise', 'prescient' ]
-
-  },
-  mental: {
-    insight: ['dense' , 'intuitive' , 'incisive' , 'brilliant' ],
-    depth:[ 'superficial' , 'substantial' , 'profound' , 'inscrutable' ],
-    education:[ 'unlettered' , 'literate' , 'tutored' , 'well-read'],
-    disposition:[ 'dismal' , 'hopeful' , 'propitious' , 'roseate'],
-    valor: [ 'timid' , 'bold' , 'courageous' , 'fearless'],
-    presence: [ 'bland' , 'charismatic' , 'captivating' , 'magnetic' ]
-    
-  },
-  spiritual: {
-    wit: [ 'slow', 'clever', 'biting', 'savage' ],
-    empathy: [ 'sadistic', 'generous', 'benevolent', 'selfless' ],
-    integrity: [ 'uncertain', 'sound', 'solid', 'incorruptible' ],
-    beauty: [ 'ugly', 'fair', 'radiant', 'resplendent' ],
-    charm: [ 'repulsive', 'inoffensive', 'affable', 'likeable' ],
-    resolve: [ 'vacillating', 'steadfast', 'intrepid', 'relentless' ],
-    temperament: [ 'guardian', 'artisan', 'rational', 'idealist' ],
-  },
-}
-export const judge = (quality: IndividualQuality): Quality => {
-  const qualityValues: Quality[] = ['terrible', 'adequate', 'good', 'excellent']
-  const matrix = attributes;
-  let result = null
-  Object.entries(matrix).forEach(([attributeGroupName, attributeGroup]) => {
-    Object.entries(attributeGroup).forEach(([attributeName, qualities]) => {
-      qualities.forEach((q: IndividualQuality) => {
-        // console.log("compare", { q, quality })
-         if (q===quality) {
-           result = qualityValues[qualities.indexOf(q)]
-         }
-      })
-    })
-  })
-  // const terribleQualities: IndividualQuality[] = [ 'ugly', 'weak', 'dismal', 'clueless' ]
-  // if (terribleQualities.includes(quality)) {
-  //   return 'terrible'
-  // }
-
-  if (result === null) {
-  throw new Error("Cannot judge unknown quality " + quality)
-  } else {
-    return result
-  }
-  // return 'adequate'
-}
-
-type Rational = 'inventor' | 'architect' | 'fieldmarshal' | 'mastermind'
-type Idealist = 'champion' | 'healer' | 'teacher' | 'counselor'
-type Artisan = 'performer' | 'composer' | 'persuader' | 'crafter'
-type Guardian = 'provider' | 'protector' | 'supervisor' | 'inspector'
-// type RoleKind = 'ration'
-// }
-
-type SocialRole = Idealist
-                | Rational
-                | Artisan
-                | Guardian
-
-const roles: { [key in Temperament]: SocialRole[] } = {
-  idealist: [ 'champion', 'healer',    'teacher',      'counselor' ],
-  rational: [ 'inventor', 'architect', 'fieldmarshal', 'mastermind' ],
-  artisan: [ 'performer', 'composer',  'persuader',    'crafter' ],
-  guardian: [ 'provider', 'protector', 'supervisor',   'inspector' ],
-}
-
-
-
-export type Person = Individual<Moiety> & {
-  nameConcepts: Concept[]
-
-  body: Body
-  mind: Mind
-  soul: Soul
-  role: SocialRole
-
-
-  // ie within my moiety, I am (thought of as)...
-  // rank: 'commoner' | 'wellborn'
-  // title?: string
-  // reputation: 'unknown' | 'worthy' | 'adored' | 'revered'
-
-  // individually...
-  things: ManageStocks //Stocks<Item> // hmmm, maybe we really want a map at a higher-level anyway
-  // stats: ManageStocks //Stocks<Item> // hmmm, maybe we really want a map at a higher-level anyway
-
-  items: Stocks<Item>
-
-  currency: number
-  traits: ManageStocks // IList<Trait>
-
-  // things to draw meters for..
-  meters: () => { [meterName: string]: Function }
-  memory: Collection<Memory>
-  // philosophy?: Ideology
-  // destiny: 'doomed' | 'commonplace' | 'exceptional' | 'free'
-}
-
-const personId = new Sequence()
-const human: Species = { id: -1, name: 'Human Being', size: 'medium' }
-export const createPerson = (name: string, moiety: Moiety, attrs: Partial<Person> = {}): Person => {
-
-  const inventory = new Stocks<any>(`${name}'s Things`)
-  const traits = new Stocks<any>(`${name}'s Traits`)
-  const items = new Stocks<Item>(`${name}'s Items`)
-  // const state = new Stocks<any>(`${name}'s State`)
-    // personAttrs.things = inventory.manageAll()
-    const soul: Soul = createSoul()
-    let roleOptions = roles[soul.temperament]
-    // if (soul.temperament === 'rational') {
-
-    // }
-
-
-
-  return {
-    id: personId.next,
-    kind: moiety,
-    role: sample(roleOptions),
-    nameConcepts: [],
-    // kind: createMoiety()
-    name,
-    age: 0,
-    body: createAnimal(name, human),
-    mind: createMind(),
-    soul,
-    // rank: 'commoner',
-    // reputation: 'unknown',
-    currency: 0,
-    items, //.manageAll(),
-    things: inventory.manageAll(),
-    traits: traits.manageAll(),
-
-    // stats: state.manageAll()
-    // things: new M
-    meters: () => { return {}},
-    memory: new Collection<Memory>(),
-    ...attrs,
-  }
-
-}
 export type Recipe = BasicEntity & {
   time?: number
   probability?: number
@@ -373,6 +96,7 @@ export type Recipe = BasicEntity & {
   produces?: { [resourceName: string]: number }
   consumes?: { [resourceName: string]: number }
   requiresMachine?: string
+  onSuccess: (worker: Person, _recipe: Recipe) => void
 }
 
 export type Machine = BasicEntity
@@ -419,3 +143,5 @@ export type StepResult = {
 // todo move these model/sim things somewhere else???
 export type Action = { id: number, name: string, act: Function }
 export type Policy = { id: number, name: string, manage: Function }
+
+export type { Person };

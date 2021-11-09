@@ -42,11 +42,12 @@ type Activity = 'idle'
               | 'vibe'
               | 'trade'
               | 'create'
+              | 'mine'
 
 type CitizenRole = 'Artisan' | 'Hunter' | 'Fisherman' | 'Merchant'
 
 // spirit 'entities' 
-const spiritAnimals = [
+const spiritEntities = [
   'dragon', 'elephant',
   'bear', 'horse', 'snake', 'hound',
   'swan', 'eagle', 'nightingale',
@@ -60,9 +61,16 @@ const spiritAnimals = [
   'falcon',
 
   'cloud', 'fireball',
+  
+  'bell', 'thimble', 'cup',
+  'boat',
 
-  'robot', 'alien',
+  'dial', 'bead', 
+  'cube', 'sphere', 'pyramid', 'spiral',
+
+  'robot', 'alien', 
 ]
+
 class City extends Model {
   
 
@@ -80,19 +88,21 @@ constructor() {
 
   this.folks = this.people.create('Folks')
 
-  const fish = this.folks.recipes.create({ name: 'Fish', time: 500, probability: 0.45 })
-  const hunt = this.folks.recipes.create({ name: 'Hunt', time: 240, probability: 0.52 })
+  const fish = this.folks.recipes.create({ name: 'Fish', time: 500, probability: 0.45, produces: { Meat: 2 } })
+  const hunt = this.folks.recipes.create({ name: 'Hunt', time: 240, probability: 0.52, produces: { Fish: 1 } })
   const rest = this.folks.recipes.create({ name: 'Rest', time: 1900 })
   const eat = this.folks.recipes.create({ name: 'Eat', time: 200 })
   const vibe = this.folks.recipes.create({ name: 'Vibe', time: 777 })
   const idle = this.folks.recipes.create({ name: 'Ready', time: 180 })
   const gather = this.folks.recipes.create({ name: 'Gather', time: 1234 })
-  const trade = this.folks.recipes.create({ name: 'Trade', time: 300 })
+  const trade = this.folks.recipes.create({ name: 'Trade', time: 300, onSuccess: this.trade })
+  const mine = this.folks.recipes.create({ name: 'Trade', time: 300, produces: { Stone: 10 }})
+  //individual => this.tradeWith(individual) })
 
   // interesting b/c a concrete object in the world really 'owns' the progress?
-  const create = this.folks.recipes.create({ name: 'Sculpt', time: 1700 })
+  const create = this.folks.recipes.create({ name: 'Sculpt', time: 1700, consumes: { Stone: 5 } })
 
-  this.recipes = { fish, hunt, rest, eat, vibe, idle, gather, trade, create };
+  this.recipes = { fish, hunt, rest, eat, vibe, idle, gather, trade, create, mine };
 
   const roles: CitizenRole[] = ['Hunter', 'Fisherman', 'Artisan'] //, 'Merchant']
 
@@ -116,6 +126,7 @@ createCitizen = (role: CitizenRole) => {
 
   if (role === 'Artisan') {
     individual.traits.add(1, 'Sculpting')
+    individual.traits.add(1, 'Mining')
   } else if (role === 'Hunter') {
     individual.traits.add(1, 'Hunting')
   } else if (role === 'Fisherman') {
@@ -155,10 +166,10 @@ createCitizen = (role: CitizenRole) => {
   }
 
   // concepts = ['wolf']
-  let spiritCreature = sample(spiritAnimals)
+  let spiritCreature = sample(spiritEntities)
   // let animalPlurals = spiritAnimals.map(a => a + 's')
-  if (any(concepts, concept => spiritAnimals.includes(concept) || Object.values(animalConcepts).includes(concept))) {
-    let theConcept = spiritAnimals.find(animal => concepts.includes(animal as Concept) || concepts.includes(animalConcepts[animal]))
+  if (any(concepts, concept => spiritEntities.includes(concept) || Object.values(animalConcepts).includes(concept))) {
+    let theConcept = spiritEntities.find(animal => concepts.includes(animal as Concept) || concepts.includes(animalConcepts[animal]))
     if (theConcept) { spiritCreature = theConcept }
   }
 
@@ -170,6 +181,10 @@ createCitizen = (role: CitizenRole) => {
     size: 'fine',
     material: 'stone',
   })
+
+  // todo they need a pet?? eg
+  // const pet = createAnimal(sample([ 'Spot', 'Rover', 'Miss Perkins' ]), { id: 1, name: 'Dog' })
+  // individual.pets.create(pet)
 
   individual.meters = () => {
     const job = this.folks.jobs.get(individual)
@@ -247,7 +262,7 @@ evolveIndividual = (individual: Person, resources: ManageStocks) => {
   }
 
   const folks = this.folks
-  const { eat, rest, idle, vibe, hunt, fish, trade, create } = this.recipes
+  const { eat, rest, idle, vibe, hunt, fish, trade, create, mine } = this.recipes
 
   const assign = (task: Recipe) => {
     folks.jobs.set(individual, { recipe: task, startedAt: this.ticks })
@@ -306,14 +321,18 @@ evolveIndividual = (individual: Person, resources: ManageStocks) => {
     else if (joy < 40) { assign(vibe) }
     else {
       if (this.date.timeOfDay === 'morning' || this.date.timeOfDay === 'afternoon') {
+        let possibleActivities: Recipe[] = [ create ]
         if (individual.traits.count('Hunting') > 0) {
-          assign(hunt)
+          possibleActivities.push(hunt)
+          // assign(hunt)
         } else if (individual.traits.count('Fishing') > 0) {
-          assign(fish)
-        } else
-          if (individual.traits.count('Sculpting') > 0) {
-            assign(create)
-          }
+          possibleActivities.push(fish)
+          // assign(fish)
+        } else if (individual.traits.count('Mining') > 0) {
+            possibleActivities.push(mine)
+        }
+
+        assign(sample(possibleActivities))
       }
       else if (satiety < 70 && food > 0) { assign(eat) }
       else if (joy < 90) { assign(vibe) }
@@ -373,21 +392,37 @@ evolveIndividual = (individual: Person, resources: ManageStocks) => {
 
 
       const skill = individual.traits.count('Sculpting')
-      const subject = sample(spiritAnimals)
+      const subject = sample(spiritEntities)
       const sizeDescriptions = { fine: 'tiny', small: 'little', medium: 'big', large: 'huge', huge: 'gigantic' }
       const size = skill > 0 ? sample(['fine', 'small', 'medium', 'large'] as Size[]) : 'small'
 
-      // const moods = [
-      //   // 'sullen', 'dismal', 'joyous', 'surprised', 'happy', 'content', 'confused', 'terrified', 'gentle',
-      // ]
+      const moods = [
+        'worried', 'profound', 'angered', 'aroused', 'elephantine', 'persecuted', 'annoyed', 'excellent', 'striving', 'seeking',
+        'cautious', 'terrible', 'sullen', 'dismal', 'joyous', 'surprised', 'happy', 'content', 'confused', 'terrified', 'gentle',
+      ]
+
+      const ideas = [
+        'loss', 'victory', 'foundation', 'beauty', 'holiness', 'covetousness', 'anxiety', 'productivity',
+        'holism', 'concern', 'care', 'generosity', 'faith', 'temporality', 'illusoriness', 'elusiveness',
+        'chaos', 'purity', 'space', 'time', 'worldliness', 'ugliness', 'hatred', 'appreciation', 'coldness',
+        'cruelty', 'grace', 'facility', 'spareness', 'lack', 'plenitude', 'indulgence', 'innocence', 'parsimony',
+      ]
+
       // const mood = sample(moods)
+      const quality: Quality = 'excellent'; // skill > 0 ? sample(['good', 'excellent'] as Quality[]) : sample(['terrible', 'adequate'] as Quality[]);
+
+      const description = `A ${[sizeDescriptions[size], 'stone', subject].join(' ')} by ${individual.name.split(' ')[0]}`
+      const longDescription = `This ${subject} was carved from stone by ${individual.name}.
+                               Its aspect is ${sample(moods)} ${sample(['yet', 'but', 'and'])}
+                               suggests a strong sense of ${sample(ideas)}.`
 
       individual.items.create({
         name: `Stone ${capitalize(subject)}`,
         kind: 'sculpture',
         size,
-        quality: skill > 0 ? sample(['good', 'excellent'] as Quality[]) : 'terrible',
-        description: `A ${[sizeDescriptions[size], subject].join(' ')} carved from stone by ${individual.name}`
+        quality, 
+        description,
+        longDescription
       })
 
     } else if (task === eat) {
@@ -529,6 +564,12 @@ evolveIndividual = (individual: Person, resources: ManageStocks) => {
       description: `${seasonSign[seasonName]} ${dayOfWeek}, ${monthName} ${ordinate(dayOfMonth)}`,
       time: `${dayPartSign[timeOfDay]} ${String(normalHour)}:${String(minute).padStart(2, '0')} ${(meridian.toUpperCase())}`,
     }
+  }
+
+  // handle any outstanding trades bewteen individual + town..
+  trade(individual: Person) {
+    // todo -- wire this up and start breaking out things that actually require complexity here?
+    console.log("hit trade job complete callback!!!")
   }
 }
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { Machine, Moiety, Person } from "../types";
+import { Machine, Person } from "../types";
 import { LastDelta } from "../../ModelPresenter";
 import { presentItem } from "../Model/presentItem";
 import { Tile } from "./Tile";
@@ -9,6 +9,7 @@ import { Community } from "../Community";
 import { capitalize } from '../utils/capitalize';
 import { BoardPresenter, IBoard } from "./BoardPresenter";
 import './View.css'
+import { Moiety } from "../types/Person";
 
 export type ModelViewProps = {
   modelName: string;

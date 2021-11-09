@@ -1,4 +1,4 @@
-import { Substance, Machine, Animal, Species, Action, Policy, Moiety, Person } from "../types"
+import { Substance, Machine, Animal, Species, Action, Policy, Person } from "../types"
 import { Stocks } from "../Stocks"
 import { Registry } from "../Registry"
 import { Simulation } from "./Simulation"
@@ -7,6 +7,7 @@ import { Collection } from "../Collection"
 import { Community } from "../Community"
 import { Population } from "../Population"
 import { Tiles } from "../Board"
+import { Moiety } from "../types/Person"
 
 type Fauna = Population<Species, Animal>
 export class Model extends Simulation implements IModel  {

@@ -1,6 +1,6 @@
 import { Concept, theConcepts } from "../ecosphere/Dictionary";
 import Model from "../ecosphere/Model";
-import { attributes, createMoiety, createPerson, judge, ManageStocks, Memory, MentalAttribute, Person, PhysicalAttribute, Recipe, SocialAttribute, SpiritualAttribute, TimeEvolution } from "../ecosphere/types";
+import { ManageStocks, Person, Recipe, TimeEvolution } from "../ecosphere/types";
 import { capitalize } from "../ecosphere/utils/capitalize";
 import { randomInteger } from "../ecosphere/utils/randomInteger";
 import { choose, sample } from "../ecosphere/utils/sample";
@@ -9,6 +9,7 @@ import { Sindarin } from "../ecosphere/Languages/Sindarin";
 import Westron from "../ecosphere/Languages/Westron";
 import Common from "../ecosphere/Languages/Common";
 import { clamp } from "../ecosphere/utils/clamp";
+import { createMoiety, createPerson, judge, attributes, SpiritualAttribute, SocialAttribute, MentalAttribute, PhysicalAttribute } from "../ecosphere/types/Person";
 
 // todo behavior model for citizens...
 // class Citizenship { }
@@ -315,9 +316,9 @@ class Citizen extends Model {
     // 'bio': () => this.subject.memory.list().map(this.describeMemory).join('... '),
   }
 
-  describeMemory(memory: Memory) {
-    return `I remember ${memory.description}`
-  }
+  // describeMemory(memory: Memory) {
+  //   return `I remember ${memory.description}`
+  // }
 
   // @boundMethod
   get date() {

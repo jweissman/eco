@@ -1,8 +1,9 @@
 import { List, Map } from '../collections';
-import { Recipe, Moiety, Person, ManageStocks, createPerson, createMoiety } from "./types";
+import { Recipe, ManageStocks } from "./types";
 import { Population } from "./Population";
 import { Collection } from "./Collection";
 import { boundMethod } from 'autobind-decorator';
+import { Moiety, Person, createPerson, createMoiety } from './types/Person';
 
 type Job = { recipe: Recipe, startedAt?: number }
 
