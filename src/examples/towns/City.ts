@@ -396,11 +396,15 @@ evolveIndividual = (individual: Person, resources: ManageStocks) => {
       const sizeDescriptions = { fine: 'tiny', small: 'little', medium: 'big', large: 'huge', huge: 'gigantic' }
       const size = skill > 0 ? sample(['fine', 'small', 'medium', 'large'] as Size[]) : 'small'
 
+      // things the work "is"
       const moods = [
-        'worried', 'profound', 'angered', 'aroused', 'elephantine', 'persecuted', 'annoyed', 'excellent', 'striving', 'seeking',
+        'worried', 'profound', 'angered', 'aroused', 'elephantine', 'persecuted', 'annoyed', 'striving', 'seeking',
         'cautious', 'terrible', 'sullen', 'dismal', 'joyous', 'surprised', 'happy', 'content', 'confused', 'terrified', 'gentle',
+        'stern', 'distant', 'suspicious', 'firm', 'stark', 'bewildered', 'chaotic', 'generous', 'benevolent', 'poetic', 'sublime',
+        'shocked', 'appalled', 'amused', 'determined', 'devoted', 'meandering', 'suspect', 'ferocious', 'feral', 'hungry',
       ]
 
+      // things the work "suggests"
       const ideas = [
         'menace', 'daring', 'outrage', 'resonance', 'rapidity', 'wealth', 'poverty', 'righteousness',
         'loss', 'victory', 'foundation', 'beauty', 'holiness', 'covetousness', 'anxiety', 'productivity',
@@ -410,14 +414,25 @@ evolveIndividual = (individual: Person, resources: ManageStocks) => {
       ]
 
       // const mood = sample(moods)
-      const quality: Quality = 'excellent'; // skill > 0 ? sample(['good', 'excellent'] as Quality[]) : sample(['terrible', 'adequate'] as Quality[]);
+      const excellence = randomInteger(0,25) + (randomInteger(0, skill) * 25)
+      let quality: Quality = 'adequate';
+      if (excellence < 10) quality = 'terrible';
+      if (excellence > 10) quality = 'good';
+      if (excellence > 25) quality = 'excellent';
+      // const quality: Quality = randomInteger(0, 20) - skill  //> 0 ? sample(['good', 'excellent'] as Quality[]) : sample(['terrible', 'adequate'] as Quality[]);
 
       const description = `A ${[sizeDescriptions[size], 'stone', subject].join(' ')} by ${individual.name.split(' ')[0]}`
-      const longDescription = `This ${subject} was carved from stone by ${individual.name}.
-                               Its aspect is ${sample(moods)} ${sample(['yet', 'but', 'and'])}
-                               ${sample(['conveys', 'suggests', 'intimates', 'exudes', 'reveals', 'contains', 'presents'])}
-                               ${sample(['a strong', 'a subtle', 'a quiet', 'an understated', 'an unmistakable', 'a lasting', 'a remarkable'])}
-                               ${sample(['feeling', 'sense', 'impression', 'vibe', 'energy', 'charge', 'affect'])} of ${sample(ideas)}.`
+      let longDescription = `This ${subject} was carved from stone by ${individual.name}.
+                             Its ${sample(['aspect', 'expression', 'countenance'])} is ${sample(moods)}`
+
+      if (quality === 'excellent') {
+        longDescription += `${sample([' yet', ' but', ' and', '; however, it', '. It'])}
+                            ${sample(['conveys', 'suggests', 'intimates', 'exudes', 'presents'])}
+                            ${sample(['a strong', 'a subtle', 'a quiet', 'an understated', 'an unmistakable', 'a lasting', 'a remarkable'])}
+                            ${sample(['feeling', 'sense', 'impression'])} of ${sample(ideas)}.`
+      } else {
+        longDescription += '.'
+      }
 
       individual.items.create({
         name: `Stone ${capitalize(subject)}`,
