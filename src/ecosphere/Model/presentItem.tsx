@@ -9,7 +9,7 @@ export function presentItem(deltas?: { [elementName: string]: number; }) {
         {prettyAmount(amount)}
       </span>
       <span data-testid='Delta'>
-        {delta}
+        <small>{delta || '-----'}</small>
       </span>
     </li>;
   };

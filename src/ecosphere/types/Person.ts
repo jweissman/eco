@@ -60,13 +60,26 @@ export const createMind = (): Mind => {
   return { insight, depth, education, disposition, valor, presence }
 }
 
-type Wit = 'slow' | 'clever' | 'biting' | 'savage'
+export type Gender = 'neuter' | 'feminine' | 'masculine' | 'androgynous'
+type Justice = 'arbitrary' | 'severe' | 'harsh' | 'firm' 
+type Wit = 'grim' | 'droll' | 'sardonic' | 'acerbic'
+// piquant
+// 'acerbic'
+// | 'riotous'
+// type Humor = 'cruel' | 
+
 type Empathy = 'sadistic' | 'generous' | 'benevolent' | 'selfless'
 type Integrity = 'uncertain' | 'sound' | 'solid' | 'incorruptible'
 type Beauty = 'ugly' | 'fair' | 'radiant' | 'resplendent'
 type Charm  = 'repulsive' | 'inoffensive' | 'affable' | 'likeable'
 type Resolve = 'vacillating' | 'steadfast' | 'intrepid' | 'relentless'
+
 type Temperament = 'guardian' | 'artisan' | 'rational' | 'idealist'
+
+type Philosophy = 'naive' | 'narrow' | 'contemplative' | 'enlightened'
+type Faith = 'materialistic' | 'spiritual' | 'devout' | 'militant'
+type Demeanor = 'arrogant' | 'proud' | 'humble' | 'serene'
+// type Philosophy = 'pessimist' | 'realist' | 'optimist' | 'utopian'
 
 type SpiritualQuality = Wit
                       | Empathy
@@ -75,6 +88,11 @@ type SpiritualQuality = Wit
                       | Charm
                       | Resolve
                       | Temperament
+                      | Gender
+                      | Philosophy
+                      | Faith
+                      | Demeanor
+                      | Justice
 
 type Soul = {
   wit: Wit
@@ -84,19 +102,33 @@ type Soul = {
   charm: Charm
   resolve: Resolve
   temperament: Temperament
+  gender: Gender
+  philosophy: Philosophy
+  faith: Faith
+  demeanor: Demeanor
+  justice: Justice
 }
 
 
-export const createSoul = (): Soul => {
-  const wit: Wit = pick([ 'slow', 'clever', 'biting', 'savage' ])
+export const createSoul = (gender?: Gender): Soul => {
+  const wit: Wit = pick([ 'grim', 'droll', 'sardonic', 'acerbic' ]) // 'slow', 'clever', 'biting', 'savage' ])
   const empathy: Empathy = pick([ 'sadistic', 'generous', 'benevolent', 'selfless' ])
   const integrity: Integrity = pick([ 'uncertain', 'sound', 'solid', 'incorruptible' ])
   const beauty: Beauty = pick([ 'ugly', 'fair', 'radiant', 'resplendent' ])
   const charm: Charm = pick([ 'repulsive', 'inoffensive', 'affable', 'likeable' ])
   const resolve: Resolve = pick([ 'vacillating', 'steadfast', 'intrepid', 'relentless' ])
   const temperament: Temperament = pick([ 'guardian', 'artisan', 'rational', 'idealist'])
+  // const gender: Gender =
+  gender = gender || pick([ 'neuter', 'feminine', 'masculine', 'androgynous' ])
+  const philosophy: Philosophy = pick([ 'naive', 'narrow', 'contemplative', 'enlightened'])
+  const faith: Faith = pick(['materialistic', 'spiritual', 'devout', 'militant'])
+  const demeanor: Demeanor = pick(['arrogant', 'proud', 'humble', 'serene'])
+  const justice: Justice = pick( [ 'arbitrary', 'severe', 'harsh', 'firm' ]) //[ 'arbitrary', 'harsh', 'fair', 'firm' ])
   
-  return { wit, empathy, integrity, beauty, charm, resolve, temperament }
+  return {
+    wit, empathy, integrity, beauty, charm, resolve, temperament,
+    gender, faith, philosophy, demeanor, justice,
+  }
 }
 
 // export type Memory = { id: number, name: string, description: string }
@@ -104,7 +136,9 @@ export const createSoul = (): Soul => {
 type IndividualQuality = PhysicalQuality | SocialQuality | MentalQuality | SpiritualQuality
 export type PhysicalAttribute = 'spirit' | 'strength' | 'cunning' | 'agility' | 'guile'
 export type SocialAttribute =  'wealth' | 'sophistication' | 'power' | 'knowledge'
-export type SpiritualAttribute = 'wit' | 'empathy' | 'integrity' | 'beauty' | 'charm' | 'resolve' | 'temperament'
+export type SpiritualAttribute = 'wit' | 'empathy' | 'integrity' | 'beauty'
+                               | 'charm' | 'resolve' | 'temperament' | 'justice'
+                               | 'gender' | 'philosophy' | 'faith' | 'demeanor'
 type AttributeMatrix = {
   physical: { [key in PhysicalAttribute]: PhysicalQuality[] },
   social: { [key in SocialAttribute]: SocialQuality[] },
@@ -138,13 +172,18 @@ export const attributes: AttributeMatrix = {
     
   },
   spiritual: {
-    wit: [ 'slow', 'clever', 'biting', 'savage' ],
+    wit: [ 'grim', 'droll', 'sardonic', 'acerbic' ],
     empathy: [ 'sadistic', 'generous', 'benevolent', 'selfless' ],
     integrity: [ 'uncertain', 'sound', 'solid', 'incorruptible' ],
     beauty: [ 'ugly', 'fair', 'radiant', 'resplendent' ],
     charm: [ 'repulsive', 'inoffensive', 'affable', 'likeable' ],
     resolve: [ 'vacillating', 'steadfast', 'intrepid', 'relentless' ],
     temperament: [ 'guardian', 'artisan', 'rational', 'idealist' ],
+    gender: [ 'neuter', 'feminine', 'masculine', 'androgynous' ],
+    philosophy: [ 'naive', 'narrow', 'contemplative', 'enlightened'],
+    faith: ['materialistic', 'spiritual', 'devout', 'militant'],
+    demeanor: ['arrogant', 'proud', 'humble', 'serene'],
+    justice: [ 'arbitrary', 'severe', 'harsh', 'firm' ],
   },
 }
 export const judge = (quality: IndividualQuality): Quality => {

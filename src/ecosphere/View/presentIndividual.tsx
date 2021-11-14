@@ -3,16 +3,20 @@ import { Stocks } from "../Stocks";
 import { Item, ManageStocks } from "../types";
 import { capitalize } from "../utils/capitalize";
 
-
-export function presentIndividual(work: { [key: number]: string; }) {
-  return ({ id, name, things, traits, items, nameConcepts, meters }: {
+export function presentIndividual(
+  work: { [key: number]: string; }
+) {
+  return ({ id, name, things, traits, items, pets, nameConcepts, meters }: {
     id: number;
+    // gender: Gender;
     name: string;
     // nameSignificance?: string;
     nameConcepts: Concept[]
     things: ManageStocks;
     items: Stocks<Item>;
     traits: ManageStocks;
+    pets: ManageStocks;
+
     meters: () => { [key: string]: Function }
   }) => {
     const thingNames = things.list().map(thing => thing.name);
@@ -23,10 +27,11 @@ export function presentIndividual(work: { [key: number]: string; }) {
       return left + ' ' + right;
     }, '') //.join(' ').trim(); //.replaceAll('-', ''));
 
-    const showThings = true, showTraits = false
+    const showThings = true, showTraits = true
 
     return <li key={id} title={name} className='Item' style={{display: 'flex', flexDirection: 'column', width: '500px'}}>
       <div className='Title' data-testid='Name'>
+        🧍
         {name}
       </div>
       {significance && <div className='Subtitle' data-testid='Significance of Name' style={{ fontStyle: 'italic', fontSize:' 10pt' }}>
@@ -36,7 +41,7 @@ export function presentIndividual(work: { [key: number]: string; }) {
       {Object.entries(meters()).map(([meterName, measure]) => {
         const { value, max } = measure()
         return <div className='Meter' data-testid={meterName} style={{display: 'flex', width: '100px', flexDirection: 'row', flexWrap: 'wrap', padding: '2px'}}>
-          <label htmlFor={meterName} style={{fontSize: '8.5pt', color: 'white', fontWeight: 'lighter', textTransform: 'uppercase', paddingRight: '8px'}}>{meterName}</label>
+          <label htmlFor={meterName} style={{fontSize: '8.5pt', fontWeight: 'lighter', textTransform: 'uppercase', paddingRight: '8px'}}>{meterName}</label>
           <meter id={meterName}
                  style={{ width:100, height: 14 }}
                  min="0" max={max}
@@ -66,23 +71,24 @@ export function presentIndividual(work: { [key: number]: string; }) {
             flexDirection: 'column',
             }}>
               <div>
-              <span style={{color:'lightgray'}} title={items.lookup(it).description}>- {it}</span>
+              <span title={items.lookup(it).description}>- {it}</span>
               &nbsp;
               <span style={{fontSize: '6.5pt'}}>
                 {items.lookup(it).description}
                 &nbsp;
-                <span style={{color:'darkslategray'}}>
+                <span>
                   ({items.lookup(it).quality && items.lookup(it).quality})
                 </span>
               </span>
               </div>
               {items.lookup(it).longDescription &&
-              <div style={{fontSize: '6pt', color: '#50403c', padding: '4px', marginBottom: '8px', width: '180px', textAlign: 'justify', alignSelf: 'center'}}>
+              <div style={{fontSize: '6pt', padding: '4px', marginBottom: '8px', width: '180px', textAlign: 'justify', alignSelf: 'center'}}>
                 {items.lookup(it).longDescription}
               </div>}
           </li>)}
         </ul>
       </div>}
+
       {thingNames.length > 0 && <div className='Things' data-testid='Inventory' style={{ display: showThings ? 'block' : 'none' }}>
         <ul>
           {thingNames.sort((a,b) => a > b ? 1 : -1).map(it => <li key={it} style={{

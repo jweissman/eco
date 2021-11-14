@@ -3,15 +3,15 @@ import { Concept, theConcepts } from "../../ecosphere/Dictionary"
 import Westron from "../../ecosphere/Languages/Westron"
 import Model from "../../ecosphere/Model"
 import { Recipe, TimeEvolution, Person, ManageStocks, Quality, Size, Material } from "../../ecosphere/types"
+import { Gender, createSoul } from "../../ecosphere/types/Person"
 import { any } from "../../ecosphere/utils/any"
 import { capitalize } from "../../ecosphere/utils/capitalize"
 import ordinate from "../../ecosphere/utils/ordinate"
 import { randomInteger } from "../../ecosphere/utils/randomInteger"
 import { choose, sample } from "../../ecosphere/utils/sample"
 
-type Gender = 'male' | 'female'
 function generateName(gender: Gender): { name: string, concepts: Concept[] } {
-  let suffices: Concept[] = gender === 'male'
+  let suffices: Concept[] = gender === 'masculine'
     ? ['-person', '-man', '-son']
     : ['-woman', '-maid', '-daughter']
 
@@ -119,10 +119,10 @@ constructor() {
 }
 
 createCitizen = (role: CitizenRole) => {
-  const gender: Gender = sample(['male', 'female'])
+  const gender: Gender = sample(['masculine', 'feminine'])
   const { name, concepts } = generateName(gender)
   const firstName = name.split(' ')[0]
-  const individual = this.folks.create({ name, nameConcepts: concepts })
+  const individual = this.folks.create({ name, soul: createSoul(gender), nameConcepts: concepts })
 
   if (role === 'Artisan') {
     individual.traits.add(1, 'Sculpting')
@@ -402,6 +402,7 @@ evolveIndividual = (individual: Person, resources: ManageStocks) => {
       ]
 
       const ideas = [
+        'menace', 'daring', 'outrage', 'resonance', 'rapidity', 'wealth', 'poverty', 'righteousness',
         'loss', 'victory', 'foundation', 'beauty', 'holiness', 'covetousness', 'anxiety', 'productivity',
         'holism', 'concern', 'care', 'generosity', 'faith', 'temporality', 'illusoriness', 'elusiveness',
         'chaos', 'purity', 'space', 'time', 'worldliness', 'ugliness', 'hatred', 'appreciation', 'coldness',
@@ -414,7 +415,9 @@ evolveIndividual = (individual: Person, resources: ManageStocks) => {
       const description = `A ${[sizeDescriptions[size], 'stone', subject].join(' ')} by ${individual.name.split(' ')[0]}`
       const longDescription = `This ${subject} was carved from stone by ${individual.name}.
                                Its aspect is ${sample(moods)} ${sample(['yet', 'but', 'and'])}
-                               suggests a strong sense of ${sample(ideas)}.`
+                               ${sample(['conveys', 'suggests', 'intimates', 'exudes', 'reveals', 'contains', 'presents'])}
+                               ${sample(['a strong', 'a subtle', 'a quiet', 'an understated', 'an unmistakable', 'a lasting', 'a remarkable'])}
+                               ${sample(['feeling', 'sense', 'impression', 'vibe', 'energy', 'charge', 'affect'])} of ${sample(ideas)}.`
 
       individual.items.create({
         name: `Stone ${capitalize(subject)}`,

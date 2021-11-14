@@ -1,3 +1,3 @@
 export function prettyAmount(amount: number) {
-  return amount;
+  return Math.floor(amount);
 }

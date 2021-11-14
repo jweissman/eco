@@ -1,11 +1,12 @@
 import worldMapMaker from "./WorldMap"
 import Language from "./Language"
 import City from "./towns/City"
+import Citizen from './Citizen';
 
 const models = [
   City,
   worldMapMaker,
-  // Citizen,
+  Citizen,
   Language,
   // Building,
   // arena,

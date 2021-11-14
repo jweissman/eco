@@ -134,21 +134,21 @@ class Citizen extends Model {
     const maxEnergy = resources.count('Max Energy')
     if (energy > maxEnergy) { resources.remove(energy - maxEnergy, 'Energy')}
     if (energy > 0) {
-      resources.remove(3, 'Energy')
+      resources.remove(0.03, 'Energy')
     }
 
     const satiety = resources.count('Satiety')
     const maxSatiety = resources.count('Max Satiety')
     if (satiety > maxSatiety) { resources.remove(satiety - maxSatiety, 'Satiety')}
     if (satiety > 0) {
-      resources.remove(2, 'Satiety')
+      resources.remove(0.02, 'Satiety')
     }
 
     const joy = resources.count('Joy')
     const maxJoy = resources.count('Max Joy')
     if (joy > maxJoy) { resources.remove(joy - maxJoy, 'Joy')}
     if (joy > 0) {
-      resources.remove(1, 'Joy')
+      resources.remove(0.001, 'Joy')
     }
 
     const self = this.people.lookup('Self')

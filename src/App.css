@@ -1,7 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700;900&display=swap');
 
 .App {
-  color: #eaeaea;
+  min-height: 100vh;
+  /* background: #141b2a; */
+  background: #34363a;
+  /* background: #e0d0c4; */
+  /* color: #eee; */
+  /* color: #777; */
   text-align: center;
   /* height: 100vh; */
 }

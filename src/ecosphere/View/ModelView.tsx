@@ -65,16 +65,16 @@ export function ModelView({
       <ul>
         {Object.entries(metrics).map(([name, value]) => <li title={name} key={name}>
           {name}
-          <span data-testid='Count'>{value}</span>
+          <span data-testid='Count'>{Math.floor(value)}</span>
         </li>)}
       </ul>
     </Tile>}
-    {Object.keys(notes).length > 0 && <div title='Notes'
-      style={{
-        overflow: 'scroll',
-        height: '560px',
-        // maxHeight: '340px'
-      }}
+    {Object.keys(notes).length > 0 && <Tile title='Notes'
+      // style={{
+      //   overflow: 'scroll',
+      //   height: '560px',
+      //   // maxHeight: '340px'
+      // }}
     >
     <table>
       <tbody>
@@ -111,6 +111,6 @@ export function ModelView({
     </tbody>
     </table>
       {/* </tr> */}
-    </div>}
+    </Tile>}
   </div>;
 }
